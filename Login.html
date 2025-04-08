@@ -1,0 +1,690 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin Key System</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap">
+    <link rel="icon" href="Main/Extra/logo-search.svg" type="image/png">
+    
+    <style>
+        body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+body.loaded {
+    opacity: 1;
+}
+.container {
+    width: 80%;
+    margin: 5px auto;
+    padding: 15px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+#login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #4a90e2, #6cc3f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+#login-form {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    padding: 30px;
+    width: 360px;
+    max-width: 90%;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+#login-form:hover {
+    transform: translateY(-5px);
+}
+#login-form h2 {
+    margin-bottom: 25px;
+    font-size: 28px;
+    color: #333;
+    font-weight: 600;
+}
+#login-form input {
+    width: calc(100% - 20px);
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+#login-form input:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+#login-form button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+#login-form button:hover {
+    background-color: #357abd;
+    transform: scale(1.05);
+}
+#logout-btn {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    background-color: #e94e77;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+#logout-btn:hover {
+    background-color: #d43f60;
+    transform: scale(1.05);
+}
+#main-content {
+    display: none;
+    margin: 20px;
+}
+body.logged-in {
+    overflow: auto;
+}
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #1e3a8a;
+    gap: 8px;
+}
+.tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    margin-right: 5px;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.tab:hover {
+    background-color: #e2e6ea;
+}
+.tab.active {
+    background-color: #ff0000;
+    color: white;
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-color: #1e3a8a;
+}
+.tab-content {
+    position: relative;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    margin-top: 10px;
+    border-radius: 6px;
+}
+.tab-content.active {
+    max-height: 1000px;
+    opacity: 1;
+}
+button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0) 80%);
+    transition: transform 0.5s, opacity 0.5s;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    border-radius: 50%;
+}
+button:active::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+input[type="text"], input[type="date"], input[type="number"], textarea, select {
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: calc(100% - 24px);
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+.scrollable-content {
+    max-height: 700px;
+    width: 99%;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+.upload-container {
+    background-color: #fff;
+    padding: 30px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    text-align: center;
+    margin: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.upload-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+.notification {
+    display: none;
+    position: relative;
+    padding: 16px 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border-left: 6px solid #007bff;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 600px;
+    background-color: #ffffff;
+    color: #333333;
+}
+
+.notification.success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.notification.error {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.notification.info {
+    color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.notification.warning {
+    color: #ffc107;
+    border-color: #ffc107;
+}
+
+.notification .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+.notification.success .icon {
+    background: url('Main/Extra/check2.png') no-repeat center center;
+    background-size: contain;
+}
+.notification.error .icon {
+    background: url('Main/Extra/error2.png') no-repeat center center;
+    background-size: contain;
+}
+.notification.info .icon {
+    background: url('Main/Extra/info2.png') no-repeat center center;
+    background-size: contain;
+}
+.notification.warning .icon {
+    background: url('Main/Extra/warning2.png') no-repeat center center;
+    background-size: contain;
+}
+.notification:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    opacity: 0.95;
+}
+h1 {
+    margin-top: 0;
+    color: #333;
+    font-size: 24px;
+    font-weight: 700;
+}
+p {
+    color: #666;
+    font-size: 18px;
+    line-height: 1.6;
+}
+button {
+    font-weight: 700;
+}
+        button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            background-color: #ff0000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        button:active {
+            background-color: #ff0000;
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        #file-input {
+         display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="login-container">
+    <form id="login-form">
+        <h1><i class="fas fa-database"></i> Free Admin Panel</h1>
+        <input type="password" id="password" placeholder="Enter Password" required>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+    <div class="container">
+        <h1><i class="fa-solid fa-cube" style="color: #63E6BE;"></i>  Free Key Management</h1>
+        <div class="tabs">
+            <div class="tab <br />
+<b>Warning</b>:  Undefined variable $current_tab in <b>/home/kdcampin/protonx.kdlootersofficial.com/Main/Manager.php</b> on line <b>737</b><br />
+" data-tab="generate_key">Generate Key</div>
+            <div class="tab <br />
+<b>Warning</b>:  Undefined variable $current_tab in <b>/home/kdcampin/protonx.kdlootersofficial.com/Main/Manager.php</b> on line <b>738</b><br />
+" data-tab="manage_key">Edit Key</div> 
+            <div class="tab <br />
+<b>Warning</b>:  Undefined variable $current_tab in <b>/home/kdcampin/protonx.kdlootersofficial.com/Main/Manager.php</b> on line <b>739</b><br />
+" data-tab="ban_devices">Ban Action</div>
+                    <div class="tab <br />
+<b>Warning</b>:  Undefined variable $current_tab in <b>/home/kdcampin/protonx.kdlootersofficial.com/Main/Manager.php</b> on line <b>740</b><br />
+" data-tab="new_tab">Setting</div>
+                </div>        
+                
+         <div class="tab-content <br />
+<b>Warning</b>:  Undefined variable $current_tab in <b>/home/kdcampin/protonx.kdlootersofficial.com/Main/Manager.php</b> on line <b>743</b><br />
+" id="generate_key">
+                 <div class="scrollable-content">
+            
+
+            <form method="post">
+    <h3><i class="fas fa-gem"></i> Paid Key</h3>
+    <label for="game_type">Game Type :</label>
+    <select id="game_type" name="game_type" required>
+        <option value="" disabled selected> Select Game</option>
+        <option value="PremiumGame1">〇 Premium Game 1</option>
+        <option value="PremiumGame2">〇 Premium Game 2</option>
+        <option value="PremiumGame3">〇 Premium Game 3</option>
+    </select>
+        <label for="custom_key">Custom Key Name :</label>
+    <br>
+    <input type="text" name="custom_key" placeholder=" Key Name" maxlength="50">
+    <label for="expiration_date">Expiration Date :</label>
+    <br>
+    <input type="date" name="expiration_date" required>
+    <label for="usage_limit">Usage Limit :</label>
+    <br>
+    <input type="number" name="usage_limit" placeholder="Enter Number" min="1" required>
+    <button type="submit" name="generate_key_vip">Generate</button>      
+</form> <br> <br>
+            
+<form method="post">
+    <h3><i class="fa-brands fa-keybase"></i> Free Key</h3>
+    <label for="game_type">Game Type :</label>
+    <br><br>
+    <select id="game_type" name="game_type" required>
+        <option value="" disabled selected> Select Game</option>
+        <option value="FreeGame1">〇 Free Game 1</option>
+        <option value="FreeGame2">〇 Free Game 2</option>
+        <option value="FreeGame3">〇 Free Game 3</option>
+    </select>
+    <label for="expiration_date">Expiration Date :</label>
+    <br>
+    <input type="date" name="expiration_date" required>
+    <label for="usage_limit">Usage Limit :</label>
+    <br>
+    <input type="number" name="usage_limit" placeholder="Enter Number" min="1" required>
+    <label for="number_of_keys">Number Of Keys :</label>
+    <br>
+    <input type="number" name="number_of_keys" placeholder="Enter Number" min="1" required>
+    <button type="submit" name="generate_key_game">Generate</button>
+</form> <br> <br>           
+        </div>
+     </div>
+     
+    <div class="tab-content <br />
+<b>Warning</b>:  Undefined variable $current_tab in <b>/home/kdcampin/protonx.kdlootersofficial.com/Main/Manager.php</b> on line <b>804</b><br />
+" id="manage_key">
+        <div class="scrollable-content">
+                       
+                        <form method="post">
+                <h3><i class="fas fa-trash-can"></i> Delete Key </h3>
+                <p>Function used to delete key, please select below</p>
+                <select name="key_id" required>       
+                    <option value="" disabled selected>Select Key</option>
+                    <option value="7">PremiumGame1-ARUN</option><option value="21">PremiumGame1-ARUN1</option><option value="23">PremiumGame1-ARUN12</option><option value="3">PremiumGame1-BANTI</option><option value="20">PremiumGame1-FUCK1</option><option value="5">PremiumGame1-HITESH</option><option value="17">PremiumGame1-MADHU</option><option value="12">PremiumGame1-MADHUV</option><option value="8">PremiumGame1-MANU</option><option value="10">PremiumGame1-NEW</option><option value="13">PremiumGame1-PANEL</option><option value="4">PremiumGame1-RAHUL</option><option value="1">PremiumGame1-TAMIL</option><option value="2">PremiumGame1-TITOO</option><option value="16">PremiumGame1-VISHAL</option>                </select>
+                <button type="submit" name="delete_key">Submit</button> <br>
+            </form> <br>
+            
+            <form method="post">
+                <h3><i class="fas fa-clock"></i> Update Expiration Date</h3>
+                <p>Function used to update key expiration time, please select key and your date option</p>
+                <select name="key_id" required>
+                    <option value="" disabled selected>Select Key</option>
+                    <option value="7">PremiumGame1-ARUN</option><option value="21">PremiumGame1-ARUN1</option><option value="23">PremiumGame1-ARUN12</option><option value="3">PremiumGame1-BANTI</option><option value="20">PremiumGame1-FUCK1</option><option value="5">PremiumGame1-HITESH</option><option value="17">PremiumGame1-MADHU</option><option value="12">PremiumGame1-MADHUV</option><option value="8">PremiumGame1-MANU</option><option value="10">PremiumGame1-NEW</option><option value="13">PremiumGame1-PANEL</option><option value="4">PremiumGame1-RAHUL</option><option value="1">PremiumGame1-TAMIL</option><option value="2">PremiumGame1-TITOO</option><option value="16">PremiumGame1-VISHAL</option>                </select>
+                <input type="date" name="new_expiration_date" required>
+                <button type="submit" name="update_expiration">Submit </button><br>
+            </form> <br>
+            <form method="post">
+                <h3><i class="fas fa-users"></i></i> Set Usage Limit</h3>
+                <p>Function to set limit on number of devices that can access key, please select key and number to set</p>
+                <select name="key_id" required>
+                    <option value="" disabled selected>Select Key</option>
+                    <option value="7">PremiumGame1-ARUN</option><option value="21">PremiumGame1-ARUN1</option><option value="23">PremiumGame1-ARUN12</option><option value="3">PremiumGame1-BANTI</option><option value="20">PremiumGame1-FUCK1</option><option value="5">PremiumGame1-HITESH</option><option value="17">PremiumGame1-MADHU</option><option value="12">PremiumGame1-MADHUV</option><option value="8">PremiumGame1-MANU</option><option value="10">PremiumGame1-NEW</option><option value="13">PremiumGame1-PANEL</option><option value="4">PremiumGame1-RAHUL</option><option value="1">PremiumGame1-TAMIL</option><option value="2">PremiumGame1-TITOO</option><option value="16">PremiumGame1-VISHAL</option>                </select>
+                <input type="number" name="new_usage_limit" placeholder="New Usage Limit" required>
+                <button type="submit" name="set_usage_limit">Submit</button><br>
+            </form> <br>
+            <form method="post">
+                <h3><i class="fas fa-user-minus"></i> Reset Current Usage</h3>
+                <p>Function used to reset the number of current users for the initial key to 0</p>
+                <select name="key_id" required>
+                    <option value="" disabled selected>Select Key</option>
+                    <option value="7">PremiumGame1-ARUN</option><option value="21">PremiumGame1-ARUN1</option><option value="23">PremiumGame1-ARUN12</option><option value="3">PremiumGame1-BANTI</option><option value="20">PremiumGame1-FUCK1</option><option value="5">PremiumGame1-HITESH</option><option value="17">PremiumGame1-MADHU</option><option value="12">PremiumGame1-MADHUV</option><option value="8">PremiumGame1-MANU</option><option value="10">PremiumGame1-NEW</option><option value="13">PremiumGame1-PANEL</option><option value="4">PremiumGame1-RAHUL</option><option value="1">PremiumGame1-TAMIL</option><option value="2">PremiumGame1-TITOO</option><option value="16">PremiumGame1-VISHAL</option>                </select>
+                <button type="submit" name="reset_user_count_specific">Submit</button><br>
+            </form> <br>
+                        <form method="post">
+                <h3><i class="fas fa-lock"></i> Revoked Key</h3>
+                <p>Function used to temporarily disable active keys, consider when using</p>
+                <select name="key_id" required>
+                    <option value="" disabled selected>Select Key</option>
+                    <option value="7">PremiumGame1-ARUN</option><option value="21">PremiumGame1-ARUN1</option><option value="23">PremiumGame1-ARUN12</option><option value="3">PremiumGame1-BANTI</option><option value="20">PremiumGame1-FUCK1</option><option value="5">PremiumGame1-HITESH</option><option value="17">PremiumGame1-MADHU</option><option value="12">PremiumGame1-MADHUV</option><option value="8">PremiumGame1-MANU</option><option value="10">PremiumGame1-NEW</option><option value="13">PremiumGame1-PANEL</option><option value="4">PremiumGame1-RAHUL</option><option value="1">PremiumGame1-TAMIL</option><option value="2">PremiumGame1-TITOO</option><option value="16">PremiumGame1-VISHAL</option>                </select>
+                <button type="submit" name="revoke_key_specific">Submit</button><br>
+            </form>
+                                    <form method="post">
+                <h3><i class="fas fa-unlock"></i> Activate Key</h3>
+                <p>Function used to activate the key status back to work !</p>
+                <select name="key_id" required>
+                    <option value="" disabled selected>Select Key</option>
+                    <option value="7">PremiumGame1-ARUN</option><option value="21">PremiumGame1-ARUN1</option><option value="23">PremiumGame1-ARUN12</option><option value="3">PremiumGame1-BANTI</option><option value="20">PremiumGame1-FUCK1</option><option value="5">PremiumGame1-HITESH</option><option value="17">PremiumGame1-MADHU</option><option value="12">PremiumGame1-MADHUV</option><option value="8">PremiumGame1-MANU</option><option value="10">PremiumGame1-NEW</option><option value="13">PremiumGame1-PANEL</option><option value="4">PremiumGame1-RAHUL</option><option value="1">PremiumGame1-TAMIL</option><option value="2">PremiumGame1-TITOO</option><option value="16">PremiumGame1-VISHAL</option>                </select>
+                <button type="submit" name="unrevoke_key_specific">Submit</button><br>
+            </form>
+        </div>
+    </div>
+
+        <div class="tab-content <br />
+<b>Warning</b>:  Undefined variable $current_tab in <b>/home/kdcampin/protonx.kdlootersofficial.com/Main/Manager.php</b> on line <b>879</b><br />
+" id="ban_devices">
+                <div class="scrollable-content">
+                        <form method="post">
+                    <h3><i class="fas fa-user-pen"></i> Banned User</h3>
+                    <p>Function to ban devices from accessing, ban anyone if you want</p>
+        <select name="device_id" required>
+            <option value="" disabled selected>Select ID Device</option>
+            <option value="029842062864644260224824">029842062864644260224824</option><option value="930602228462204628800868">930602228462204628800868</option><option value="174442666266808426064864">174442666266808426064864</option><option value="954682208828406042866460">954682208828406042866460</option><option value="242646060402664486068886">242646060402664486068886</option>        </select>
+        <input type="text" name="ban_reason" placeholder="Reason for Ban" required>
+        <button type="submit" name="ban_action">Ban Device</button>
+    </form> <br>
+    <form method="post">
+                    <h3><i class="fas fa-user-slash"></i> UnBanned User</h3>
+                    <p>Function to unban devices from accessing, unban anyone if you want</p>
+        <select name="device_id" required>
+            <option value="" disabled selected>Select ID Device</option>
+                    </select>
+        <button type="submit" name="unban_action">Unban Device</button>
+    </form>
+</div>       
+</div>
+
+<div class="tab-content <br />
+<b>Warning</b>:  Undefined variable $current_tab in <b>/home/kdcampin/protonx.kdlootersofficial.com/Main/Manager.php</b> on line <b>915</b><br />
+" id="new_tab">
+        <div class="scrollable-content">
+ 
+    
+    
+               <h3><i class="fas fa-circle-info"></i> Check Information Table</h3>
+                   <p>Function used to check all information from database click to view</p>
+        <button type="submit" onclick="submitForm2()">Submit</button> <br> <br>
+    
+              <form method="POST" action="">
+                    <h3><i class="fas fa-database"></i> Format Data All Table</h3>
+                        <p>Please consider carefully before doing this, because it will delete all user data</p>
+        <button type="submit" name="delete_data" onclick="return confirm('Are you sure you want to delete all data?');">Submit</button> 
+    </form> <br>
+     
+<form action="" method="post" enctype="multipart/form-data" id="upload-form">
+    <h3><i class="fas fa-cloud-arrow-up"></i> Upload Lua Script</h3>
+           <p>Upload Your Lua Script Here, Will Help Protect Your Script !</p>
+    <select name="script_name" required>
+        <option value="" disabled selected>Select Script</option>
+        <option value="FreeGame1">〇 Free Script 1</option>
+        <option value="FreeGame2">〇 Free Script 2</option>
+        <option value="FreeGame1">〇 Free Script 3</option>
+        <option value="PremiumGame1">〇 Premium Script 1</option>
+        <option value="PremiumGame2">〇 Premium Script 2</option>
+        <option value="PremiumGame3">〇 Premium Script 3</option>
+    </select>
+    
+    <!-- File Input Hidden by Default -->
+    <input type="file" id="file-input" name="upload_file" accept=".lua" required style="display: none;" onchange="document.getElementById('upload-form').submit();">
+    
+    <!-- Upload Button -->
+    <button type="button" onclick="document.getElementById('file-input').click();">Upload</button>
+</form>
+
+
+</div>
+</div>
+
+    <div class="footer">
+        <p>© Powered By @Mr_manu_kumar</p>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const password = '1407';
+    const loginForm = document.getElementById('login-form');
+    const logoutForm = document.getElementById('logout-form');
+    const loginContainer = document.getElementById('login-container');
+    const mainContent = document.getElementById('main-content');
+    const body = document.body;
+    let timeoutId;
+
+    function resetTimeout() {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(function() {
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('lastInteraction');
+            loginContainer.style.display = 'flex';
+            mainContent.style.display = 'none';
+            body.classList.remove('logged-in');
+        }, 30 * 60 * 1000);
+    }
+
+    if (localStorage.getItem('loggedIn') === 'true') {
+        const lastInteraction = localStorage.getItem('lastInteraction');
+        const currentTime = new Date().getTime();
+
+        if (currentTime - lastInteraction > 30 * 60 * 1000) {
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('lastInteraction');
+        } else {
+            loginContainer.style.display = 'none';
+            mainContent.style.display = 'block';
+            body.classList.add('logged-in');
+            resetTimeout();
+        }
+    }
+
+    function updateLastInteraction() {
+        localStorage.setItem('lastInteraction', new Date().getTime());
+    }
+
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const inputPassword = document.getElementById('password').value;
+
+        if (inputPassword === password) {
+            setTimeout(function() {
+                localStorage.setItem('loggedIn', 'true');
+                updateLastInteraction();
+                loginContainer.style.display = 'none';
+                mainContent.style.display = 'block';
+                body.classList.add('logged-in');
+                resetTimeout();
+            }, 1000);
+        } else {
+            alert('Incorrect password. Please try again.');
+        }
+    });
+
+    logoutForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        localStorage.removeItem('loggedIn');
+        localStorage.removeItem('lastInteraction');
+        loginContainer.style.display = 'flex';
+        mainContent.style.display = 'none';
+        body.classList.remove('logged-in');
+        clearTimeout(timeoutId);
+    });
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            clearTimeout(timeoutId);
+        } else {
+            resetTimeout();
+            updateLastInteraction();
+        }
+    });
+
+    window.addEventListener('load', function() {
+        if (localStorage.getItem('loggedIn') === 'true') {
+            updateLastInteraction();
+            resetTimeout();
+        }
+    });
+
+    document.addEventListener('mousemove', updateLastInteraction);
+    document.addEventListener('keydown', updateLastInteraction);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('loaded');
+
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    const activeTab = localStorage.getItem('activeTab') || tabs[0].getAttribute('data-tab');
+    
+    function showTab(tabId) {
+        document.body.classList.add('fade-out');
+
+        setTimeout(() => {
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => {
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+
+            const activeTabElement = document.querySelector(`.tab[data-tab="${tabId}"]`);
+            if (activeTabElement) {
+                activeTabElement.classList.add('active');
+            }
+
+            document.body.classList.remove('fade-out');
+        }, 300);
+    }
+
+    showTab(activeTab);
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(event) {
+            const tabId = tab.getAttribute('data-tab');
+            localStorage.setItem('activeTab', tabId);
+
+            if (tabId === 'fdos') {
+                event.preventDefault();
+                window.location.reload();
+            } else {
+                showTab(tabId);
+            }
+        });
+    });
+    
+    function hideNotifications() {
+        const notifications = document.querySelectorAll('.notification');
+        notifications.forEach(notification => {
+            notification.style.display = 'none';
+        });
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', hideNotifications);
+    });
+});
+
+document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('mousedown', () => {
+        button.classList.add('clicked');
+        setTimeout(() => button.classList.remove('clicked'), 500);
+    });
+});
+
+function UPLOAD() {
+            document.getElementById('upload-form').submit();
+        }
+
+function submitForm2() {
+    window.location.href = 'Table'; 
+}
+</script>
+</body>
+</html>
