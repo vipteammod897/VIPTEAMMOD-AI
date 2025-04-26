@@ -2096,7 +2096,6 @@ const responses = [
         }
     }
 },
-
 {
     pattern: /tell me a joke/i,
     response: () => {
@@ -2130,30 +2129,6 @@ const responses = [
         return `Here is some advice on ${topic}...`;
     }
 },
-{
-    pattern: /who is (.+)/i,
-    response: async (match) => {
-        const topic = encodeURIComponent(match[1]);
-        const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${topic}`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.extract) {
-                return Promise.resolve(
-                    `📖 *Wikipedia Summary:*\n${data.extract}\n\n🔗 Read more: [${data.title}](${data.content_urls.desktop.page})`
-                );
-            } else {
-                return Promise.resolve(`❌ No Wikipedia data found for '${match[1]}'.`);
-            }
-        } catch (error) {
-            return Promise.resolve("⚠️ Error fetching Wikipedia data. Please try again later.");
-        }
-    }
-},
-
-
 
     { pattern: /what is ([\d.]+) \+ ([\d.]+)/i, response: (match) => `${match[1]} + ${match[2]} = ${parseFloat(match[1]) + parseFloat(match[2])}` },
     { pattern: /what is ([\d.]+) - ([\d.]+)/i, response: (match) => `${match[1]} - ${match[2]} = ${parseFloat(match[1]) - parseFloat(match[2])}` },
@@ -2187,10 +2162,112 @@ const responses = [
 
 
 let chatHistory = []; // Stores chat messages with timestamps
+let calculatorEnabled = false; // Switch ON/OFF calculator mode
+let weatherEnabled = false; // Weather mode toggle
+// News mode toggle
+let newsEnabled = false;
+
+let wikipediaEnabled = false; // Wikipedia mode toggle
+
+// Advanced Calculator Function to handle multiple operations and expressions
+function advancedCalculator(expression) {
+    try {
+        // Remove extra spaces before calculating
+        expression = expression.replace(/\s+/g, '');
+
+        // Evaluate the expression using eval (ensure valid operations)
+        const result = eval(expression); 
+
+        return result;
+    } catch (e) {
+        return 'Error in expression';
+    }
+}
+
+
+// Wikipedia API function using Fetch
+async function getWikipediaSummary(topic) {
+    const encodedTopic = encodeURIComponent(topic);
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodedTopic}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.extract) {
+            return `📖 *Wikipedia Summary:*\n${data.extract}`;
+        } else {
+            return `❌ No Wikipedia data found for '${topic}'.`;
+        }
+    } catch (error) {
+        return "⚠️ Error fetching Wikipedia data. Please try again later.";
+    }
+}
+
+
+
+// Weather API function using Open-Meteo (no API key needed)
+async function getWeather(city) {
+    try {
+        // First, get latitude and longitude for the city using OpenStreetMap Nominatim
+        const geoResponse = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json`);
+        const geoData = await geoResponse.json();
+
+        if (geoData.length === 0) {
+            return `Sorry, I couldn't find the location "${city}".`;
+        }
+
+        const latitude = geoData[0].lat;
+        const longitude = geoData[0].lon;
+
+        // Now, fetch weather using Open-Meteo API
+        const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
+        const weatherData = await weatherResponse.json();
+
+        if (weatherData.current_weather) {
+            const temp = weatherData.current_weather.temperature;
+            const windspeed = weatherData.current_weather.windspeed;
+            const weathercode = weatherData.current_weather.weathercode;
+
+            return `Weather in ${city}:\nTemperature: ${temp}°C\nWind Speed: ${windspeed} km/h\nWeather Code: ${weathercode}`;
+        } else {
+            return "Sorry, weather information is not available right now.";
+        }
+    } catch (error) {
+        return "Error fetching weather data. Please try again.";
+    }
+}
+
+async function getLatestNews(searchTerms) {
+    const apiKey = 'fa78fd6e485b416cbb55681c48e6a080';
+    const baseUrl = 'https://newsapi.org/v2/everything';
+
+    let newsResults = '';
+
+    for (const term of searchTerms) {
+        const url = `${baseUrl}?q=${encodeURIComponent(term)}&apiKey=${apiKey}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.articles && data.articles.length > 0) {
+                const topArticle = data.articles[0];
+                newsResults += `📰 *News for "${term}":*\nTitle: ${topArticle.title}\nDescription: ${topArticle.description}\n🔗 [Read more](${topArticle.url})\n\n`;
+            } else {
+                newsResults += `❌ No news found for "${term}".\n\n`;
+            }
+        } catch (error) {
+            newsResults += `⚠️ Error fetching news for "${term}".\n\n`;
+        }
+    }
+
+    return newsResults.trim() || "❌ No news found for any search term.";
+}
 
 function sendMessage() {
-    const userInput = document.getElementById("user-input").value.trim();
-    if (userInput === "") return;
+    const userInputRaw = document.getElementById("user-input").value.trim();
+    if (userInputRaw === "") return;
 
     const chatBox = document.getElementById("chat-box");
 
@@ -2201,47 +2278,176 @@ function sendMessage() {
 
     // Add user message
     const userMessage = document.createElement("div");
-    userMessage.textContent = "You : " + userInput;    
+    userMessage.textContent = "You : " + userInputRaw;    
     chatBox.appendChild(userMessage);
     chatBox.appendChild(document.createElement("br"));
 
-    // Save user message with timestamp
-    chatHistory.push(`[${new Date().toLocaleTimeString()}] You: ${userInput}`);
+    // Save user message
+    chatHistory.push(`[${new Date().toLocaleTimeString()}] You: ${userInputRaw}`);
 
-    // Check if user wants to clear chat
-    if (/clear all/i.test(userInput)) {
-        chatBox.innerHTML = "";
-        chatHistory = []; // Reset chat history
-        document.getElementById("user-input").value = "";        
-        return;
+
+
+// Unlock and lock commands inside sendMessage
+if (/unlock weather mode/i.test(userInputRaw) || /open weather/i.test(userInputRaw)) {
+    weatherEnabled = true;
+    botReply("Weather Mode is now UNLOCKED! Type a city name like 'weather in London' to get the current weather.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+
+if (/close weather mode/i.test(userInputRaw) || /lock weather/i.test(userInputRaw)) {
+    weatherEnabled = false;
+    botReply("Weather Mode is now LOCKED! Back to normal chatting.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+
+// Handle weather requests
+if (weatherEnabled) {
+    const city = userInputRaw.replace(/weather in /i, "").trim();
+    if (city) {
+        getWeather(city).then((weatherInfo) => {
+            botReply(weatherInfo);
+        });
+        document.getElementById("user-input").value = "";
+        return; // <- ADD THIS RETURN to stop further reply
+    } else {
+        botReply("Please specify a city to get the weather.");
+        document.getElementById("user-input").value = "";
+        return; // <- also here
     }
+}
 
-    // Find chatbot response
-    let botReply = "Sorry, I don't understand that.";
-    for (let pair of responses) {
-        if (pair.pattern instanceof RegExp && pair.pattern.test(userInput)) {
-            botReply = typeof pair.response === "function" ? pair.response(userInput.match(pair.pattern)) : pair.response;
-            break;
+// Inside your message handler:
+
+if (/unlock News mode/i.test(userInputRaw) || /open wikipedia/i.test(userInputRaw)) {
+    newsEnabled = true;
+    botReply("News Mode is now UNLOCKED! Ask me 'Who is <name>' or type keywords to get a summary.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+if (/close News mode/i.test(userInputRaw) || /lock wikipedia/i.test(userInputRaw)) {
+    newsEnabled = false;
+    botReply("News Mode is now LOCKED! Back to normal chatting.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+
+if (newsEnabled) {
+    // Extract keywords from the user input
+    let searchTerms = userInputRaw
+        .replace(/news mode|who is|news/gi, '') // remove these words
+        .split(/[,\s]+/) // split by space or comma
+        .filter(term => term.trim() !== ''); // remove empty strings
+
+    if (searchTerms.length === 0) {
+        botReply("❗ Please provide a name or keyword to search for news.");
+        document.getElementById("user-input").value = "";
+    } else {
+        getLatestNews(searchTerms).then(newsInfo => {
+            botReply(newsInfo);
+        });
+        document.getElementById("user-input").value = "";
+    }
+    return; // Stop further normal reply
+}
+
+// Handle unlock/lock commands
+if (/unlock wikipedia mode/i.test(userInputRaw) || /open wikipedia/i.test(userInputRaw)) {
+    wikipediaEnabled = true;
+    botReply("Wikipedia Mode is now UNLOCKED! Ask me 'Who is <name>' to get a summary.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+
+if (/close wikipedia mode/i.test(userInputRaw) || /lock wikipedia/i.test(userInputRaw)) {
+    wikipediaEnabled = false;
+    botReply("Wikipedia Mode is now LOCKED! Back to normal chatting.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+
+
+
+// Handle Wikipedia requests
+if (wikipediaEnabled) {
+    const match = userInputRaw.match(/who is (.+)/i); // Check if the query matches the pattern "who is <name>"
+    if (match && match[1]) {
+        const topic = match[1];
+
+        // Call the getWikipediaSummary function
+        getWikipediaSummary(topic).then((wikipediaInfo) => {
+            botReply(wikipediaInfo); // Send the response back to the bot
+        });
+        document.getElementById("user-input").value = "";
+        return; // Stop further reply after sending response
+    } else {
+        botReply("Please ask something like 'Who is Albert Einstein'.");
+        document.getElementById("user-input").value = "";
+        return; // Stop further reply here as well
+    }
+}
+
+// Check special commands for calculator mode
+if (/unlock advanced calculator|Advance Calculator|Advanced Calculator/i.test(userInputRaw) || /open calculator/i.test(userInputRaw)) {
+    calculatorEnabled = true;
+    botReply("Advanced Calculator Mode is now UNLOCKED! Type your mathematical expressions to calculate.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+
+if (/close advanced calculator/i.test(userInputRaw) || /lock calculator/i.test(userInputRaw)) {
+    calculatorEnabled = false;
+    botReply("Advanced Calculator Mode is now LOCKED! Back to normal chatting.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+
+if (/reset calculator/i.test(userInputRaw)) {
+    calculatorEnabled = false;
+    botReply("Calculator Mode has been RESET! Back to normal chatting.");
+    document.getElementById("user-input").value = "";
+    return;
+}
+
+    // Now handle based on mode
+    if (calculatorEnabled) {
+        const result = advancedCalculator(userInputRaw);
+        botReply(`Result: ${result}`);
+        document.getElementById("user-input").value = "";
+    } else {
+    document.getElementById("user-input").value = "";
+        // Normal chatbot mode
+        let reply = "Sorry, I don't understand that.";
+        for (let pair of responses) {
+            if (pair.pattern instanceof RegExp && pair.pattern.test(userInputRaw)) {
+                reply = typeof pair.response === "function" ? pair.response(userInputRaw.match(pair.pattern)) : pair.response;
+                break;
+            }
         }
+        botReply(reply);
     }
-
-    setTimeout(() => {
-        const botMessage = document.createElement("div");
-        botMessage.classList.add("bot")
-        botMessage.textContent = "AI Bot : " + botReply;       
-        chatBox.appendChild(botMessage);
-        chatBox.appendChild(document.createElement("br"));
-
-        // Save bot message with timestamp
-        chatHistory.push(`[${new Date().toLocaleTimeString()}] AI Bot: ${botReply}`);
-
-        // Scroll chat to bottom
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 500);
 
     // Clear input field
     document.getElementById("user-input").value = "";
 }
+
+function botReply(message) {
+    const chatBox = document.getElementById("chat-box");
+    const botMessage = document.createElement("div");
+    botMessage.classList.add("bot")
+    botMessage.textContent = "AI Bot : " + message;       
+    chatBox.appendChild(botMessage);
+    chatBox.appendChild(document.createElement("br"));
+
+    // Save bot message
+    chatHistory.push(`[${new Date().toLocaleTimeString()}] AI Bot: ${message}`);
+
+    // Scroll to bottom
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+
 
 // Function to download chat history as a .txt file
 function downloadChatHistory() {
