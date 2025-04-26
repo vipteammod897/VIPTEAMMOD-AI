@@ -2320,13 +2320,13 @@ if (weatherEnabled) {
 
 // Inside your message handler:
 
-if (/unlock News mode/i.test(userInputRaw) || /open wikipedia/i.test(userInputRaw)) {
+if (/unlock News mode/i.test(userInputRaw)) {
     newsEnabled = true;
     botReply("News Mode is now UNLOCKED! Ask me 'Who is <name>' or type keywords to get a summary.");
     document.getElementById("user-input").value = "";
     return;
 }
-if (/close News mode/i.test(userInputRaw) || /lock wikipedia/i.test(userInputRaw)) {
+if (/close News mode/i.test(userInputRaw)) {
     newsEnabled = false;
     botReply("News Mode is now LOCKED! Back to normal chatting.");
     document.getElementById("user-input").value = "";
