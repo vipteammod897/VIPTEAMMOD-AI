@@ -60,6 +60,7 @@
 
         .chat-input button {
             background: #0084ff;
+            border-radius: 5px;
             color: white;
             margin-left: 5px;
             border: none;
@@ -83,6 +84,102 @@
 #downloadBtn:hover {
     background-color: #d50000;
 }
+/* Chat container */
+#chat-box {
+    
+    padding: 20px;
+    border-radius: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    
+}
+
+/* Bot message container */
+.bot-container {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 2px 8px rgba(158, 158, 158, 0.2); /* Updated to use #9e9e9e */
+    outline: 2px solid rgba(158, 158, 158, 0.4); /* Added outline with same color */
+    transition: box-shadow 0.3s ease, transform 0.1s ease; /* Smooth transition for box-shadow and transform */
+}
+
+/* Add glow effect on touch/click (active state) */
+.bot-container:active {
+    box-shadow: 0 0 20px rgba(158, 158, 158, 0.6); /* Increase glow intensity on click */
+    transform: scale(1.02); /* Slightly scale the container to give a touch effect */
+}
+
+
+
+/* Bot message content */
+.bot-message {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    margin-top: 8px;
+    word-wrap: break-word;
+}
+
+/* Button container for Copy and Share buttons */
+.button-container {
+    display: flex; /* Align buttons horizontally */
+    gap: 10px;     /* Add space between the buttons */
+    margin-bottom: 10px;
+}
+
+/* Button styling for both Copy and Share */
+.copy-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.copy-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Button active effect */
+.copy-btn:active {
+    background-color: #004085;
+}
+
+/* Optional message timestamp */
+.bot-message::before {
+    content: attr(data-time);
+    font-size: 12px;
+    color: #888;
+    margin-right: 5px;
+}
+/* User message styling */
+.user-message {
+    background-color: #888;  /* Light blue background for user messages */
+    color: #ffff;              /* Dark blue text color */
+    padding: 8px 12px;           /* Add padding around the message */
+    border-radius: 10px;         /* Rounded corners */
+    margin-bottom: 10px;         /* Spacing between messages */
+    max-width: 80%;              /* Limit the width of the message */
+    align-self: flex-start;      /* Align the message to the left (user's side) */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    font-family: 'Arial', sans-serif; /* Clean font */
+    font-size: 14px;             /* Adjust font size */
+}
+
+/* If the user message is too long, allow it to wrap */
+.user-message {
+    word-wrap: break-word;
+}
+
 
     </style>
 
@@ -2156,8 +2253,14 @@ const responses = [
     { pattern: /([\d.]+) \* ([\d.]+)/i, response: (match) => `${match[1]} × ${match[2]} = ${(parseFloat(match[1]) * parseFloat(match[2])).toFixed(2)}` },
     { pattern: /([\d.]+) \/ ([\d.]+)/i, response: (match) => parseFloat(match[2]) !== 0 ? `${match[1]} ÷ ${match[2]} = ${(parseFloat(match[1]) / parseFloat(match[2])).toFixed(2)}` : "I can't divide by zero!" },
     
-    
+{
+    pattern: /unlock image to text/i,
+    response: "The Image to Text feature lets you upload any photo containing text, and the AI will automatically read and extract the text for you! Just type 'Unlock Image to Text' to activate it, and then select your image."
+},
+
     { pattern: /.*/, response: "I'm sorry, I didn't understand that. Try asking a Math Related question!" }
+    
+    
 ];
 
 
@@ -2166,6 +2269,9 @@ let calculatorEnabled = false; // Switch ON/OFF calculator mode
 let weatherEnabled = false; // Weather mode toggle
 // News mode toggle
 let newsEnabled = false;
+let ipEnabled = false; // IP mode is OFF by default
+// ===== Declare Variables at Top =====
+let ipTrackerEnabled = false; // IP Tracker Mode OFF by default
 
 let wikipediaEnabled = false; // Wikipedia mode toggle
 
@@ -2265,6 +2371,30 @@ async function getLatestNews(searchTerms) {
     return newsResults.trim() || "❌ No news found for any search term.";
 }
 
+// Function to fetch details of any IP address
+async function getIPDetails(ipAddress) {
+    const url = `https://ipinfo.io/${ipAddress}/json?token=16d9d846db0eb5`; // Your token added here
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data && data.ip) {
+            return `🌐 *IP Address:* ${data.ip}\n` +
+                   `🏙️ *City:* ${data.city}\n` +
+                   `🌍 *Region:* ${data.region}\n` +
+                   `🌎 *Country:* ${data.country}\n` +
+                   `🏢 *ISP/Org:* ${data.org}\n` +
+                   `📍 *Location Coordinates:* ${data.loc}`;
+        } else {
+            return "❌ Could not fetch details for the given IP address.";
+        }
+    } catch (error) {
+        return "⚠️ Error fetching IP details. Please try again.";
+    }
+}
+
+
 function sendMessage() {
     const userInputRaw = document.getElementById("user-input").value.trim();
     if (userInputRaw === "") return;
@@ -2276,11 +2406,14 @@ function sendMessage() {
         chatHistory.push(`Chat Start: ${new Date().toLocaleString()}\n`);
     }
 
-    // Add user message
-    const userMessage = document.createElement("div");
-    userMessage.textContent = "You : " + userInputRaw;    
-    chatBox.appendChild(userMessage);
-    chatBox.appendChild(document.createElement("br"));
+// Add user message
+const userMessage = document.createElement("div");
+userMessage.classList.add("user-message");  // Add class for styling
+userMessage.textContent = "You: " + userInputRaw;    
+
+chatBox.appendChild(userMessage);
+chatBox.appendChild(document.createElement("br"));
+
 
     // Save user message
     chatHistory.push(`[${new Date().toLocaleTimeString()}] You: ${userInputRaw}`);
@@ -2387,7 +2520,78 @@ if (wikipediaEnabled) {
         return; // Stop further reply here as well
     }
 }
+// Function to fetch your public IP address
+async function getMyIP() {
+    const url = 'https://api.ipify.org?format=json'; // Free public IP API
 
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.ip) {
+            return `🌐 Your Public IP Address is: *${data.ip}*`;
+            document.getElementById("user-input").value = "";
+        } else {
+            return "❌ Could not fetch IP address.";
+            document.getElementById("user-input").value = "";
+        }
+    } catch (error) {
+        return "⚠️ Error fetching IP address. Please try again later.";
+        document.getElementById("user-input").value = "";
+    }
+}
+// Unlock IP Mode
+if (/unlock ip mode/i.test(userInputRaw) || /open ip check/i.test(userInputRaw)) {
+    ipEnabled = true;
+    botReply("IP Check Mode is now UNLOCKED! Type anything to see your IP address.");
+    return;
+}
+
+// Lock IP Mode
+if (/close ip mode/i.test(userInputRaw) || /lock ip check/i.test(userInputRaw)) {
+    ipEnabled = false;
+    botReply("IP Check Mode is now LOCKED! Back to normal chatting.");
+    return;
+}
+
+// Now handle IP Check if IP mode is enabled
+if (ipEnabled) {
+    getMyIP().then(ipInfo => {
+        botReply(ipInfo);
+    });
+    return; // stop further reply
+}
+// ==== Toggle IP Tracker Mode =====
+if (/unlock ip tracker mode/i.test(userInputRaw)) {
+    ipTrackerEnabled = true;
+    botReply("IP Tracker Mode is now UNLOCKED! Type any IP address to check details.");
+    return;
+}
+
+if (/close ip tracker mode/i.test(userInputRaw)) {
+    ipTrackerEnabled = false;
+    botReply("IP Tracker Mode is now LOCKED! Back to normal chatting.");
+    return;
+}
+
+// ==== Handle IP Address Input in Tracker Mode =====
+if (ipTrackerEnabled) {
+    // Try to detect IP Address Format
+    const ipRegex = /(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)/;
+    const match = userInputRaw.match(ipRegex);
+
+    if (match) {
+        const ipAddress = match[1];
+        getIPDetails(ipAddress).then(ipInfo => {
+            botReply(ipInfo);
+        });
+    } else {
+        botReply("❗ Please enter a valid IP address like 8.8.8.8");
+    }
+    return; // Stop further reply
+}
+
+    
 // Check special commands for calculator mode
 if (/unlock advanced calculator|Advance Calculator|Advanced Calculator/i.test(userInputRaw) || /open calculator/i.test(userInputRaw)) {
     calculatorEnabled = true;
@@ -2430,23 +2634,155 @@ if (/reset calculator/i.test(userInputRaw)) {
 
     // Clear input field
     document.getElementById("user-input").value = "";
+    
+        // Check if user wants to clear chat
+    if (/clear all/i.test(userInputRaw)) {
+        chatBox.innerHTML = "";
+        chatHistory = []; // Reset chat history
+        document.getElementById("user-input").value = "";        
+        return;
+    }
+
+
+    if (/unlock image to text/i.test(userInputRaw)) {
+    botReply("Unlocking Image to Text feature... Please upload your image.");
+
+    // Add a small delay before opening the file picker
+    setTimeout(() => {
+        document.getElementById('hiddenFileInput').click();
+    }, 1500); // 1500 milliseconds = 1.5 seconds delay
+    return;
+}
+
+
+// Create Hidden File Input (if not already created elsewhere in your code)
+const hiddenFileInput = document.createElement("input");
+hiddenFileInput.type = "file";
+hiddenFileInput.accept = "image/*";
+hiddenFileInput.id = "hiddenFileInput";
+hiddenFileInput.style.display = "none"; // hide the input field
+document.body.appendChild(hiddenFileInput);
+
+// Function to handle file selection
+hiddenFileInput.addEventListener('change', handleFileSelect, false);
+
+// Function to handle file selection and OCR processing
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            // After image is loaded, you can call an OCR function (e.g., Tesseract.js)
+            processImageToText(img);
+        };
+        img.src = e.target.result; // Load the image
+    };
+    reader.readAsDataURL(file); // Read the image file as a data URL
+    botReply("Read the image file as a data URL.");
+}
+
+// Example OCR function using Tesseract.js (requires Tesseract.js library)
+function processImageToText(img) {
+    // Use Tesseract.js to extract text from the image
+    Tesseract.recognize(
+        img,
+        'eng',
+        {
+            logger: (m) => console.log(m),  // Log the progress (optional)
+        }
+    ).then(({ data: { text } }) => {
+        // Process the extracted text (e.g., remove extra spaces, newlines, etc.)
+        const processedText = text.trim().replace(/\n+/g, ' ');
+        botReply(`Extracted Text: ${processedText}`);
+    }).catch(error => {
+        botReply("Error extracting text from the image.");
+        console.error(error);
+    });
+}
+
+
+    
 }
 
 function botReply(message) {
     const chatBox = document.getElementById("chat-box");
+    const botMessageContainer = document.createElement("div");
+    botMessageContainer.classList.add("bot-container");
+
+    // Create the copy button
+    const copyButton = document.createElement("button");
+    copyButton.classList.add("copy-btn");
+    copyButton.innerText = "Copy";
+
+    // Copy the message to clipboard when clicked
+    copyButton.addEventListener("click", () => {
+        navigator.clipboard.writeText(message).then(() => {
+            // Change button text to "Copied"
+            copyButton.innerText = "Copied";
+
+            // Reset the button text after 2 seconds
+            setTimeout(() => {
+                copyButton.innerText = "Copy";
+            }, 2000);
+        }).catch(err => {
+            console.error("Error copying text: ", err);
+        });
+    });
+
+    // Create the share button (same style as copy button)
+    const shareButton = document.createElement("button");
+    shareButton.classList.add("copy-btn"); // Same class as copy button
+    shareButton.innerText = "Share";
+
+    // Share the message when clicked
+    shareButton.addEventListener("click", () => {
+        // Use the Web Share API to share the message (if supported)
+        if (navigator.share) {
+            navigator.share({
+                title: "AI Bot Message",
+                text: message,
+                url: window.location.href
+            }).then(() => {
+                console.log("Message shared successfully!");
+            }).catch(err => {
+                console.error("Error sharing message: ", err);
+            });
+        } else {
+            // If the Web Share API is not supported, alert the user
+            alert("Sharing is not supported on this device/browser.");
+        }
+    });
+
+    // Create the bot message
     const botMessage = document.createElement("div");
-    botMessage.classList.add("bot")
-    botMessage.textContent = "AI Bot : " + message;       
-    chatBox.appendChild(botMessage);
+    botMessage.classList.add("bot-message");
+    botMessage.innerHTML = `<strong style="color: white; background-color: red; padding: 4px 8px; border-radius: 6px; display: inline-block;">AI Bot:</strong> ${message}`;
+
+    // Create a div for the buttons and apply flexbox for alignment
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("button-container");
+
+    // Append buttons to the container
+    buttonContainer.appendChild(copyButton);
+    buttonContainer.appendChild(shareButton);
+
+    // Append the button container and the message to the bot message container
+    botMessageContainer.appendChild(buttonContainer);
+    botMessageContainer.appendChild(botMessage);
+
+    // Append the container to chatBox
+    chatBox.appendChild(botMessageContainer);
     chatBox.appendChild(document.createElement("br"));
 
-    // Save bot message
-    chatHistory.push(`[${new Date().toLocaleTimeString()}] AI Bot: ${message}`);
+    // Save plain text message for history
+    chatHistory.push(`[${new Date().toLocaleTimeString()}] AI Bot: ${botMessage.textContent}`);
 
     // Scroll to bottom
     chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 
 
 // Function to download chat history as a .txt file
@@ -2475,6 +2811,8 @@ document.querySelector(".chat-container").appendChild(downloadBtn);
 
 
     </script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+
 
 </body>
 </html>
