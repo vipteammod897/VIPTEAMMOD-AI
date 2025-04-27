@@ -2255,7 +2255,7 @@ const responses = [
     
 {
     pattern: /unlock image to text/i,
-    response: "The Image to Text feature lets you upload any photo containing text, and the AI will automatically read and extract the text for you! Just type 'Unlock Image to Text' to activate it, and then select your image."
+    response: "Unlocking Image to Text feature... Please upload your image."
 },
 
     { pattern: /.*/, response: "I'm sorry, I didn't understand that. Try asking a Math Related question!" }
@@ -2272,6 +2272,8 @@ let newsEnabled = false;
 let ipEnabled = false; // IP mode is OFF by default
 // ===== Declare Variables at Top =====
 let ipTrackerEnabled = false; // IP Tracker Mode OFF by default
+let isLocked = false; // Flag to check if the process is locked
+let htmlLoadEnabled = false;  // Flag to check if the HTML load mode is enabled
 
 let wikipediaEnabled = false; // Wikipedia mode toggle
 
@@ -2574,6 +2576,7 @@ if (/close ip tracker mode/i.test(userInputRaw)) {
     return;
 }
 
+
 // ==== Handle IP Address Input in Tracker Mode =====
 if (ipTrackerEnabled) {
     // Try to detect IP Address Format
@@ -2644,16 +2647,13 @@ if (/reset calculator/i.test(userInputRaw)) {
     }
 
 
-    if (/unlock image to text/i.test(userInputRaw)) {
-    botReply("Unlocking Image to Text feature... Please upload your image.");
-
+if (/unlock image to text/i.test(userInputRaw)) {
     // Add a small delay before opening the file picker
     setTimeout(() => {
         document.getElementById('hiddenFileInput').click();
     }, 1500); // 1500 milliseconds = 1.5 seconds delay
     return;
 }
-
 
 // Create Hidden File Input (if not already created elsewhere in your code)
 const hiddenFileInput = document.createElement("input");
@@ -2675,36 +2675,57 @@ function handleFileSelect(event) {
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-            // After image is loaded, you can call an OCR function (e.g., Tesseract.js)
+            // After image is loaded, you can preprocess and call an OCR function
             processImageToText(img);
         };
         img.src = e.target.result; // Load the image
     };
     reader.readAsDataURL(file); // Read the image file as a data URL
-    botReply("Read the image file as a data URL.");
+  //  botReply("Reading the image file...");
 }
 
-// Example OCR function using Tesseract.js (requires Tesseract.js library)
+// Improved OCR function using Tesseract.js with preprocessing
 function processImageToText(img) {
-    // Use Tesseract.js to extract text from the image
+    botReply("Processing image... Please wait.");
+
+    // Preprocess the image (resize, grayscale, binarization, etc.)
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+
+    // Preprocessing: Convert to grayscale
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        data[i] = data[i + 1] = data[i + 2] = avg; // Set R, G, B to grayscale value
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // Use Tesseract.js to extract text from the processed image
     Tesseract.recognize(
-        img,
-        'eng',
+        canvas,
+        'eng', // Add more language support if needed
         {
             logger: (m) => console.log(m),  // Log the progress (optional)
         }
     ).then(({ data: { text } }) => {
-        // Process the extracted text (e.g., remove extra spaces, newlines, etc.)
-        const processedText = text.trim().replace(/\n+/g, ' ');
-        botReply(`Extracted Text: ${processedText}`);
+        if (text.trim() === "") {
+            botReply("No text was extracted from the image. Please try again with a clearer image.");
+        } else {
+            const processedText = text.trim().replace(/\n+/g, ' ');
+            botReply(`Extracted Text: ${processedText}`);
+        }
     }).catch(error => {
-        botReply("Error extracting text from the image.");
+        botReply("Error extracting text from the image. Please try again later.");
         console.error(error);
     });
 }
 
 
-    
+
 }
 
 function botReply(message) {
@@ -2813,6 +2834,7 @@ document.querySelector(".chat-container").appendChild(downloadBtn);
     </script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.min.js"></script>
 
 </body>
 </html>
