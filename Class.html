@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mod Menu Design Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9f9f9;
+            color: #333;
+            padding: 20px;
+            line-height: 1.7;
+        }
+        h1, h2, h3 {
+            color: #0d6efd;
+        }
+        code {
+            background: #eee;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 15px;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        pre {
+            background: #272727;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        .checklist {
+            list-style: none;
+        }
+        .checklist li::before {
+            content: "✅ ";
+            color: green;
+        }
+        .summary {
+            background: #e0f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .lang-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<button class="lang-toggle" onclick="toggleLanguage()">Switch to English</button>
+
+<div id="content-hi">
+    <h1>🔥 कैसे बदलें Mod Menu का Design</h1>
+    <p>जब आप किसी गेम का मोड मेन्यू बना रहे हो, तो उसका <strong>डिज़ाइन</strong> बहुत ज़रूरी होता है।  
+    अच्छा डिज़ाइन आपका मोड को <strong>प्रोफेशनल</strong> और <strong>खूबसूरत</strong> बनाता है।</p>
+
+    <h2>Design बदलने का मतलब होता है:</h2>
+    <ul>
+        <li>Layout (बटन कहां रखे हैं)</li>
+        <li>Button Style (गोल, चौकोर, ग्लो वाला)</li>
+        <li>Colors (बैकग्राउंड, बटन कलर, टेक्स्ट कलर)</li>
+        <li>Fonts (स्टाइलिश या बोल्ड फॉन्ट)</li>
+        <li>Animation (ओपन/क्लोज स्मूथ मूवमेंट)</li>
+        <li>Icons (सिर्फ टेक्स्ट नहीं, छोटे आइकॉन भी)</li>
+    </ul>
+
+    <h2>✨ Mod Menu Design बदलने के स्टेप्स</h2>
+    <h3>1️⃣ अपना UI Library चुनो</h3>
+    <p>अगर ImGui यूज़ कर रहे हो → स्टाइल कोड से पूरा डिज़ाइन चेंज कर सकते हो।</p>
+
+    <pre><code>ImGuiStyle& style = ImGui::GetStyle();
+style.FrameRounding = 10.0f;
+style.Colors[ImGuiCol_Button] = ImVec4(0.2f, 0.6f, 1.0f, 1.0f);
+style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.8f);</code></pre>
+
+    <h3>2️⃣ बटन का लेआउट बदलो</h3>
+    <pre><code>if (ImGui::Button("Aimbot")) { /* कोड */ }
+if (ImGui::Button("Wallhack")) { /* कोड */ }</code></pre>
+
+    <h3>3️⃣ बटन स्टाइल कस्टमाइज़ करो</h3>
+    <pre><code>style.FrameRounding = 12.0f;
+style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.4f, 0.7f, 1.0f, 1.0f);</code></pre>
+
+    <h3>4️⃣ Fonts बदलो</h3>
+    <pre><code>ImGuiIO& io = ImGui::GetIO();
+io.Fonts->AddFontFromFileTTF("path/to/your/font.ttf", 16.0f);</code></pre>
+
+    <h3>5️⃣ Icons ऐड करो</h3>
+    <pre><code>ImGui::Button("\xef\x80\x81  Settings");</code></pre>
+
+    <h3>6️⃣ बैकग्राउंड और बॉर्डर चेंज करो</h3>
+    <pre><code>style.WindowBorderSize = 2.0f;
+style.WindowRounding = 10.0f;
+style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.05f, 0.05f, 0.8f);</code></pre>
+
+    <h2>⚡ प्रो टिप:</h2>
+    <p>छोटा और सिंपल मेन्यू ज्यादा बढ़िया लगता है।  
+    ज्यादा कलर मत डालो — दो या तीन कलर बेहतर दिखते हैं।</p>
+
+    <div class="summary">
+        Layout + Button Style + Colors + Fonts + Animation = जबरदस्त Professional Mod Menu
+    </div>
+
+    <h2>✅ Bonus चेकलिस्ट:</h2>
+    <ul class="checklist">
+        <li>बटन का साइज़ और गोलाई बदलो</li>
+        <li>कलर अपडेट करो</li>
+        <li>होवर और क्लिक पर स्मूथ एनिमेशन ऐड करो</li>
+        <li>बैकग्राउंड कलर और ट्रांसपेरेंसी सेट करो</li>
+        <li>Fonts और Icons ऐड करो</li>
+        <li>Layout अच्छा और क्लीन रखो</li>
+    </ul>
+</div>
+
+<div id="content-en" style="display:none;">
+    <h1>🔥 How to Change Mod Menu Design</h1>
+    <p>When you are creating a game's mod menu, the <strong>design</strong> is very important.  
+    A good design makes your mod look <strong>professional</strong> and <strong>beautiful</strong>.</p>
+
+    <h2>Changing design means:</h2>
+    <ul>
+        <li>Layout (where buttons are placed)</li>
+        <li>Button Style (round, square, glowing)</li>
+        <li>Colors (background, button color, text color)</li>
+        <li>Fonts (stylish or bold font)</li>
+        <li>Animation (smooth open/close)</li>
+        <li>Icons (not just text, use small icons)</li>
+    </ul>
+
+    <h2>✨ Steps to Change Mod Menu Design</h2>
+    <h3>1️⃣ Choose Your UI Library</h3>
+    <p>If you are using ImGui → you can fully change the design through style code.</p>
+
+    <pre><code>ImGuiStyle& style = ImGui::GetStyle();
+style.FrameRounding = 10.0f;
+style.Colors[ImGuiCol_Button] = ImVec4(0.2f, 0.6f, 1.0f, 1.0f);
+style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.8f);</code></pre>
+
+    <h3>2️⃣ Change Button Layout</h3>
+    <pre><code>if (ImGui::Button("Aimbot")) { /* code */ }
+if (ImGui::Button("Wallhack")) { /* code */ }</code></pre>
+
+    <h3>3️⃣ Customize Button Style</h3>
+    <pre><code>style.FrameRounding = 12.0f;
+style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.4f, 0.7f, 1.0f, 1.0f);</code></pre>
+
+    <h3>4️⃣ Change Fonts</h3>
+    <pre><code>ImGuiIO& io = ImGui::GetIO();
+io.Fonts->AddFontFromFileTTF("path/to/your/font.ttf", 16.0f);</code></pre>
+
+    <h3>5️⃣ Add Icons</h3>
+    <pre><code>ImGui::Button("\xef\x80\x81  Settings");</code></pre>
+
+    <h3>6️⃣ Change Background and Border</h3>
+    <pre><code>style.WindowBorderSize = 2.0f;
+style.WindowRounding = 10.0f;
+style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.05f, 0.05f, 0.8f);</code></pre>
+
+    <h2>⚡ Pro Tip:</h2>
+    <p>Small and simple menus look better.  
+    Don't use too many colors — two or three colors are best.</p>
+
+    <div class="summary">
+        Layout + Button Style + Colors + Fonts + Animation = Awesome Professional Mod Menu
+    </div>
+
+    <h2>✅ Bonus Checklist:</h2>
+    <ul class="checklist">
+        <li>Change button size and rounding</li>
+        <li>Update colors</li>
+        <li>Add smooth hover/click animations</li>
+        <li>Set background color and transparency</li>
+        <li>Add stylish Fonts and Icons</li>
+        <li>Keep the Layout clean and neat</li>
+    </ul>
+</div>
+<h2>🎨 Color Definitions in Mod Menu</h2>
+<p>यहाँ पर हम <strong>Mod Menu</strong> के लिए अलग-अलग रंग (Colors) को परिभाषित कर रहे हैं।  
+हर Color का एक स्पेशल काम है जैसे Background, Button, Text, Border वगैरह।</p>
+
+<pre><code>// रंगों की परिभाषा (Color Definitions)
+ImColor BackgroundColor = ImColor(30, 30, 30, 220);    // डार्क बैकग्राउंड हल्की ट्रांसपेरेंसी के साथ
+ImColor PrimaryRed = ImColor(0, 0, 255, 255);          // ब्राइट नीला रंग (Primary Button या Highlight के लिए)
+ImColor HoverRed = ImColor(0, 0, 255, 255);            // बटन होवर पर नीला रंग
+ImColor ActiveRed = ImColor(0, 0, 255, 255);           // बटन दबाने के बाद गहरा नीला रंग
+ImColor TextColor = ImColor(255, 255, 255, 255);       // सफेद टेक्स्ट जिससे बैकग्राउंड पर अच्छे से दिखे
+ImColor BorderColor = ImColor(0, 0, 255, 180);         // सेमी-ट्रांसपेरेंट नीला बॉर्डर</code></pre>
+
+<h3>🧠 हिंदी में समझाइए:</h3>
+<ul>
+    <li><strong>BackgroundColor</strong> – पूरा बैकग्राउंड डार्क ग्रे कलर में दिखेगा (30,30,30), जिसमें थोड़ी ट्रांसपेरेंसी होगी (220/255)।</li>
+    <li><strong>PrimaryRed</strong> – बटन और मेन आइटम्स का में कलर ब्राइट नीला (0,0,255)।</li>
+    <li><strong>HoverRed</strong> – जब आप बटन के ऊपर माउस ले जाओगे तो थोड़ा हल्का नीला रंग दिखेगा।</li>
+    <li><strong>ActiveRed</strong> – जब आप बटन दबाओगे तो गहरा नीला दिखेगा, ताकि "क्लिक" का एहसास आए।</li>
+    <li><strong>TextColor</strong> – सफेद कलर (255,255,255) जिससे टेक्स्ट अच्छे से पढ़ने में आसानी हो।</li>
+    <li><strong>BorderColor</strong> – बटन और विंडो के बॉर्डर के लिए सेमी-ट्रांसपेरेंट नीला बॉर्डर।</li>
+</ul>
+
+<h3>🧠 In English:</h3>
+<ul>
+    <li><strong>BackgroundColor</strong> – Dark grey background (30,30,30) with slight transparency (220/255).</li>
+    <li><strong>PrimaryRed</strong> – Bright blue color (0,0,255) used for main buttons or highlights.</li>
+    <li><strong>HoverRed</strong> – Slightly lighter blue color when hovering over buttons.</li>
+    <li><strong>ActiveRed</strong> – Deeper blue color when button is pressed (gives click effect).</li>
+    <li><strong>TextColor</strong> – White color (255,255,255) for clean, easy-to-read text.</li>
+    <li><strong>BorderColor</strong> – Semi-transparent blue border for buttons and windows.</li>
+</ul>
+
+<div class="summary" style="background:#e0f7fa;padding:10px;margin-top:20px;border-radius:8px;">
+    ✨ एक सुंदर Mod Menu डिज़ाइन के लिए <strong>Colors का सही इस्तेमाल</strong> बहुत जरूरी है!  
+    (Good Color Setup = Professional Looking Mod Menu)
+</div>
+<h2>🎨 How to Change Color in Mod Menu (Example)</h2>
+
+<p><strong>BackgroundColor</strong> को चेंज करना बहुत आसान है।  
+आपको सिर्फ <code>ImColor</code> के अंदर दिए गए <strong>RGB और Alpha</strong> वैल्यूज को बदलना है।</p>
+
+<h3>🧠 Code Example:</h3>
+<pre><code>// पुराना कलर (Old Color)
+ImColor BackgroundColor = ImColor(30, 30, 30, 220); // Dark grey background with transparency
+
+// नया कलर (New Color)
+// Suppose आप हल्का नीला बैकग्राउंड चाहते हो:
+ImColor BackgroundColor = ImColor(100, 150, 255, 220); // Light blue background with transparency
+</code></pre>
+
+<h3>🧠 हिंदी में समझाइए:</h3>
+<ul>
+    <li><strong>ImColor(R, G, B, A)</strong> फॉर्मेट होता है, जहाँ:
+        <ul>
+            <li><b>R</b> = Red वैल्यू (0 से 255 तक)</li>
+            <li><b>G</b> = Green वैल्यू (0 से 255 तक)</li>
+            <li><b>B</b> = Blue वैल्यू (0 से 255 तक)</li>
+            <li><b>A</b> = Alpha/Transparency (0 = Full Transparent, 255 = Fully Visible)</li>
+        </ul>
+    </li>
+    <li>अगर आपको Light Blue Background चाहिए तो Red, Green, Blue वैल्यू को ऐसे सेट करो: (100,150,255)</li>
+    <li>Transparency कम या ज्यादा करने के लिए Alpha को Adjust कर सकते हो (220 अच्छा Balance है)।</li>
+</ul>
+
+<h3>🧠 In English:</h3>
+<ul>
+    <li><strong>ImColor(R, G, B, A)</strong> defines a color where:
+        <ul>
+            <li><b>R</b> = Red Value (0 to 255)</li>
+            <li><b>G</b> = Green Value (0 to 255)</li>
+            <li><b>B</b> = Blue Value (0 to 255)</li>
+            <li><b>A</b> = Alpha/Transparency (0 = Fully Transparent, 255 = Fully Opaque)</li>
+        </ul>
+    </li>
+    <li>To create a Light Blue Background, you set the values like: (100,150,255)</li>
+    <li>Adjust the Alpha value to make it more or less transparent (220 is a good balance).</li>
+</ul>
+
+<div class="tip" style="background:#f1f8e9;padding:10px;margin-top:20px;border-radius:8px;">
+    ✨ <strong>Tip:</strong> Good color combinations make your Mod Menu look more Professional and Attractive!
+</div>
+<h2>🎮 ImGui UI Components Explained (with Examples)</h2>
+
+<p>यहाँ पर हम <strong>ImGui</strong> में इस्तेमाल होने वाले मुख्य UI एलिमेंट्स को समझ रहे हैं जैसे कि Slider, Toggle, Switch, Checkbox और Radio Button। हर एक का अलग Use Case है।</p>
+
+<hr>
+
+<h3>1️⃣ Slider</h3>
+<img src="https://i.imgur.com/0vqVqJ3.png" alt="ImGui Slider Example" style="max-width:100%;border-radius:8px;">
+<pre><code>// Simple Float Slider
+ImGui::SliderFloat("Float Slider", &value, 0.0f, 100.0f);
+</code></pre>
+
+<ul>
+<li>यह एक स्लाइडर है जो एक वैल्यू को एक Range (जैसे 0 से 100) के बीच Move कर सकता है।</li>
+<li>Slider को Drag करके User इनपुट दे सकता है।</li>
+<li>Slider का उपयोग Volume Control, Speed Control वगैरह के लिए होता है।</li>
+</ul>
+
+<hr>
+
+<h3>2️⃣ Toggle Button (Switch Style)</h3>
+<img src="https://i.imgur.com/sNyl4z4.gif" alt="ImGui Toggle Button Example" style="max-width:100%;border-radius:8px;">
+<pre><code>// Toggle Example
+if (ImGui::Button(on ? "ON" : "OFF"))
+{
+    on = !on; // Switch the value
+}
+</code></pre>
+
+<ul>
+<li>यह Toggle बटन किसी भी Setting को ON या OFF करने के लिए Use होता है।</li>
+<li>Button Text भी Change होता है (ON/OFF)।</li>
+<li>Use Case: Dark Mode Toggle, Settings ON/OFF.</li>
+</ul>
+
+<hr>
+
+<h3>3️⃣ Switch (Advanced Toggle)</h3>
+<img src="https://i.imgur.com/KKZkhql.gif" alt="ImGui Switch Example" style="max-width:100%;border-radius:8px;">
+<pre><code>// Custom Switch Look (Using Checkbox trick)
+ImGui::Checkbox("Enable Feature", &feature_enabled);
+</code></pre>
+
+<ul>
+<li>Switch भी एक तरह का Toggle है लेकिन स्टाइल अलग दिखता है।</li>
+<li>आप अलग से Color या Animation भी Add कर सकते हो।</li>
+<li>Use Case: Enabling/Disabling Features inside app.</li>
+</ul>
+
+<hr>
+
+<h3>4️⃣ Checkbox</h3>
+<img src="https://i.imgur.com/ZQksuGs.png" alt="ImGui Checkbox Example" style="max-width:100%;border-radius:8px;">
+<pre><code>// Simple Checkbox
+ImGui::Checkbox("Activate Option", &option_activated);
+</code></pre>
+
+<ul>
+<li>Checkbox का इस्तेमाल होता है True/False या ON/OFF स्टेटस के लिए।</li>
+<li>Tick Mark से पता चलता है कि Option Enable है या नहीं।</li>
+<li>Use Case: Settings, Preferences, Filters.</li>
+</ul>
+
+<hr>
+<h3>5️⃣ Radio Button</h3>
+<img src="https://i.imgur.com/dz7C6yD.png" alt="ImGui Radio Button Example" style="max-width:50%;border-radius:8px;">
+<pre><code>// Simple Radio Button Example
+ImGui::RadioButton("Choice A", selected == 0); if (ImGui::IsItemClicked()) selected = 0;
+ImGui::RadioButton("Choice B", selected == 1); if (ImGui::IsItemClicked()) selected = 1;
+</code></pre>
+
+<ul>
+    <li>Radio Button का इस्तेमाल Multiple Options में से सिर्फ <strong>एक Option</strong> Select करने के लिए होता है।</li>
+    <li>एक समय पर एक ही Radio Button Active हो सकता है।</li>
+    <li>Use Case: Selecting Modes (Easy / Medium / Hard), Category selection.</li>
+</ul>
+
+<hr>
+
+<!-- New Code Section with Image and Buttons -->
+<div class="imgui-container">
+    <!-- Image from URL -->
+    <img class="imgui-image" src="https://user-images.githubusercontent.com/278957/113489633-f6af1880-948a-11eb-827b-6541cf826f87.png" alt="ImGui Basic Design" style="max-width:50%;border-radius:8px;">
+
+    <!-- Button Example -->
+    <button class="imgui-button" onclick="alert('Button Clicked!')">Click Me!</button>
+
+    <!-- Toggle Button -->
+    <button class="imgui-toggle" onclick="toggleButton(this)">Toggle Me!</button>
+</div>
+
+<script>
+    // Toggle Button Functionality
+    function toggleButton(button) {
+        if (button.classList.contains('active')) {
+            button.classList.remove('active');
+            button.textContent = 'Toggle Me!';
+        } else {
+            button.classList.add('active');
+            button.textContent = 'Toggled!';
+        }
+    }
+</script>
+
+
+<div class="summary" style="background:#fff3e0;padding:10px;margin-top:20px;border-radius:8px;">
+✨ <strong>Tip:</strong> हर ImGui UI एलिमेंट का अपना Purpose होता है। सही जगह सही UI एलिमेंट का Use करो तो Mod Menu का UX बहुत Professional बनता है!
+</div>
+
+<script>
+let isHindi = true;
+function toggleLanguage() {
+    if (isHindi) {
+        document.getElementById('content-hi').style.display = 'none';
+        document.getElementById('content-en').style.display = 'block';
+        document.querySelector('.lang-toggle').innerText = "स्विच करें हिंदी में";
+    } else {
+        document.getElementById('content-hi').style.display = 'block';
+        document.getElementById('content-en').style.display = 'none';
+        document.querySelector('.lang-toggle').innerText = "Switch to English";
+    }
+    isHindi = !isHindi;
+}
+</script>
+
+</body>
+</html>
