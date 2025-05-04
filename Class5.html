@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>MemoryPatch + ImGui Tutorial (Hindi)</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
+        h1, h2, h3 { color: #2c3e50; }
+        code { background-color: #ecf0f1; padding: 2px 5px; border-radius: 5px; }
+        pre { background-color: #ecf0f1; padding: 10px; border-radius: 8px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #bdc3c7; padding: 10px; text-align: center; }
+        th { background-color: #3498db; color: white; }
+        .highlight { background-color: #dff9fb; padding: 10px; border-left: 5px solid #3498db; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<h1>⚡ Step by Step गाइड: MemoryPatch + ImGui + Toggle Menu (हिंदी में)</h1>
+
+<hr>
+
+<h2>1. Header फाइलें शामिल करो</h2>
+<pre><code>#include &lt;pthread.h&gt;
+#include &lt;unistd.h&gt;   // sleep() के लिए
+#include "MemoryPatch.h"
+#include "imgui.h"
+</code></pre>
+
+<h2>2. Patch Struct बनाओ</h2>
+<pre><code>struct My_Patches {
+    MemoryPatch DoubleGu;
+} Cheater;
+</code></pre>
+
+<h2>3. Bool Variables बनाओ (ON/OFF के लिए)</h2>
+<pre><code>bool isDoubleGuEnabled = false;
+</code></pre>
+
+<h2>4. Patch Initialize करो</h2>
+<pre><code>void initPatches() {
+    Cheater.DoubleGu = MemoryPatch::createWithHex("libil2cpp.so", 0x16B0164, "02 00 A0 E3 1E FF 2F E1", 8);
+}
+</code></pre>
+
+<h2>5. Bool के हिसाब से Patch Apply या Restore करो</h2>
+<pre><code>void updatePatches() {
+    if (isDoubleGuEnabled)
+        Cheater.DoubleGu.Modify();
+    else
+        Cheater.DoubleGu.Restore();
+}
+</code></pre>
+
+<h2>6. ImGui Menu बनाओ (Checkbox)</h2>
+<pre><code>void draw_menu() {
+    ImGui::Begin("Cheaters Team Menu");
+
+    ImGui::Checkbox("Double Gun", &amp;isDoubleGuEnabled);
+
+    ImGui::End();
+}
+</code></pre>
+
+<h2>7. GUI Thread बनाओ</h2>
+<pre><code>void *imgui_go(void *) {
+    sleep(10);
+
+    initPatches();
+
+    while (true) {
+        updatePatches();
+        draw_menu();
+        usleep(10000);
+    }
+    return NULL;
+}
+</code></pre>
+
+<h2>8. Main Entry बनाओ (Constructor)</h2>
+<pre><code>__attribute__((constructor))
+void lib_main() {
+    pthread_t ptid;
+
+    Init_Hook(); // (Optional)
+
+    pthread_create(&amp;ptid, NULL, imgui_go, NULL);
+}
+</code></pre>
+
+<hr>
+
+<h2>✅ फाइनल Structure</h2>
+<table>
+<thead>
+<tr><th>पार्ट</th><th>फंक्शन</th><th>काम</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>#include</td><td>सारे हेडर फाइल लाओ</td></tr>
+<tr><td>2</td><td>struct My_Patches</td><td>Patch को संभालो</td></tr>
+<tr><td>3</td><td>bool variables</td><td>ON/OFF कंट्रोल</td></tr>
+<tr><td>4</td><td>initPatches()</td><td>Patch तैयार करो</td></tr>
+<tr><td>5</td><td>updatePatches()</td><td>Patch Apply/Restore करो</td></tr>
+<tr><td>6</td><td>draw_menu()</td><td>GUI मेनू दिखाओ</td></tr>
+<tr><td>7</td><td>imgui_go(void *)</td><td>Menu और Patch Loop चलाओ</td></tr>
+<tr><td>8</td><td>lib_main()</td><td>Auto Start</td></tr>
+</tbody>
+</table>
+
+<div class="highlight">
+<b>⚡ फुल FLOW:</b><br>
+लाइब्रेरी लोड ➔ lib_main() ➔ pthread_create ➔ imgui_go() ➔ sleep(10 सेकंड) ➔ initPatches() ➔ Infinite loop ➔ updatePatches() + draw_menu()
+</div>
+
+<hr>
+
+<h2>✨ अगर Multiple Patches चाहिए</h2>
+<p>Same स्टेप्स फॉलो करो। बस:</p>
+<ul>
+    <li>Struct में नया Patch जोड़ो</li>
+    <li>नया Bool बनाओ</li>
+    <li>नया Checkbox बनाओ</li>
+    <li>updatePatches() में Manage करो</li>
+</ul>
+
+<pre><code>struct My_Patches {
+    MemoryPatch DoubleGu;
+    MemoryPatch SpeedHack;
+    MemoryPatch WallHack;
+} Cheater;
+
+bool isDoubleGuEnabled = false;
+bool isSpeedHackEnabled = false;
+bool isWallHackEnabled = false;
+
+void initPatches() {
+    Cheater.DoubleGu = MemoryPatch::createWithHex("libil2cpp.so", 0x16B0164, "02 00 A0 E3 1E FF 2F E1", 8);
+    Cheater.SpeedHack = MemoryPatch::createWithHex("libil2cpp.so", 0x123456, "02 30 A0 E3 1E FF 2F E1", 8);
+    Cheater.WallHack = MemoryPatch::createWithHex("libil2cpp.so", 0x654321, "03 00 A0 E3 1E FF 2F E1", 8);
+}
+</code></pre>
+
+---
+
+<h2>⚡ Congratulations!</h2>
+<p>अब तुम्हारा पूरा <b>MemoryPatch + ImGui Toggle Menu</b> तैयार है, वो भी <b>प्रोफेशनल स्टाइल</b में!</p>
+
+<hr>
+
+<h2>❓ अब तुम्हारा सवाल:</h2>
+<p>क्या तुम चाहोगे कि मैं <b>Full Example native-lib.cpp</b> फाइल भी दूँ (Direct Download वाला)?</p>
+
+<p><b>अगर हाँ, तो बोलो:</b> <i>"Send Full Example File!"</i></p>
+
+</body>
+</html>
