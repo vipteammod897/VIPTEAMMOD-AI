@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hook Function Explanation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f6f8;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        section {
+            background: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        section:hover {
+            transform: translateY(-5px);
+        }
+        pre {
+            background: #eef1f5;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 15px;
+            color: #2c3e50;
+        }
+        code {
+            background-color: #eef1f5;
+            padding: 2px 5px;
+            border-radius: 5px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .keyword {
+            color: #3498db;
+            font-weight: bold;
+        }
+        .function {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .comment {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        .center-text {
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Hook Function का पूरा Explanation</h1>
+
+    <section>
+        <h2>1. Global Variable:</h2>
+        <pre><span class="keyword">bool</span> <code>Convidado = false;</code></pre>
+        <p><b>Convidado</b> एक <b>Global Boolean Variable</b> है, जो Guest Reset Control के लिए काम करता है।</p>
+    </section>
+
+    <section>
+        <h2>2. ImGui Checkbox:</h2>
+        <pre><span class="function">ImGui::Checkbox</span>("RESET GUEST", &Convidado);</pre>
+        <p>यह एक Checkbox बनाता है जिससे User <b>Reset Guest</b> को ON या OFF कर सकता है।</p>
+    </section>
+
+    <section>
+        <h2>3. Function Pointer:</h2>
+        <pre><span class="keyword">bool</span>(*<code>get_ResetGuest</code>)(<span class="keyword">bool</span>* instance);</pre>
+        <p>यह <b>Original Game Function</b> को Point करेगा।</p>
+    </section>
+
+    <section>
+        <h2>4. Custom Hook Function:</h2>
+        <pre>
+<span class="keyword">bool</span> <span class="function">_get_ResetGuest</span>(<span class="keyword">bool</span>* instance) {
+    <span class="keyword">if</span> (Convidado) {
+        <span class="keyword">return</span> <span style="color:#27ae60;">true</span>;
+    }
+    <span class="keyword">return</span> get_ResetGuest(instance);
+}
+        </pre>
+        <p>अगर <b>Convidado == true</b> है, तो हमेशा <b>true</b> Return करेगा।</p>
+    </section>
+
+    <section>
+        <h2>5. Hooking with Dobby:</h2>
+        <pre>
+<span class="function">DobbyHook</span>(
+    (<span class="keyword">void</span> *)getRealOffset(0x4d772d4), 
+    (<span class="keyword">void</span> *)_get_ResetGuest, 
+    (<span class="keyword">void</span> **)&get_ResetGuest
+);
+        </pre>
+        <p><b>DobbyHook</b> का उपयोग करके Real Function को Custom Function से Replace किया गया है।</p>
+    </section>
+
+    <section>
+        <h2>6. Original Game Function:</h2>
+        <pre class="comment">
+// RVA: 0x4d772d4 VA: 0xaded42d4
+public static Boolean get_ResetGuest() { }
+        </pre>
+        <p>यह Game का असली Guest Reset Function है।</p>
+    </section>
+
+    <section>
+        <h2><u>Comparison Table:</u></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Without Hook</th>
+                    <th>With Hook (Checkbox ON)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Game खुद Decide करेगा कि Guest Reset करना है या नहीं।</td>
+                    <td>हमेशा <span style="color:#27ae60;"><b>True</b></span> Return होगा।</td>
+                </tr>
+                <tr>
+                    <td>Normal Game Behavior चलता रहेगा।</td>
+                    <td>Player के हाथ में पूरा Control रहेगा।</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2><u>Client को फायदा:</u></h2>
+        <ul>
+            <li>Guest Accounts को Reset किया जा सकता है।</li>
+            <li>Fast Re-login और Cleanup हो सकता है।</li>
+            <li>Guest-only Features को Unlock किया जा सकता है।</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2><u>अगर Hook fail हुआ तो?</u></h2>
+        <ul>
+            <li>Game Crash होने का Chance रहेगा।</li>
+            <li>Unexpected Behaviors आ सकते हैं।</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2><u>Quick Summary:</u></h2>
+        <ul>
+            <li><b>Convidado</b> Variable से Full Control।</li>
+            <li><b>Checkbox</b> से ON/OFF Option।</li>
+            <li><b>_get_ResetGuest()</b> Safe Hook Function।</li>
+            <li><b>DobbyHook()</b> से Clean और Safe Hooking।</li>
+        </ul>
+    </section>
+
+    <p class="center-text">Safe और Clean तरीके से Hook किया गया है।</p>
+
+</body>
+</html>
