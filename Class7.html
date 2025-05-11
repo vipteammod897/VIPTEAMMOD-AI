@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bypass Hook Explanation</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f7f9fb;
+        color: #333;
+        line-height: 1.6;
+        margin: 20px;
+        padding: 20px;
+    }
+    h1, h2 {
+        color: #2c3e50;
+    }
+    p {
+        margin-bottom: 15px;
+    }
+    code {
+        background: #ecf0f1;
+        padding: 2px 6px;
+        border-radius: 5px;
+        font-family: monospace;
+    }
+    .highlight {
+        background: #d1f0ff;
+        padding: 10px;
+        border-left: 5px solid #3498db;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+    .diagram {
+        background: #ffeaa7;
+        padding: 15px;
+        border-left: 5px solid #fdcb6e;
+        margin: 20px 0;
+        border-radius: 5px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #ccc;
+        text-align: left;
+    }
+    th {
+        background: #3498db;
+        color: white;
+    }
+</style>
+</head>
+<body>
+
+<h1>Bypass Hook Explanation</h1>
+
+<div class="highlight">
+    <strong>Simple Definition:</strong>  
+    You replace the game's original function with your own fake function which always returns <code>false</code> to bypass protections.
+</div>
+
+<h2>1. Define the Function Pointer</h2>
+<p>
+    <code>bool (*original_Bypass)(void* _this);</code><br>
+    This saves the address of the real function, allowing you to call it later if needed.
+</p>
+
+<h2>2. Create the Hook Function</h2>
+<p>
+    <code>bool hooked_Bypass(void* _this) { return false; }</code><br>
+    This fake function will always return <code>false</code>, ignoring the original behavior.
+</p>
+
+<h2>3. Hook the Real Function</h2>
+<p>
+<code>
+void init_bypass() {<br>
+&nbsp;&nbsp;void* target = (void*)getRealOffset(0x1278444);<br>
+&nbsp;&nbsp;if (target) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DobbyHook(target, (void*)hooked_Bypass, (void**)&original_Bypass);<br>
+&nbsp;&nbsp;}<br>
+}
+</code><br>
+    <br>
+    <strong>DobbyHook</strong> replaces the real function with your fake one and saves the original address.
+</p>
+
+<div class="diagram">
+    <h3>Simple Call Flow:</h3>
+    <p>
+        Game ➔ Calls original function ➔ <strong>Hooked</strong> ➔ Your <code>hooked_Bypass</code> ➔ Always returns <code>false</code>
+    </p>
+</div>
+
+<h2>Summary Table:</h2>
+
+<table>
+    <tr>
+        <th>Step</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>original_Bypass</td>
+        <td>Save real function address</td>
+    </tr>
+    <tr>
+        <td>hooked_Bypass</td>
+        <td>Fake function that always returns false</td>
+    </tr>
+    <tr>
+        <td>DobbyHook</td>
+        <td>Redirects game calls to your function</td>
+    </tr>
+</table>
+
+<h2>Final One-line Explanation:</h2>
+<div class="highlight">
+    You are tricking the game into always getting a <code>false</code> result, bypassing its normal security checks.
+</div>
+
+</body>
+</html>
