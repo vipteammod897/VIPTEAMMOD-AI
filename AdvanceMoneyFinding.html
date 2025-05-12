@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Money Finder - Match with Target Amount</title>
+</head>
+<body style="font-family: Arial; text-align: center; margin-top: 30px;">
+
+  <h2>Money Finding & Matching</h2>
+
+  <label>Enter Customer Target Amount:</label><br>
+  <input type="number" id="targetAmount" placeholder="Enter Target Amount" style="padding: 10px; width: 250px;"><br><br>
+
+  <h3>Enter Number of Notes:</h3>
+
+  <label>₹500 Notes:</label><br>
+  <input type="number" id="notes500" value="0" style="padding: 5px;"><br><br>
+
+  <label>₹200 Notes:</label><br>
+  <input type="number" id="notes200" value="0" style="padding: 5px;"><br><br>
+
+  <label>₹100 Notes:</label><br>
+  <input type="number" id="notes100" value="0" style="padding: 5px;"><br><br>
+
+  <label>₹50 Notes:</label><br>
+  <input type="number" id="notes50" value="0" style="padding: 5px;"><br><br>
+
+  <label>₹20 Notes:</label><br>
+  <input type="number" id="notes20" value="0" style="padding: 5px;"><br><br>
+
+  <label>₹10 Notes:</label><br>
+  <input type="number" id="notes10" value="0" style="padding: 5px;"><br><br>
+
+  <button onclick="calculateTotal()" style="padding: 10px 20px;">Calculate & Match</button><br><br>
+
+  <h2 id="result"></h2>
+
+  <script>
+    function calculateTotal() {
+      var target = parseInt(document.getElementById('targetAmount').value) || 0;
+      var n500 = parseInt(document.getElementById('notes500').value) || 0;
+      var n200 = parseInt(document.getElementById('notes200').value) || 0;
+      var n100 = parseInt(document.getElementById('notes100').value) || 0;
+      var n50 = parseInt(document.getElementById('notes50').value) || 0;
+      var n20 = parseInt(document.getElementById('notes20').value) || 0;
+      var n10 = parseInt(document.getElementById('notes10').value) || 0;
+
+      var total = (n500 * 500) + (n200 * 200) + (n100 * 100) + (n50 * 50) + (n20 * 20) + (n10 * 10);
+
+      var message = "Total Money: ₹" + total + "<br>";
+
+      if (target > 0) {
+        if (total == target) {
+          message += "<span style='color: green;'>Perfect Match with Target! ✅</span>";
+        } else {
+          var difference = target - total;
+          if (difference > 0) {
+            message += "<span style='color: red;'>Short by ₹" + difference + " ❌</span>";
+          } else {
+            message += "<span style='color: red;'>Extra by ₹" + Math.abs(difference) + " ❌</span>";
+          }
+        }
+      } else {
+        message += "<span style='color: blue;'>Note: No Target Amount Entered</span>";
+      }
+
+      document.getElementById('result').innerHTML = message;
+    }
+  </script>
+
+</body>
+</html>
