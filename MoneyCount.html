@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Money Finder - Select Note Type</title>
+</head>
+<body style="font-family: Arial; text-align: center; margin-top: 50px;">
+
+  <h2>Money Finding (Select Note Type)</h2>
+
+  <label>Enter Total Money:</label><br><br>
+  <input type="number" id="moneyInput" placeholder="Enter amount" style="padding: 10px; width: 200px;"><br><br>
+
+  <label>Select Note Type:</label><br><br>
+  <select id="noteType" style="padding: 10px; width: 220px;">
+    <option value="10">₹10</option>
+    <option value="20">₹20</option>
+    <option value="50">₹50</option>
+    <option value="100">₹100</option>
+    <option value="200">₹200</option>
+    <option value="500">₹500</option>
+  </select><br><br>
+
+  <button onclick="calculateSelectedNotes()" style="padding: 10px 20px;">Find Notes</button><br><br>
+
+  <h3 id="result"></h3>
+
+  <script>
+    function calculateSelectedNotes() {
+      var totalMoney = parseInt(document.getElementById('moneyInput').value);
+      var noteValue = parseInt(document.getElementById('noteType').value);
+
+      if (!totalMoney || totalMoney <= 0) {
+        document.getElementById('result').innerText = "Please enter a valid amount.";
+        return;
+      }
+
+      var numberOfNotes = Math.floor(totalMoney / noteValue);
+
+      document.getElementById('result').innerText = 
+        "You will get " + numberOfNotes + " notes of ₹" + noteValue + ".";
+    }
+  </script>
+
+</body>
+</html>
