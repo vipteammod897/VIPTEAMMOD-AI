@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Money Finder - Match with Target Amount</title>
+  <title>Money Finder - Match with Target & Amount in Words</title>
 </head>
 <body style="font-family: Arial; text-align: center; margin-top: 30px;">
 
-  <h2>Money Finding & Matching</h2>
+  <h2>Money Finding, Matching & Amount in Words</h2>
 
   <label>Enter Customer Target Amount:</label><br>
-  <input type="number" id="targetAmount" placeholder="Enter Target Amount" style="padding: 10px; width: 250px;"><br><br>
+  <input type="number" id="targetAmount" placeholder="Enter Target Amount" oninput="showAmountInWords()" style="padding: 10px; width: 250px;"><br><br>
+
+  <div id="amountInWords" style="font-size: 18px; color: blue;"></div><br>
 
   <h3>Enter Number of Notes:</h3>
 
@@ -64,6 +66,89 @@
       }
 
       document.getElementById('result').innerHTML = message;
+    }
+
+    function showAmountInWords() {
+      var num = parseInt(document.getElementById('targetAmount').value) || 0;
+      var words = convertNumberToWords(num);
+      document.getElementById('amountInWords').innerHTML = "In Words: <b>" + words + "</b>";
+    }
+
+    function convertNumberToWords(amount) {
+      var words = new Array();
+      words[0] = '';
+      words[1] = 'One';
+      words[2] = 'Two';
+      words[3] = 'Three';
+      words[4] = 'Four';
+      words[5] = 'Five';
+      words[6] = 'Six';
+      words[7] = 'Seven';
+      words[8] = 'Eight';
+      words[9] = 'Nine';
+      words[10] = 'Ten';
+      words[11] = 'Eleven';
+      words[12] = 'Twelve';
+      words[13] = 'Thirteen';
+      words[14] = 'Fourteen';
+      words[15] = 'Fifteen';
+      words[16] = 'Sixteen';
+      words[17] = 'Seventeen';
+      words[18] = 'Eighteen';
+      words[19] = 'Nineteen';
+      words[20] = 'Twenty';
+      words[30] = 'Thirty';
+      words[40] = 'Forty';
+      words[50] = 'Fifty';
+      words[60] = 'Sixty';
+      words[70] = 'Seventy';
+      words[80] = 'Eighty';
+      words[90] = 'Ninety';
+
+      if (amount == 0) return 'Zero Only';
+      if (amount > 9999999) return 'Amount too large';
+
+      var crore = Math.floor(amount / 10000000);
+      var lakh = Math.floor((amount / 100000) % 100);
+      var thousand = Math.floor((amount / 1000) % 100);
+      var hundred = Math.floor((amount / 100) % 10);
+      var rest = Math.floor(amount % 100);
+
+      var str = '';
+
+      if (crore > 0) {
+        if (crore < 21) {
+          str += words[crore] + ' Crore ';
+        } else {
+          str += words[Math.floor(crore / 10) * 10] + ' ' + words[crore % 10] + ' Crore ';
+        }
+      }
+      if (lakh > 0) {
+        if (lakh < 21) {
+          str += words[lakh] + ' Lakh ';
+        } else {
+          str += words[Math.floor(lakh / 10) * 10] + ' ' + words[lakh % 10] + ' Lakh ';
+        }
+      }
+      if (thousand > 0) {
+        if (thousand < 21) {
+          str += words[thousand] + ' Thousand ';
+        } else {
+          str += words[Math.floor(thousand / 10) * 10] + ' ' + words[thousand % 10] + ' Thousand ';
+        }
+      }
+      if (hundred > 0) {
+        str += words[hundred] + ' Hundred ';
+      }
+      if (rest > 0) {
+        if (rest < 21) {
+          str += words[rest] + ' ';
+        } else {
+          str += words[Math.floor(rest / 10) * 10] + ' ' + words[rest % 10] + ' ';
+        }
+      }
+
+      return str + 'Only';
     }
   </script>
 
