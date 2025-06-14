@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ImGui Mod Menu Guide</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #eee;
+      padding: 2rem;
+    }
+    h1, h2, h3 {
+      color: #55d7c6;
+    }
+    .section {
+      background-color: #1c1c1c;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #000;
+    }
+    pre, code {
+      background-color: #2a2a2a;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #2a2a2a;
+    }
+    .color-box {
+      width: 30px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid #666;
+      display: inline-block;
+    }
+    select {
+      padding: 6px 10px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      background-color: #222;
+      color: #eee;
+      border: 1px solid #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌐 ImGui Mod Menu + Color Guide</h1>
+  <label for="languageSelect"><strong>🌍 Select Language:</strong></label>
+  <select id="languageSelect" onchange="changeLanguage()">
+    <option value="en">English</option>
+    <option value="hi">हिन्दी</option>
+  </select>
+
+  <!-- ENGLISH CONTENT -->
+  <div class="section" id="content-en">
+    <h2>🎨 RGB vs HEX Color Formats in ImGui</h2>
+    <p><strong>RGB</strong> and <strong>HEX</strong> are color formats. ImGui uses float-based RGB values like <code>ImVec4</code>. You must convert HEX or RGB into float values.</p>
+    
+    <h3>📌 Example Conversion</h3>
+    <pre><code>#55D7C6 → RGB(85, 215, 198)
+ImGui Float: ImVec4(85/255.0f, 215/255.0f, 198/255.0f, 1.0f)
+            = ImVec4(0.33f, 0.84f, 0.78f, 1.0f)</code></pre>
+
+    <h3>✅ Use in ImGui</h3>
+    <pre><code>ImVec4 myColor = ImVec4(0.33f, 0.84f, 0.78f, 1.0f);
+ImGui::ColorEdit3("Pick Color", (float*)&myColor);</code></pre>
+
+    <h3>🖍️ Example Color Table</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Preview</th>
+          <th>HEX</th>
+          <th>RGB</th>
+          <th>ImGui Float</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Turquoise</td>
+          <td><div class="color-box" style="background:#55D7C6;"></div></td>
+          <td>#55D7C6</td>
+          <td>85, 215, 198</td>
+          <td>0.33, 0.84, 0.78</td>
+        </tr>
+        <tr>
+          <td>Orange</td>
+          <td><div class="color-box" style="background:#FFA500;"></div></td>
+          <td>#FFA500</td>
+          <td>255, 165, 0</td>
+          <td>1.0, 0.65, 0.0</td>
+        </tr>
+        <tr>
+          <td>Neon Green</td>
+          <td><div class="color-box" style="background:#39FF14;"></div></td>
+          <td>#39FF14</td>
+          <td>57, 255, 20</td>
+          <td>0.22, 1.0, 0.08</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- HINDI CONTENT -->
+  <div class="section" id="content-hi" style="display: none;">
+    <h2>🎨 ImGui में RGB और HEX रंग का अंतर</h2>
+    <p><strong>RGB</strong> और <strong>HEX</strong> रंग कोडिंग के दो तरीके हैं। ImGui में हम <code>ImVec4</code> जैसे float फ़ॉर्मेट का उपयोग करते हैं। इसलिए पहले HEX या RGB को float में बदलना जरूरी है।</p>
+
+    <h3>📌 उदाहरण</h3>
+    <pre><code>#55D7C6 → RGB(85, 215, 198)
+ImGui Float: ImVec4(85/255.0f, 215/255.0f, 198/255.0f, 1.0f)
+            = ImVec4(0.33f, 0.84f, 0.78f, 1.0f)</code></pre>
+
+    <h3>✅ ImGui में उपयोग कैसे करें</h3>
+    <pre><code>ImVec4 myColor = ImVec4(0.33f, 0.84f, 0.78f, 1.0f);
+ImGui::ColorEdit3("Pick Color", (float*)&myColor);</code></pre>
+
+    <h3>🖍️ रंगों की तालिका</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>रंग</th>
+          <th>उदाहरण</th>
+          <th>HEX</th>
+          <th>RGB</th>
+          <th>ImGui Float</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Turquoise</td>
+          <td><div class="color-box" style="background:#55D7C6;"></div></td>
+          <td>#55D7C6</td>
+          <td>85, 215, 198</td>
+          <td>0.33, 0.84, 0.78</td>
+        </tr>
+        <tr>
+          <td>Orange</td>
+          <td><div class="color-box" style="background:#FFA500;"></div></td>
+          <td>#FFA500</td>
+          <td>255, 165, 0</td>
+          <td>1.0, 0.65, 0.0</td>
+        </tr>
+        <tr>
+          <td>Neon Green</td>
+          <td><div class="color-box" style="background:#39FF14;"></div></td>
+          <td>#39FF14</td>
+          <td>57, 255, 20</td>
+          <td>0.22, 1.0, 0.08</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function changeLanguage() {
+      var lang = document.getElementById("languageSelect").value;
+      document.getElementById("content-en").style.display = (lang === "en") ? "block" : "none";
+      document.getElementById("content-hi").style.display = (lang === "hi") ? "block" : "none";
+    }
+  </script>
+
+</body>
+</html>
