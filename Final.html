@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aimbot UI Design Explanation</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #101820;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #1e2a38;
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #3c87ff;
+      box-shadow: 0 0 10px rgba(60, 135, 255, 0.4);
+    }
+    h2 {
+      color: #3c87ff;
+      text-align: center;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 12px 15px;
+      border-radius: 10px;
+      background-color: #27394e;
+      border: 1px solid #3c87ff;
+      transition: background 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .option:hover {
+      background-color: #32506c;
+      box-shadow: 0 0 5px #3c87ff;
+    }
+    .option input[type="checkbox"] {
+      transform: scale(1.3);
+      margin-right: 15px;
+    }
+    .tooltip {
+      font-size: 0.85em;
+      color: #ccc;
+      margin-left: auto;
+      max-width: 50%;
+    }
+    .footer {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #3c87ff;
+      font-size: 0.9em;
+      color: #ffbb55;
+      text-align: center;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+      margin-right: 15px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #444;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    .switch input:checked + .slider {
+      background-color: #3c87ff;
+    }
+    .switch input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    .switch-outline-box {
+      background-color: #202f45;
+      border: 2px dashed #4fa2ff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+    .switch-outline-box h3 {
+      color: #4fa2ff;
+      margin-top: 0;
+    }
+    .switch-outline-box .option {
+      background-color: #2b425b;
+      border-color: #4fa2ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🎯 AIMBOT CONFIGURATION</h2>
+
+    <div class="option">
+      <label class="switch">
+        <input type="checkbox" id="aimHead">
+        <span class="slider"></span>
+      </label>
+      <label for="aimHead">✔ AIM HEAD</label>
+      <span class="tooltip">Automatically targets enemy head for higher damage.</span>
+    </div>
+
+    <div class="option">
+      <label class="switch">
+        <input type="checkbox" id="aimSafe">
+        <span class="slider"></span>
+      </label>
+      <label for="aimSafe">🛡 AIM SAFE</label>
+      <span class="tooltip">Disables aim when in danger zones or close combat.</span>
+    </div>
+
+    <div class="option">
+      <label class="switch">
+        <input type="checkbox" id="aimSilent">
+        <span class="slider"></span>
+      </label>
+      <label for="aimSilent">🕶 AIM SILENT</label>
+      <span class="tooltip">Silently aims without snapping the crosshair.</span>
+    </div>
+
+    <div class="option">
+      <label class="switch">
+        <input type="checkbox" id="aimScope">
+        <span class="slider"></span>
+      </label>
+      <label for="aimScope">🔭 AIM SCOPE</label>
+      <span class="tooltip">Only activates aimbot when scoped or zoomed.</span>
+    </div>
+
+    <div class="footer">
+      ⚠️ Tip: Don’t use all options at once for anti-ban safety.
+    </div>
+
+    <!-- Extended Explanation Section with Visual Switch Outline Box -->
+    <div class="switch-outline-box">
+      <h3>🔧 Switch Design Explanation</h3>
+      <p>This section shows how modern switches are styled using HTML and CSS. Each switch has an outline border, rounded slider, and state indicator with smooth transitions.</p>
+
+      <div class="option">
+        <label class="switch">
+          <input type="checkbox" id="switchExample">
+          <span class="slider"></span>
+        </label>
+        <label for="switchExample">DEMO SWITCH</label>
+        <span class="tooltip">This is a visual example switch with border & animation.</span>
+      </div>
+
+      <p>The <code>.switch</code> and <code>.slider</code> classes handle the visual rendering. Rounded corners and colors help the user clearly see ON/OFF states.</p>
+    </div>
+    
+    <!-- Add this inside the <div class="container"> after the switch-outline-box section -->
+
+<div class="switch-outline-box">
+  <h3>🧪 Other UI Element Types with Explanation</h3>
+
+  <!-- Checkbox -->
+  <div class="option">
+    <input type="checkbox" id="recoilControl" style="transform: scale(1.3); margin-right: 15px;">
+    <label for="recoilControl">📦 Recoil Control</label>
+    <span class="tooltip">Reduces weapon recoil during firing.</span>
+  </div>
+
+  <!-- Radio Buttons -->
+  <div class="option" style="flex-direction: column; align-items: flex-start;">
+    <label style="margin-bottom: 5px;">🎯 Target Selection Mode</label>
+    <label><input type="radio" name="target" value="head" checked> Head</label>
+    <label><input type="radio" name="target" value="body"> Body</label>
+    <label><input type="radio" name="target" value="legs"> Legs</label>
+    <span class="tooltip">Choose specific body part to aim at.</span>
+  </div>
+
+  <!-- ListView (Select Box) -->
+  <div class="option">
+    <label for="weaponType" style="margin-right: 15px;">🔫 Weapon Type:</label>
+    <select id="weaponType" style="padding: 5px 10px; border-radius: 6px; border: none; background-color: #1e2a38; color: white;">
+      <option value="sniper">Sniper</option>
+      <option value="rifle">Assault Rifle</option>
+      <option value="smg">SMG</option>
+      <option value="shotgun">Shotgun</option>
+    </select>
+    <span class="tooltip">Used to configure aimbot based on weapon type.</span>
+  </div>
+
+  <!-- Slider -->
+  <div class="option" style="flex-direction: column; align-items: flex-start;">
+    <label for="aimSpeed">⚡ Aimbot Speed: <span id="speedValue">50</span>%</label>
+    <input type="range" id="aimSpeed" min="0" max="100" value="50" style="width: 100%; margin-top: 10px;">
+    <span class="tooltip">Controls how fast the aimbot locks onto targets.</span>
+  </div>
+
+  <!-- Toggle Button Group -->
+  <div class="option" style="flex-direction: column; align-items: flex-start;">
+    <label style="margin-bottom: 10px;">🎮 Game Mode:</label>
+    <div style="display: flex; gap: 10px;">
+      <button style="background-color: #3c87ff; border: none; padding: 8px 15px; border-radius: 8px; color: white; cursor: pointer;">Classic</button>
+      <button style="background-color: #27394e; border: 1px solid #3c87ff; padding: 8px 15px; border-radius: 8px; color: white; cursor: pointer;">Ranked</button>
+      <button style="background-color: #27394e; border: 1px solid #3c87ff; padding: 8px 15px; border-radius: 8px; color: white; cursor: pointer;">Arcade</button>
+    </div>
+    <span class="tooltip" style="margin-top: 10px;">Tap to choose the active game mode for custom configs.</span>
+  </div>
+</div>
+
+<script>
+  // Optional JS to display slider value
+  const aimSpeed = document.getElementById("aimSpeed");
+  const speedValue = document.getElementById("speedValue");
+  aimSpeed.oninput = function () {
+    speedValue.textContent = this.value;
+  };
+</script>
+
+    
+    
+  </div>
+</body>
+</html>
