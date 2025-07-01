@@ -1,0 +1,573 @@
+<html>
+
+
+  
+  
+<meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  body {
+    background: linear-gradient(to right, #0d1b2a, #1b263b, #415a77);
+
+    color: #fff;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.2rem;
+  border-bottom: 2px solid #00c6ff;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 30px;
+  gap: 10px;
+}
+
+.site-header h1 {
+  font-size: 2rem;
+  color: #ffffffcc;
+  border-left: 4px solid #00c6ff;
+  padding-left: 12px;
+  margin: 0;
+  flex: 1;
+  word-break: break-word;
+  white-space: normal; /* allow wrap */
+}
+
+.telegram-center-wrapper {
+  flex-shrink: 0; /* prevent shrinking */
+}
+
+
+  #backButton {
+    background-color: #00c6ff;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background 0.3s;
+  }
+
+  #backButton:hover {
+    background-color: #009ecb;
+  }
+
+  .telegram-center-wrapper {
+    display: block;
+    margin-top: 0;
+  }
+
+  .telegram-glow-btn {
+    display: inline-block;
+    padding: 4px;
+    border-radius: 50%;
+    background: transparent;
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(0, 136, 204, 0.9), 0 0 60px rgba(0, 136, 204, 0.7);
+    transition: transform 0.3s ease, box-shadow 0.4s ease;
+    text-decoration: none;
+    position: relative;
+  }
+
+  .telegram-icon {
+    width: 50px;
+    height: 50px;
+    display: block;
+  }
+
+  #content {
+    width: 100%;
+    max-width: 800px;
+    
+  }
+
+  .movie-item,
+  .category-item {
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: background 0.3s;
+    background: rgba(255, 255, 255, 0.02);
+    margin-bottom: 15px;
+  }
+
+  .movie-item:hover,
+  .category-item:hover {
+    background: rgba(0, 198, 255, 0.15);
+  }
+
+  .movie-item img {
+    width: 30px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .movie-info {
+    flex: 1;
+  }
+
+  .movie-info a {
+    color: #00c6ff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .movie-info a:hover {
+    text-decoration: underline;
+  }
+
+  .pagination {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .pagination a,
+  .pagination span {
+    margin: 0 6px;
+    color: #ffcc00;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .pagination a:hover {
+    text-decoration: underline;
+  }
+
+  .pagination .pagination_current {
+    color: #fff;
+  }
+
+  .spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+  }
+
+  .spinner {
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top: 4px solid #00c6ff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+  }
+
+  .loading-text {
+    font-size: 14px;
+    color: #ccc;
+    font-style: italic;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .error {
+    color: #ff6666;
+    text-align: center;
+    padding: 20px;
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .site-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-header h1 {
+      font-size: 1.5rem;
+    }
+
+   .movie-item,
+.category-item {
+  flex-direction: column;
+  align-items: center;   /* ⬅️ centers horizontally */
+  justify-content: center; /* ⬅️ centers vertically if needed */
+  text-align: center;    /* ⬅️ centers text content */
+}
+
+
+    .movie-item img {
+      width: 30%;
+    
+    }
+
+    #backButton {
+      width: 40%;
+      margin-top: 10px;
+    }
+
+    .telegram-icon {
+      width: 35px;
+      height: 35px;
+    }
+
+    .pagination {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding: 20px 10px;
+    }
+
+    .site-header {
+      padding: 1rem;
+    }
+
+    .movie-info a {
+      font-size: 0.95rem;
+    }
+
+    .loading-text {
+      font-size: 12px;
+    }
+  }
+
+  .telegram-glow-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(0, 198, 255, 0.5) 20%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    animation: pulse-wave-glow 2s infinite ease-out;
+    box-shadow: 0 0 30px rgba(0, 198, 255, 0.7), 0 0 60px rgba(0, 198, 255, 0.5);
+    filter: blur(2px);
+    z-index: -1;
+  }
+
+  @keyframes pulse-wave-glow {
+    0% {
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0.9;
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.6);
+      opacity: 0.5;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2.2);
+      opacity: 0;
+    }
+  }
+</style>
+
+
+
+
+
+
+  <div class="site-header">
+  <h1>Movies VIPTEAMMOD - தமிழ் </h1>
+
+
+ 
+</div>
+<button id="backButton" onclick="goBack()">← Back</button>
+ 
+<br/>
+  <br/>
+  <div id="content" class="loading" style="color:#ccc;">Loading...</div>
+
+<br/>
+<br/>
+<br/>
+
+
+
+
+
+  <script>
+const pageHistory = [];
+
+    const baseUrl = "https://isaidub.city";
+
+async function loadPage(relativePath, isBack = false, retryCount = 3) {
+  const container = document.getElementById("content");
+
+  // Store path in history only if not triggered from "Back"
+  if (!isBack && pageHistory.length === 0 || pageHistory[pageHistory.length - 1] !== relativePath) {
+    pageHistory.push(relativePath);
+  }
+
+  container.innerHTML = `
+    <div class="spinner-container">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading...</p>
+    </div>
+  `;
+
+
+
+  const match = relativePath.match(/\/download\/page\/(\d+)\/?$/);
+
+let fullUrl = match
+  ? `https://dubmv.top/download/file/${match[1]}`
+  : "https://isaidub.city" + relativePath;
+
+
+  const apiUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(fullUrl);
+
+  for (let attempt = 1; attempt <= retryCount; attempt++) {
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error("Network response not OK");
+      const data = await response.json();
+      const html = data.contents;
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+
+      // ✅ Handle final download page
+      if (match) {
+        const downloadSection = doc.querySelector("div.download");
+        let downloadHTML = `<div class="category-item"><strong>Download Links</strong><br><br>`;
+
+        if (downloadSection) {
+          const downloadLinks = downloadSection.querySelectorAll("a[href]");
+          downloadLinks.forEach(a => {
+            const text = a.textContent.toLowerCase();
+            const href = a.getAttribute("href");
+            if (text.includes("watch online") || !href) return;
+            downloadHTML += `<div><a href="${href}" target="_self" style="color:lime" rel="noopener noreferrer">${a.textContent.replace(/isaiDub\.me/gi, "MoviesAroDub")}
+</a></div>`;
+          });
+        }
+
+        downloadHTML += `</div>`;
+        container.innerHTML = downloadHTML;
+        return;
+      }
+
+      // ✅ Otherwise: Category or listing page
+      const fDivs = doc.querySelectorAll("div.f");
+      let contentHTML = "";
+
+      fDivs.forEach(div => {
+        const table = div.querySelector("table");
+        if (table) {
+          const img = table.querySelector("img");
+          const anchor = table.querySelector("a");
+          const sizeMatch = table.innerText.match(/Size\s*:\s*([0-9.]+ [A-Z]+)?/);
+          const size = sizeMatch ? sizeMatch[0] : "";
+
+          contentHTML += `
+            <div class="movie-item">
+              <img src="https://isaidub.city${img.getAttribute("src")}" alt="${img.getAttribute("alt")}">
+              <div class="movie-info">
+                <a href="#" onclick="loadPage('${anchor.getAttribute("href")}'); return false;">
+                 ${anchor.textContent.replace(/isaiDub\.me/gi, "MoviesAroDub")}
+
+                </a><br>
+                <small>${size}</small>
+              </div>
+            </div>
+          `;
+        } else {
+          const aTag = div.querySelector("a");
+          if (aTag) {
+            contentHTML += `
+              <div class="category-item">
+                <div class="movie-info">
+                  <a href="#" onclick="loadPage('${aTag.getAttribute("href")}'); return false;">
+                    ${aTag.innerHTML}
+                  </a>
+                </div>
+              </div>
+            `;
+          }
+        }
+      });
+
+      // ✅ Pagination
+      const paginationDiv = doc.querySelector("div.isaiminida");
+      let paginationHTML = "";
+      if (paginationDiv) {
+        paginationHTML = `<div class="pagination">Pages: `;
+        paginationDiv.querySelectorAll("span, a").forEach(item => {
+          if (item.tagName === "SPAN") {
+            paginationHTML += `<span class="pagination_current">${item.textContent}</span>`;
+          } else {
+            const href = item.getAttribute("href");
+            paginationHTML += ` <a href="#" onclick="loadPage('${href}'); return false;">${item.textContent}</a>`;
+          }
+        });
+        paginationHTML += `</div>`;
+      }
+
+      container.innerHTML = contentHTML + paginationHTML;
+      return;
+    } catch (e) {
+      console.warn(`Attempt ${attempt} failed: ${e.message}`);
+      if (attempt === retryCount) {
+        container.innerHTML = `<p class="error">Failed to load content after ${retryCount} attempts.</p>`;
+      }
+    }
+  }
+}
+function goBack() {
+  if (pageHistory.length > 1) {
+    pageHistory.pop(); // Remove current page
+    const previous = pageHistory.pop(); // Get the one before
+    loadPage(previous, true); // Load it and flag as 'back'
+  } else {
+    // Redirect to homepage when no history
+    window.location.href = 'https://moviesaro.netlify.app';
+  }
+}
+
+
+
+   // Initial load
+loadPage("/tamil-yearly-dubbed-movies/");
+
+  </script>
+<script>
+    // Disable right-click
+document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+});
+
+// Disable keyboard shortcuts for DevTools
+document.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && (e.key === "u" || e.key === "U" || e.key === "s" || e.key === "S" || e.key === "i" || e.key === "I" || e.key === "j" || e.key === "J" || e.key === "c" || e.key === "C")) {
+        e.preventDefault();
+    }
+});
+
+// Disable F12, Ctrl+Shift+I, Ctrl+Shift+J
+document.onkeydown = function (e) {
+    if (e.keyCode == 123) { return false; } // F12
+    if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) { return false; } // Ctrl+Shift+I/J
+};
+  
+  </script>
+<script>
+    const blockScreen = document.getElementById('blockScreen');
+
+    function detectDevTools() {
+      const widthDiff = window.outerWidth - window.innerWidth;
+      const heightDiff = window.outerHeight - window.innerHeight;
+      const threshold = 120;
+
+      // True if dimensions indicate DevTools or if debugger gets trapped
+      let devtoolsOpen = widthDiff > threshold || heightDiff > threshold;
+
+      // Mobile-specific trap
+      const trap = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (trap) {
+        const start = new Date();
+        debugger;
+        const end = new Date();
+        if (end - start > 100) devtoolsOpen = true;
+      }
+
+      if (devtoolsOpen) {
+       window.location.href = "https://c.tenor.com/x4V9PRp9R-0AAAAC/tenor.gif"; // Replace with your redirect URL
+
+      } else {
+        blockScreen.style.display = 'none';
+        document.body.style.pointerEvents = 'auto';
+      }
+    }
+
+    setInterval(detectDevTools, 600);
+
+    // Block right-click
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Block common dev hotkeys
+    document.addEventListener('keydown', function (event) {
+      if (
+        event.key === 'F12' ||
+        (event.ctrlKey && event.shiftKey && ['I', 'J', 'C'].includes(event.key.toUpperCase())) ||
+        (event.ctrlKey && event.key.toLowerCase() === 'u')
+      ) {
+        event.preventDefault();
+      }
+    });
+  </script>
+
+ <script type="module">
+  // Import Firebase core + database
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-analytics.js";
+  import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCnFzRuiePFLp7rHV9ITXFl7XSPb-PAydI",
+    authDomain: "moviesaro.firebaseapp.com",
+    databaseURL: "https://moviesaro-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "moviesaro",
+    storageBucket: "moviesaro.appspot.com", // corrected domain
+    messagingSenderId: "988768227464",
+    appId: "1:988768227464:web:2afbfc7f6f000d4f610f3d",
+    measurementId: "G-CDJZBSR54T"
+  };
+
+  // Init Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getDatabase(app);
+
+  // Create random user ID for this session
+  const userId = Math.random().toString(36).substring(2);
+  const userRef = ref(db, 'onlineUsers/' + userId);
+
+  // Mark user online
+  set(userRef, true);
+
+  // Auto-remove on disconnect
+  onDisconnect(userRef).remove();
+
+  // Live count display
+  const countRef = ref(db, 'onlineUsers');
+  onValue(countRef, (snapshot) => {
+    const count = snapshot.size || snapshot.numChildren();
+    document.getElementById('userCount').textContent = count;
+  });
+</script>
+
+  <br/>
+  <br/>
+  <h5>👥 Users Online</h5>
+  <div id="userCount"></div>
+</html>
