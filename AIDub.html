@@ -295,7 +295,7 @@
 
 
   <div class="site-header">
-  <h1>Movies VIPTEAMMOD - தமிழ் </h1>
+  <h1>VIPTEAMMOD Movies - தமிழ் </h1>
 
 
  
@@ -525,42 +525,53 @@ document.onkeydown = function (e) {
     });
   </script>
 
-    <script type="module">
-  // Import Firebase core + database
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-analytics.js";
   import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
 
-  // Firebase config
   const firebaseConfig = {
-  apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
-  projectId: "vipteammod-movies",
-  appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
-  databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
-};
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
 
   const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+  const db = getDatabase(app);
 
-// Track user
-const userId = Math.random().toString(36).substring(2);
-const userRef = ref(db, "onlineUsers/" + userId);
+  // Unique per-device ID (stored in localStorage)
+  let deviceId = localStorage.getItem("deviceId");
+  if (!deviceId) {
+    deviceId = Date.now() + "_" + Math.random().toString(36).substring(2);
+    localStorage.setItem("deviceId", deviceId);
+  }
 
-set(userRef, true);
-onDisconnect(userRef).remove();
+  // Extract model info from userAgent
+  const ua = navigator.userAgent;
+  const platform = navigator.platform;
 
-// Show count
-const countRef = ref(db, "onlineUsers");
-onValue(countRef, (snapshot) => {
-  const count = snapshot.size || snapshot.numChildren();
-  document.getElementById("userCount").textContent = count;
-});
+  const userRef = ref(db, "onlineUsers/" + deviceId);
 
+  const data = {
+    device: ua,
+    platform: platform,
+    time: new Date().toISOString()
+  };
+
+  set(userRef, data);
+  onDisconnect(userRef).remove();
+
+  // User count
+  const countRef = ref(db, "onlineUsers");
+  onValue(countRef, (snapshot) => {
+    const count = snapshot.size || snapshot.numChildren();
+    document.getElementById("userCount").textContent = count;
+  });
+</script>
 
 
 
 </script>
-
 
   <br/>
   <br/>
