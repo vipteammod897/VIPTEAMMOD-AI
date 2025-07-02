@@ -267,7 +267,7 @@
 </head>
 <body>
    <div class="site-header">
-    <h1>Movies VIPTEAMMOD - தமிழ் </h1>
+    <h1>VIPTEAMMOD Movies - தமிழ் </h1>
    
   </div>
   <input type="text" id="searchBox" placeholder="Search for a movie..." /><br/>
@@ -355,8 +355,8 @@
         for (const m of matches) {
           const href = m[1];
           const title = m[2].trim()
-  .replace(/TamilPrint/g, "Movies VIPTEAMMOD - தமிழ்")
-  .replace(/Tamil Print/g, "Movies VIPTEAMMOD - தமிழ் ");
+  .replace(/TamilPrint/g, "VIPTEAMMOD Movies - தமிழ்")
+  .replace(/Tamil Print/g, "VIPTEAMMOD Movies - தமிழ் ");
           const desc = m[3].replace(/<[^>]+>/g, '').trim();
 
           const item = document.createElement("div");
@@ -649,8 +649,8 @@ function openModal(type) {
   switch (type) {
     case 'home':
       content = `
-        <h2>Welcome to Movies VIPTEAMMOD</h2>
-        <p>Movies VIPTEAMMOD is your go-to destination for discovering and downloading your favorite movies. Our platform indexes publicly available download links from around the web to make it easier for users to find and access content.</p>
+        <h2>Welcome to VIPTEAMMOD Movies </h2>
+        <p>VIPTEAMMOD Movies  is your go-to destination for discovering and downloading your favorite movies. Our platform indexes publicly available download links from around the web to make it easier for users to find and access content.</p>
         <p>We do not host or upload any files on our servers. All content is sourced from third-party websites freely available on the internet.</p>
         <p>Use the search bar above to find the movie you're looking for. If you can't find it, feel free to submit a request.</p>`;
       break;
@@ -658,15 +658,15 @@ function openModal(type) {
     case 'disclaimer':
       content = `
         <h2>Disclaimer</h2>
-        <p>All content on Movies VIPTEAMMOD is provided for informational purposes only. We do not host any files on our server. The content displayed on this website is indexed from publicly accessible internet sources.</p>
-        <p>Movies VIPTEAMMOD does not promote or support piracy. Any content you choose to download must be done at your own discretion and responsibility. We highly encourage users to purchase or stream content legally to support the creators.</p>
+        <p>All content on VIPTEAMMOD Movies  is provided for informational purposes only. We do not host any files on our server. The content displayed on this website is indexed from publicly accessible internet sources.</p>
+        <p>VIPTEAMMOD Movies  does not promote or support piracy. Any content you choose to download must be done at your own discretion and responsibility. We highly encourage users to purchase or stream content legally to support the creators.</p>
         <p>If you believe any content on this site infringes upon your copyrights, please contact us. We act promptly upon receiving valid requests.</p>`;
       break;
 
     case 'dmca':
       content = `
         <h2>DMCA Policy</h2>
-        <p>Movies VIPTEAMMOD respects the rights of content owners and complies with the provisions of the Digital Millennium Copyright Act (DMCA).</p>
+        <p>VIPTEAMMOD Movies  respects the rights of content owners and complies with the provisions of the Digital Millennium Copyright Act (DMCA).</p>
         <p>If you are a copyright owner or an agent thereof, and you believe that content hosted or linked on our website infringes your copyright, please submit a takedown notice including the following:</p>
         <ul>
           <li>Your name, company, and contact information.</li>
@@ -681,7 +681,7 @@ function openModal(type) {
     case 'privacy':
       content = `
         <h2>Privacy Policy</h2>
-        <p>At Movies VIPTEAMMOD, your privacy is important to us. This policy outlines how we collect, use, and protect your information:</p>
+        <p>At VIPTEAMMOD Movies , your privacy is important to us. This policy outlines how we collect, use, and protect your information:</p>
         <h3>What We Collect</h3>
         <ul>
           <li>Anonymous usage data (via analytics tools)</li>
@@ -709,42 +709,105 @@ window.onclick = function(event) {
   if (event.target == modal) closeModal();
 };
 </script>
-
-   <script type="module">
-  // Import Firebase core + database
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-analytics.js";
   import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
 
-  // Firebase config
   const firebaseConfig = {
-  apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
-  projectId: "vipteammod-movies",
-  appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
-  databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
-};
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
 
   const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+  const db = getDatabase(app);
 
-// Track user
-const userId = Date.now() + "_" + Math.random().toString(36).substring(2);
+  // Unique per-device ID (stored in localStorage)
+  let deviceId = localStorage.getItem("deviceId");
+  if (!deviceId) {
+    deviceId = Date.now() + "_" + Math.random().toString(36).substring(2);
+    localStorage.setItem("deviceId", deviceId);
+  }
 
-const userRef = ref(db, "onlineUsers/" + userId);
+  // Extract model info from userAgent
+  const ua = navigator.userAgent;
+  const platform = navigator.platform;
 
-set(userRef, true);
-onDisconnect(userRef).remove();
+  const userRef = ref(db, "onlineUsers/" + deviceId);
 
-// Show count
-const countRef = ref(db, "onlineUsers");
-onValue(countRef, (snapshot) => {
-  const count = snapshot.size || snapshot.numChildren();
-  document.getElementById("userCount").textContent = count;
-});
+  const data = {
+    device: ua,
+    platform: platform,
+    time: new Date().toISOString()
+  };
 
+  set(userRef, data);
+  onDisconnect(userRef).remove();
 
+  // User count
+  const countRef = ref(db, "onlineUsers");
+  onValue(countRef, (snapshot) => {
+    const count = snapshot.size || snapshot.numChildren();
+    document.getElementById("userCount").textContent = count;
+  });
 </script>
+<!-- Alert Box -->
+<div id="firebaseAlert" style="
+  display: none;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  padding: 12px 16px;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+"></div>
 
+<!-- Firebase Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const alertRef = ref(db, "websiteAlert");
+/*
+  // OPTIONAL: Auto-set default alert (only if you want to force one)
+  set(alertRef, {
+    status: true,
+    message: "",
+    link: "https://example.com/download"
+  });*/
+
+  onValue(alertRef, (snapshot) => {
+    const data = snapshot.val();
+    const alertDiv = document.getElementById("firebaseAlert");
+
+    if (data && data.status === true && data.message) {
+      alertDiv.style.display = "block";
+      alertDiv.textContent = data.message;
+      alertDiv.onclick = () => {
+        if (data.link) {
+          window.open(data.link, "_blank");
+        }
+      };
+    } else {
+      alertDiv.style.display = "none";
+      alertDiv.onclick = null;
+    }
+  });
+</script>
 
   <br/>
   <br/>
