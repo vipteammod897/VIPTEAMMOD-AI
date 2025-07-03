@@ -365,55 +365,7 @@
     border-radius: 30px;
   }
 </style>
-<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
 
-<h3 style="color:white;">♻️ Maintenance Mode</h3>
-<label class="switch">
-  <input type="checkbox" id="maintenanceToggle">
-  <span class="slider"></span>
-</label>
-<span id="maintenanceStatus" style="color:white;font-weight:bold;margin-left:10px;">Checking status...</span>
-
-<script type="module">
-  const firebaseConfig = {
-    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
-    projectId: "vipteammod-movies",
-    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
-    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const ref = db.ref("controls/maintenance_mode");
-
-  window.onload = function () {
-    const toggle = document.getElementById("maintenanceToggle");
-    const status = document.getElementById("maintenanceStatus");
-
-    // Realtime read
-    ref.on("value", (snapshot) => {
-      const isOn = snapshot.val() === true;
-      toggle.checked = isOn;
-      status.textContent = isOn ? "🔧 Maintenance ON" : "✅ Maintenance OFF";
-    });
-
-    // Toggle with password
-    toggle.addEventListener("change", () => {
-      if (toggle.checked) {
-        const password = prompt("Enter password to enable Maintenance Mode:");
-        if (password === "16") {
-          ref.set(true);
-        } else {
-          alert("❌ Incorrect password!");
-          toggle.checked = false;
-        }
-      } else {
-        ref.set(false); // turn off without password
-      }
-    });
-  };
-</script>
 <h3 style="color:white;">💬 Popup Message Control</h3>
 
 <input type="text" id="popupInput" placeholder="Enter popup message..." 
@@ -466,6 +418,140 @@
     };
   };
 </script>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+
+<h3 style="color:white;">♻️ Maintenance Mode</h3>
+<label class="switch">
+  <input type="checkbox" id="maintenanceToggle">
+  <span class="slider"></span>
+</label>
+<span id="maintenanceStatus" style="color:white;font-weight:bold;margin-left:10px;">Checking status...</span>
+
+<script>
+  // ✅ Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  // ✅ Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const ref = db.ref("controls/maintenance_mode");
+
+  // ✅ DOM elements
+  const toggle = document.getElementById("maintenanceToggle");
+  const status = document.getElementById("maintenanceStatus");
+
+  // ✅ Listen to Firebase in real-time
+  ref.on("value", (snapshot) => {
+    const isOn = snapshot.val() === true;
+    toggle.checked = isOn;
+    status.textContent = isOn ? "🔧 Maintenance ON" : "✅ Maintenance OFF";
+  });
+
+  // ✅ Handle toggle
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) {
+      const password = prompt("Enter password to enable Maintenance Mode:");
+      if (password === "16") {
+        ref.set(true);
+      } else {
+        alert("❌ Incorrect password!");
+        toggle.checked = false;
+      }
+    } else {
+      ref.set(false);
+    }
+  });
+</script>
+
+
+<h3 style="color:white;">🎬 Video Visibility Control</h3>
+
+<label class="switch">
+  <input type="checkbox" id="videoToggle">
+  <span class="slider round"></span>
+</label>
+<span id="videoStatus" style="color:white; font-weight:bold; margin-left:10px;">Checking status...</span>
+
+<style>
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 30px;
+  }
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0;
+    right: 0; bottom: 0;
+    background-color: #888;
+    transition: 0.4s;
+    border-radius: 30px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #00c6ff;
+  }
+  input:checked + .slider:before {
+    transform: translateX(25px);
+  }
+</style>
+
+<script type="module">
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const ref = db.ref("Vcontrols/video_hidden");
+
+  const toggle = document.getElementById("videoToggle");
+  const status = document.getElementById("videoStatus");
+
+  // Realtime read
+  ref.on("value", (snapshot) => {
+    const isHidden = snapshot.val() === true;
+    toggle.checked = !isHidden; // ON = visible, OFF = hidden
+    status.textContent = isHidden ? "❌ Hidden" : "✅ Visible";
+  });
+
+  // Write on change
+  toggle.addEventListener("change", () => {
+    const hideVideo = !toggle.checked;
+    ref.set(hideVideo);
+  });
+</script>
+
+
+
+
+
 
 </body>
 </html>

@@ -316,7 +316,8 @@ body {
   <!-- Your popup content goes here -->
  
   <button id="downloadBtn">Download</button>
-    <button id="streamBtn">Play Video</button>
+<button id="streamBtn" style="position: relative; left: 10px;">Play Video</button>
+
 </div>
  </div>
 <!-- 🔔 Popup Message Box -->
@@ -448,7 +449,7 @@ body {
   const popup = document.getElementById("popup");
   popup.style.display = "flex";
 
-  const streamBtn = document.getElementById("streamBtn");
+const streamBtn = document.getElementById("streamBtn");
   const downloadBtn = document.getElementById("downloadBtn");
   const closeBtn = document.getElementById("closePopupBtn");
 
@@ -1024,6 +1025,32 @@ window.onclick = function(event) {
     }
   });
 </script>
+
+
+<script type="module">
+  window.onload = function () {
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const hideRef = db.ref("Vcontrols/video_hidden");
+
+    const streamBtn2 = document.getElementById("streamBtn");
+
+    hideRef.on("value", (snapshot) => {
+      const isHidden = snapshot.val() === true;
+      if (streamBtn2) {
+        streamBtn2.style.display = isHidden ? "none" : "block";
+      }
+    });
+  };
+</script>
+
+
 
 
   <br/>
