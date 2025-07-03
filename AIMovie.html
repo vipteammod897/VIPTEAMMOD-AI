@@ -871,6 +871,36 @@ window.onclick = function(event) {
   });
 
 </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    projectId: "vipteammod-movies",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const toggleRef = ref(db, "featureControl/searchEnabled");
+
+  const searchBox = document.getElementById("searchBox");
+
+  // Disable or enable searchBox based on Firebase flag
+  onValue(toggleRef, (snapshot) => {
+    const enabled = snapshot.val();
+    if (enabled === true) {
+      searchBox.removeAttribute("disabled");
+      searchBox.style.opacity = "1";
+    } else {
+      searchBox.setAttribute("disabled", true);
+      searchBox.style.opacity = "0.4";
+    }
+  });
+</script>
 
 
   <br/>
