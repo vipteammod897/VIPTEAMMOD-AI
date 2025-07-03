@@ -767,11 +767,10 @@ window.onclick = function(event) {
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   cursor: pointer;
 "></div>
-
 <!-- ✅ Firebase Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-  import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
@@ -783,33 +782,39 @@ window.onclick = function(event) {
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // 🎨 Dynamic Theme from Firebase
+  // 🎨 Available design themes
   const styleMap = {
-    blue: "linear-gradient(to right, #00c6ff, #0072ff)",
-    red: "linear-gradient(to right, #ff416c, #ff4b2b)",
-    green: "linear-gradient(to right, #00b09b, #96c93d)",
-    purple: "linear-gradient(to right, #8e2de2, #4a00e0)",
-    orange: "linear-gradient(to right, #f12711, #f5af19)"
-  };
+  blue: "linear-gradient(to right, #00c6ff, #0072ff)",
+  red: "linear-gradient(to right, #ff416c, #ff4b2b)",
+  green: "linear-gradient(to right, #00b09b, #96c93d)",
+  purple: "linear-gradient(to right, #8e2de2, #4a00e0)",
+  orange: "linear-gradient(to right, #f12711, #f5af19)",
+  pink: "linear-gradient(to right, #ff758c, #ff7eb3)",
+  teal: "linear-gradient(to right, #136a8a, #267871)",
+  gray: "linear-gradient(to right, #3e5151, #decba4)",
+  sunset: "linear-gradient(to right, #0b486b, #f56217)",
+  aqua: "linear-gradient(to right, #13547a, #80d0c7)"
+};
 
+
+  // 🔁 Listen for style changes
   const styleRef = ref(db, "designControl/style");
+  onValue(styleRef, (snapshot) => {
+    const key = snapshot.val();
+    const bg = styleMap[key] || "#0f2027";
 
-  get(styleRef).then((snapshot) => {
-    if (snapshot.exists()) {
-      const key = snapshot.val();
-      const bg = styleMap[key] || "#0f2027";
-    //  document.body.style.background = bg;
+    // Apply background to <body>
+    //document.body.style.background = bg;
 
-      const alertDiv = document.getElementById("firebaseAlert");
-      if (alertDiv) {
-        alertDiv.style.background = bg;
-      }
+    // Apply same style to alert box (if present)
+    const alertDiv = document.getElementById("firebaseAlert");
+    if (alertDiv) {
+      alertDiv.style.background = bg;
     }
   });
 
-  // 🔔 Website Alert Message
+  // 🔔 Alert system live update
   const alertRef = ref(db, "websiteAlert");
-
   onValue(alertRef, (snapshot) => {
     const data = snapshot.val();
     const alertDiv = document.getElementById("firebaseAlert");
@@ -826,6 +831,7 @@ window.onclick = function(event) {
     }
   });
 </script>
+
 
 
 <!-- Firebase Script -->
@@ -902,6 +908,64 @@ window.onclick = function(event) {
   });
 </script>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const btn = document.getElementById("tamilDubbedBtn");
+  const lockRef = ref(db, "featureControl/lockTamilDubbed");
+
+  // 🔄 Live Button Visibility Control
+  onValue(lockRef, (snapshot) => {
+    const visible = snapshot.val() === true;
+    btn.style.display = visible ? "inline-block" : "none";
+  });
+
+  // ✅ Optional: Only redirect when visible
+  btn.addEventListener("click", () => {
+    window.location.href = "https://vipteammod897.github.io/VIPTEAMMOD-AI/AIDub.html";
+  });
+</script>
+
+<div id="maintenanceMessage" style="display: none; color: red; font-size: 20px; text-align: center; margin-top: 50px;">
+ // 🔧 Site is Under Maintenance. Please check back later.
+  window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/Maintenance.html';
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const ref = db.ref("controls/maintenance_mode");
+
+  ref.on("value", (snapshot) => {
+    const maintenance = snapshot.val() === true;
+    const msg = document.getElementById("maintenanceMessage");
+
+    if (maintenance) {
+      msg.style.display = "block";
+    } else {
+      msg.style.display = "none";
+    }
+  });
+</script>
 
   <br/>
   <br/>
