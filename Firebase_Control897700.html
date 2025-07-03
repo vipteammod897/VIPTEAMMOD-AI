@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VIPTEAMMOD Alert Control Panel</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      min-height: 100vh;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #00ffff;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+      font-size: 15px;
+    }
+
+    input[type="text"], textarea, select {
+      width: 300px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 5px;
+      background: #ffffff10;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 24px;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #0072ff, #00c6ff);
+    }
+
+    #statusDisplay {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 15px;
+      text-align: center;
+    }
+
+    .panel-box {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel-box">
+    <h2>VIPTEAMMOD Alert Panel</h2>
+
+    <label>Status:</label>
+    <select id="statusSelect">
+      <option value="true">ON</option>
+      <option value="false">OFF</option>
+    </select>
+
+    <label>Message:</label>
+    <textarea id="messageInput" rows="3" placeholder="Enter alert message..."></textarea>
+
+    <label>Link (optional):</label>
+    <input type="text" id="linkInput" placeholder="https://your-link.com" />
+
+    <button onclick="saveAlert()">Save Alert</button>
+    <div id="statusDisplay"></div>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const alertRef = ref(db, "websiteAlert");
+
+    // Load current alert
+    get(alertRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        document.getElementById("statusSelect").value = data.status ? "true" : "false";
+        document.getElementById("messageInput").value = data.message || "";
+        document.getElementById("linkInput").value = data.link || "";
+      }
+    });
+
+    // Save alert
+    window.saveAlert = () => {
+      const status = document.getElementById("statusSelect").value === "true";
+      const message = document.getElementById("messageInput").value.trim();
+      const link = document.getElementById("linkInput").value.trim();
+
+      set(alertRef, {
+        status,
+        message,
+        link
+      }).then(() => {
+        const msg = document.getElementById("statusDisplay");
+        msg.innerText = "✅ Alert saved successfully!";
+        msg.style.color = "#00ff99";
+      }).catch((err) => {
+        const msg = document.getElementById("statusDisplay");
+        msg.innerText = "❌ Error saving alert!";
+        msg.style.color = "#ff8080";
+        console.error(err);
+      });
+    };
+  </script>
+</body>
+</html>
