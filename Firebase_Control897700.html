@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>🔥 VIPTEAMMOD Alert + Design Panel</title>
+  <title>VIPTEAMMOD Alert + Design Panel</title>
   <meta charset="UTF-8" />
   <style>
     body {
@@ -82,105 +82,111 @@
 <body>
   <div class="panel-box">
     <h2>🚀 VIPTEAMMOD Alert Panel</h2>
+<div style="max-width: 600px; margin: auto; color: white; font-family: sans-serif;">
 
-    <label>Status:</label>
-    <select id="statusSelect">
-      <option value="true">ON</option>
-      <option value="false">OFF</option>
-    </select>
+  <label>Status:</label><br>
+  <select id="statusSelect" style="padding: 8px; width: 100%; margin-bottom: 10px;">
+    <option value="true">✅ ON</option>
+    <option value="false">❌ OFF</option>
+  </select>
 
-    <label>Message:</label>
-    <textarea id="messageInput" rows="3" placeholder="Enter alert message..."></textarea>
+  <label>Message:</label><br>
+  <textarea id="messageInput" rows="3" placeholder="Enter alert message..." style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px;"></textarea>
 
-    <label>Link (optional):</label>
-    <input type="text" id="linkInput" placeholder="https://your-link.com" />
+  <label>Link (optional):</label><br>
+  <input type="text" id="linkInput" placeholder="https://your-link.com" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px;" />
 
-    <button onclick="saveAlert()">💾 Save Alert</button>
+  <button onclick="saveAlert()" style="background: #00c6ff; color: white; padding: 10px 20px; border: none; border-radius: 8px; margin-bottom: 20px;">
+    💾 Save Alert
+  </button>
 
-    <hr />
+  <hr style="margin: 20px 0;" />
 
-    <h2>🎨 Design Style Selector</h2>
-    <label>Choose Website Alert Style:</label>
-    <select id="designSelect">
-      <option value="blue">🔵 Blue Gradient</option>
-      <option value="red">🔴 Red Alert</option>
-      <option value="green">🟢 Green Success</option>
-      <option value="purple">🟣 Purple Info</option>
-      <option value="orange">🟠 Orange Warning</option>
-    </select>
+  <h2>🎨 Design Style Selector</h2>
 
-    <button onclick="saveStyle()">🎨 Save Style</button>
-    <div id="statusDisplay"></div>
-  </div>
+  <label>Choose Website Alert Style:</label><br>
+<select id="designSelect" style="padding: 8px; width: 100%; margin-bottom: 10px;">
+  <option value="blue">🔵 Blue Gradient</option>
+  <option value="red">🔴 Red Alert</option>
+  <option value="green">🟢 Green Success</option>
+  <option value="purple">🟣 Purple Info</option>
+  <option value="orange">🟠 Orange Warning</option>
+  <option value="pink">🌸 Pink Blossom</option>
+  <option value="teal">🧊 Teal Cool</option>
+  <option value="gray">⚫ Gray Steel</option>
+  <option value="sunset">🌇 Sunset Vibe</option>
+  <option value="aqua">💧 Aqua Blue</option>
+</select>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
-      projectId: "vipteammod-movies",
-      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
-      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
-    };
+  <button onclick="saveStyle()" style="background: #00c6ff; color: white; padding: 10px 20px; border: none; border-radius: 8px;">
+    🎨 Save Style
+  </button>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const alertRef = ref(db, "websiteAlert");
-    const styleRef = ref(db, "designControl/style");
+  <div id="statusDisplay" style="margin-top: 15px; font-weight: bold;"></div>
+</div>
 
-    // Load alert
-    get(alertRef).then((snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        document.getElementById("statusSelect").value = data.status ? "true" : "false";
-        document.getElementById("messageInput").value = data.message || "";
-        document.getElementById("linkInput").value = data.link || "";
-      }
-    });
+<!-- Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
 
-    // Load style
-    get(styleRef).then((snapshot) => {
-      if (snapshot.exists()) {
-        document.getElementById("designSelect").value = snapshot.val();
-      }
-    });
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
 
-    window.saveAlert = () => {
-      const status = document.getElementById("statusSelect").value === "true";
-      const message = document.getElementById("messageInput").value.trim();
-      const link = document.getElementById("linkInput").value.trim();
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-      set(alertRef, {
-        status,
-        message,
-        link
-      }).then(() => {
-        const msg = document.getElementById("statusDisplay");
-        msg.innerText = "✅ Alert saved successfully!";
-        msg.style.color = "#00ff99";
-      }).catch((err) => {
-        const msg = document.getElementById("statusDisplay");
-        msg.innerText = "❌ Error saving alert!";
-        msg.style.color = "#ff8080";
-        console.error(err);
-      });
-    };
+  const alertRef = ref(db, "websiteAlert");
+  const styleRef = ref(db, "designControl/style");
 
-    window.saveStyle = () => {
-      const selectedStyle = document.getElementById("designSelect").value;
-      set(styleRef, selectedStyle).then(() => {
-        const msg = document.getElementById("statusDisplay");
-        msg.innerText = "✅ Design saved successfully!";
-        msg.style.color = "#00ff99";
-      }).catch((err) => {
-        const msg = document.getElementById("statusDisplay");
-        msg.innerText = "❌ Failed to save design.";
-        msg.style.color = "#ff8080";
-        console.error(err);
-      });
-    };
-  </script>
+  // Load current alert data
+  get(alertRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      document.getElementById("statusSelect").value = data.status ? "true" : "false";
+      document.getElementById("messageInput").value = data.message || "";
+      document.getElementById("linkInput").value = data.link || "";
+    }
+  });
+
+  // Load current style
+  get(styleRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      document.getElementById("designSelect").value = snapshot.val();
+    }
+  });
+
+  // Save alert
+  window.saveAlert = () => {
+    const status = document.getElementById("statusSelect").value === "true";
+    const message = document.getElementById("messageInput").value.trim();
+    const link = document.getElementById("linkInput").value.trim();
+
+    set(alertRef, { status, message, link })
+      .then(() => showMessage("✅ Alert saved successfully!", "#00ff99"))
+      .catch(() => showMessage("❌ Failed to save alert.", "#ff4d4d"));
+  };
+
+  // Save design
+  window.saveStyle = () => {
+    const style = document.getElementById("designSelect").value;
+    set(styleRef, style)
+      .then(() => showMessage("✅ Design saved successfully!", "#00ff99"))
+      .catch(() => showMessage("❌ Failed to save design.", "#ff4d4d"));
+  };
+
+  function showMessage(text, color) {
+    const display = document.getElementById("statusDisplay");
+    display.innerText = text;
+    display.style.color = color;
+  }
+</script>
+
   
 <!-- Search Box Toggle -->
 <h3 style="color:white;">🔧 Search Box Control</h3>
@@ -222,6 +228,91 @@
     set(toggleRef, state);
   });
 </script>
+<!-- 🔒 Tamil Dubbed Lock Control -->
+<h3 style="color:white;">🔒 Lock Tamil Dubbed Button</h3>
+<label class="switch">
+  <input type="checkbox" id="btnLockToggle">
+  <span class="slider round"></span>
+</label>
+<span id="btnLockStatus" style="color:white;font-weight:bold;margin-left:10px;">Checking...</span>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    projectId: "vipteammod-movies",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const lockRef = ref(db, "featureControl/lockTamilDubbed");
+  const toggle = document.getElementById("btnLockToggle");
+  const status = document.getElementById("btnLockStatus");
+
+  onValue(lockRef, (snapshot) => {
+  const visible = snapshot.val() === true;
+  toggle.checked = visible;
+  status.textContent = visible ? "✅ Visible" : "❌ Hidden";
+});
+
+
+  toggle.addEventListener("change", () => {
+    set(lockRef, toggle.checked);
+  });
+</script>
+
+<!-- Optional Switch CSS (reuse if not already present) -->
+<style>
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 30px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #888;
+    transition: 0.4s;
+    border-radius: 30px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background-color: #00c6ff;
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(25px);
+  }
+</style>
 
 <!-- Stylish Toggle Switch CSS -->
 <style>
@@ -273,7 +364,56 @@
   .slider.round {
     border-radius: 30px;
   }
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
 
+<h3 style="color:white;">♻️ Maintenance Mode</h3>
+<label class="switch">
+  <input type="checkbox" id="maintenanceToggle">
+  <span class="slider"></span>
+</label>
+<span id="maintenanceStatus" style="color:white;font-weight:bold;margin-left:10px;">Checking status...</span>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const ref = db.ref("controls/maintenance_mode");
+
+  window.onload = function () {
+    const toggle = document.getElementById("maintenanceToggle");
+    const status = document.getElementById("maintenanceStatus");
+
+    // Realtime read
+    ref.on("value", (snapshot) => {
+      const isOn = snapshot.val() === true;
+      toggle.checked = isOn;
+      status.textContent = isOn ? "🔧 Maintenance ON" : "✅ Maintenance OFF";
+    });
+
+    // Toggle with password
+    toggle.addEventListener("change", () => {
+      if (toggle.checked) {
+        const password = prompt("Enter password to enable Maintenance Mode:");
+        if (password === "16") {
+          ref.set(true);
+        } else {
+          alert("❌ Incorrect password!");
+          toggle.checked = false;
+        }
+      } else {
+        ref.set(false); // turn off without password
+      }
+    });
+  };
+</script>
 
 </body>
 </html>
