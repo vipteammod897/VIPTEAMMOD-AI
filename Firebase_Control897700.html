@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VIPTEAMMOD Alert Control Panel</title>
+  <title>🔥 VIPTEAMMOD Alert + Design Panel</title>
   <meta charset="UTF-8" />
   <style>
     body {
@@ -18,7 +18,6 @@
     h2 {
       font-size: 24px;
       margin-bottom: 20px;
-      text-align: center;
       color: #00ffff;
     }
 
@@ -51,7 +50,6 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
     }
 
     button:hover {
@@ -73,11 +71,17 @@
       width: 100%;
       max-width: 400px;
     }
+
+    hr {
+      margin: 30px 0;
+      width: 100%;
+      border: 1px solid #ffffff30;
+    }
   </style>
 </head>
 <body>
   <div class="panel-box">
-    <h2>VIPTEAMMOD Alert Panel</h2>
+    <h2>🚀 VIPTEAMMOD Alert Panel</h2>
 
     <label>Status:</label>
     <select id="statusSelect">
@@ -91,11 +95,24 @@
     <label>Link (optional):</label>
     <input type="text" id="linkInput" placeholder="https://your-link.com" />
 
-    <button onclick="saveAlert()">Save Alert</button>
+    <button onclick="saveAlert()">💾 Save Alert</button>
+
+    <hr />
+
+    <h2>🎨 Design Style Selector</h2>
+    <label>Choose Website Alert Style:</label>
+    <select id="designSelect">
+      <option value="blue">🔵 Blue Gradient</option>
+      <option value="red">🔴 Red Alert</option>
+      <option value="green">🟢 Green Success</option>
+      <option value="purple">🟣 Purple Info</option>
+      <option value="orange">🟠 Orange Warning</option>
+    </select>
+
+    <button onclick="saveStyle()">🎨 Save Style</button>
     <div id="statusDisplay"></div>
   </div>
 
-  <!-- Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
     import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
@@ -110,8 +127,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const alertRef = ref(db, "websiteAlert");
+    const styleRef = ref(db, "designControl/style");
 
-    // Load current alert
+    // Load alert
     get(alertRef).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
@@ -121,7 +139,13 @@
       }
     });
 
-    // Save alert
+    // Load style
+    get(styleRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        document.getElementById("designSelect").value = snapshot.val();
+      }
+    });
+
     window.saveAlert = () => {
       const status = document.getElementById("statusSelect").value === "true";
       const message = document.getElementById("messageInput").value.trim();
@@ -138,6 +162,20 @@
       }).catch((err) => {
         const msg = document.getElementById("statusDisplay");
         msg.innerText = "❌ Error saving alert!";
+        msg.style.color = "#ff8080";
+        console.error(err);
+      });
+    };
+
+    window.saveStyle = () => {
+      const selectedStyle = document.getElementById("designSelect").value;
+      set(styleRef, selectedStyle).then(() => {
+        const msg = document.getElementById("statusDisplay");
+        msg.innerText = "✅ Design saved successfully!";
+        msg.style.color = "#00ff99";
+      }).catch((err) => {
+        const msg = document.getElementById("statusDisplay");
+        msg.innerText = "❌ Failed to save design.";
         msg.style.color = "#ff8080";
         console.error(err);
       });
