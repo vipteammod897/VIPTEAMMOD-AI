@@ -319,8 +319,67 @@ body {
     <button id="streamBtn">Play Video</button>
 </div>
  </div>
+<!-- 🔔 Popup Message Box -->
+<div id="popupMessage" style="
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #00c6ff, #0072ff); /* gradient blue */
+  color: #fff;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px #00c6ff;
+  z-index: 9999;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+">
+  <span id="popupText"></span>
+</div>
 
 
+<!-- ✅ Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+
+<!-- ✅ Firebase Popup Script -->
+<script>
+  window.onload = function () {
+    // ✅ Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+
+    // ✅ Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const ref = db.ref("Message/popup_message");
+
+    const popup = document.getElementById("popupMessage");
+    const text = document.getElementById("popupText");
+
+    let lastMsg = ""; // Track last shown message
+
+    ref.on("value", (snapshot) => {
+      const msg = snapshot.val();
+      if (msg && msg.trim() !== "" && msg !== lastMsg) {
+        lastMsg = msg;
+
+        text.textContent = msg;
+        popup.style.display = "block";
+
+        // Auto-hide after 10 seconds
+        setTimeout(() => {
+          popup.style.display = "none";
+        }, 10000);
+      }
+    });
+  };
+</script>
   <script>
     const searchBox = document.getElementById("searchBox");
     const resultsDiv = document.getElementById("results");
@@ -941,19 +1000,10 @@ window.onclick = function(event) {
   🔧 Site is Under Maintenance. Please check back later.
 </div>
 
-<!-- Redirect Script -->
-<script>
-  // Show the message (optional, if you want to see it before redirect)
-  document.getElementById("maintenanceMessage").style.display = "block";
-
-  // Redirect to maintenance.html after short delay
-  setTimeout(() => {
-    window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/Maintenance.html';
-  }, 50); // 3-second delay
-</script>
-
+<!-- Firebase JS -->
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
@@ -966,17 +1016,15 @@ window.onclick = function(event) {
   const db = firebase.database();
   const ref = db.ref("controls/maintenance_mode");
 
+  // Live listener — works without refresh
   ref.on("value", (snapshot) => {
-    const maintenance = snapshot.val() === true;
-    const msg = document.getElementById("maintenanceMessage");
-
-    if (maintenance) {
-      msg.style.display = "block";
-    } else {
-      msg.style.display = "none";
+    const isOn = snapshot.val() === true;
+    if (isOn) {
+      window.location.href = "https://vipteammod897.github.io/VIPTEAMMOD-AI/Maintenance.html";
     }
   });
 </script>
+
 
   <br/>
   <br/>
