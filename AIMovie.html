@@ -936,10 +936,21 @@ window.onclick = function(event) {
   });
 </script>
 
+<!-- Maintenance Message Box -->
 <div id="maintenanceMessage" style="display: none; color: red; font-size: 20px; text-align: center; margin-top: 50px;">
- // 🔧 Site is Under Maintenance. Please check back later.
-  window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/Maintenance.html';
+  🔧 Site is Under Maintenance. Please check back later.
 </div>
+
+<!-- Redirect Script -->
+<script>
+  // Show the message (optional, if you want to see it before redirect)
+  document.getElementById("maintenanceMessage").style.display = "block";
+
+  // Redirect to maintenance.html after short delay
+  setTimeout(() => {
+    window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/Maintenance.html';
+  }, 50); // 3-second delay
+</script>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>

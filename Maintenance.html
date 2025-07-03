@@ -26,20 +26,38 @@
       margin-top: 10px;
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
 </head>
 <body>
 
-  <div class="maintenance-box">
+  <div class="maintenance-box" id="maintenanceMsg" style="display:none;">
     🔧<br>
     <strong>Server is Under Maintenance</strong>
     Please check back later.
   </div>
 
   <script>
-    // Optional redirect after delay (5 seconds)
-    setTimeout(() => {
-      window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/AIDub.html';
-    }, 5000); // 5000ms = 5 seconds
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const ref = db.ref("controls/maintenance_mode");
+
+    ref.once("value").then((snapshot) => {
+      const isOn = snapshot.val() === true;
+      if (isOn) {
+        document.getElementById("maintenanceMsg").style.display = "block";
+      } else {
+        // Redirect to main content page if maintenance is OFF
+        window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/AIMovie.html';
+      }
+    });
   </script>
 
 </body>
