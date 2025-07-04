@@ -35,6 +35,16 @@
     Please check back later.
   </div>
 
+  <script>
+    window.onload = () => {
+      const allowed = sessionStorage.getItem("access_granted");
+      if (allowed !== "true") {
+        // If not allowed, send back
+
+        window.location.href = "AIMovie.html";
+      }
+    };
+  </script>
   
 </body>
 </html>

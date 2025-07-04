@@ -282,9 +282,16 @@ body {
 <!-- JavaScript -->
 <script>
   document.getElementById('tamilDubbedBtn').addEventListener('click', function () {
-    window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/AIDub.html';
+    const allowed = sessionStorage.getItem("access_granted");
+    if (allowed !== "true") {
+      // If not allowed, send back
+      window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/AIDub.html';
+    } else {
+      
+    }
   });
 </script>
+
 
 <!-- CSS Styling -->
 <style>
@@ -327,27 +334,45 @@ body {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, #00c6ff, #0072ff); /* gradient blue */
+  background: linear-gradient(135deg, #ff416c, #ff4b2b); /* Pink to Orange gradient */
   color: #fff;
   padding: 15px 25px;
-  border-radius: 8px;
-  box-shadow: 0 0 15px #00c6ff;
+  border-radius: 12px;
+  box-shadow: 0 0 25px rgba(255, 0, 100, 0.8), 0 0 35px rgba(255, 75, 43, 0.8);
   z-index: 9999;
   font-family: 'Segoe UI', sans-serif;
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  animation: fadeInUp 0.6s ease-out;
+  transition: all 0.3s ease;
+  max-width: 90%;
+  text-align: center;
 ">
   <span id="popupText"></span>
 </div>
 
+<!-- ✨ Animation Keyframes -->
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+</style>
 
 <!-- ✅ Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
 
-<!-- ✅ Firebase Popup Script -->
+<!-- ✅ Firebase Popup Script with Colors -->
 <script>
   window.onload = function () {
-    // ✅ Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
       projectId: "vipteammod-movies",
@@ -355,25 +380,35 @@ body {
       databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
     };
 
-    // ✅ Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const ref = db.ref("Message/popup_message");
+    const ref = db.ref("Message");
 
     const popup = document.getElementById("popupMessage");
     const text = document.getElementById("popupText");
 
-    let lastMsg = ""; // Track last shown message
+    let lastShown = "";
 
     ref.on("value", (snapshot) => {
-      const msg = snapshot.val();
-      if (msg && msg.trim() !== "" && msg !== lastMsg) {
-        lastMsg = msg;
+      const data = snapshot.val();
+      if (!data || !data.popup_message || data.popup_message.trim() === "") {
+        popup.style.display = "none";
+        return;
+      }
+
+      const msg = data.popup_message;
+      const bg = data.bg_color || "#0072ff";
+      const color = data.text_color || "#ffffff";
+
+      if (msg !== lastShown) {
+        lastShown = msg;
 
         text.textContent = msg;
+        popup.style.background = bg;
+        popup.style.color = color;
         popup.style.display = "block";
 
-        // Auto-hide after 10 seconds
+        // Auto-hide after 10s
         setTimeout(() => {
           popup.style.display = "none";
         }, 10000);
@@ -381,6 +416,7 @@ body {
     });
   };
 </script>
+
   <script>
     const searchBox = document.getElementById("searchBox");
     const resultsDiv = document.getElementById("results");
@@ -1017,11 +1053,19 @@ window.onclick = function(event) {
   ref.on("value", (snapshot) => {
     const isOn = snapshot.val() === true;
     if (isOn) {
+      
+      const allowed = sessionStorage.getItem("access_granted");
+    if (allowed !== "true") {
+      // If not allowed, send back
       window.location.href = "https://vipteammod897.github.io/VIPTEAMMOD-AI/Maintenance.html";
+      
+      
+    } else {
+      
+    }
     }
   });
 </script>
-
 
 
   <br/>
