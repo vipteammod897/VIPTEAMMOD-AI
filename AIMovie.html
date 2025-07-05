@@ -1065,7 +1065,7 @@ window.onclick = function(event) {
   🔧 Site is Under Maintenance. Please check back later.
 </div>
 
-<script>
+<script type="module">
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
     projectId: "vipteammod-movies",
@@ -1081,16 +1081,9 @@ window.onclick = function(event) {
   ref.on("value", (snapshot) => {
     const isOn = snapshot.val() === true;
     if (isOn) {
-      
-      const allowed = sessionStorage.getItem("access_granted");
-    if (allowed !== "true") {
-      // If not allowed, send back
-      window.location.href = "https://vipteammod897.github.io/VIPTEAMMOD-AI/Maintenance.html";
-      
-      
-    } else {
-      
-    }
+     
+      window.location.href = "Maintenance.html";
+
     }
   });
 </script>

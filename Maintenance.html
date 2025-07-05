@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <title>Server Under Maintenance</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
   <style>
     body {
       background-color: #111;
@@ -29,22 +34,35 @@
 </head>
 <body>
 
-  <div class="maintenance-box">
+  <div class="maintenance-box" id="maintenanceBox">
     🔧<br>
     <strong>Server is Under Maintenance</strong>
     Please check back later.
   </div>
 
   <script>
-    window.onload = () => {
-      const allowed = sessionStorage.getItem("access_granted");
-      if (allowed !== "true") {
-        // If not allowed, send back
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
 
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const ref = db.ref("controls/maintenance_mode");
+
+    // Check if maintenance is OFF → redirect to main
+    ref.on("value", (snapshot) => {
+      const isOn = snapshot.val() === true;
+
+      if (!isOn) {
+        // Maintenance off, return to main.html
         window.location.href = "AIMovie.html";
       }
-    };
+      // else do nothing and stay on Maintenance
+    });
   </script>
-  
+
 </body>
 </html>
