@@ -6,7 +6,7 @@
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
 
   <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet" />
- 
+
   <style>
      * {
     box-sizing: border-box;
@@ -162,54 +162,55 @@ body {
     margin-top: 0;
   }
 
-  .telegram-glow-btn {
-    display: inline-block;
-    padding: 4px;
-    border-radius: 50%;
-    background: transparent;
-    transform: scale(1.1);
-    box-shadow: 0 0 25px rgba(0, 136, 204, 0.9), 0 0 60px rgba(0, 136, 204, 0.7);
-    transition: transform 0.3s ease, box-shadow 0.4s ease;
-    text-decoration: none;
-    position: relative;
-  }
 
-  .telegram-icon {
-    width: 35px;
-    height: 35px;
-    display: block;
-  }
+:root {
+  --glow-color: #0088cc; /* default */
+}
+
+.telegram-glow-btn {
+  display: inline-block;
+  padding: 4px;
+  border-radius: 50%;
+  background: transparent;
+  transform: scale(1.1);
+  box-shadow: 0 0 25px var(--glow-color), 0 0 60px var(--glow-color);
+  transition: transform 0.3s ease, box-shadow 0.4s ease;
+  text-decoration: none;
+  position: relative;
+}
+
 .telegram-glow-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, rgba(0, 198, 255, 0.5) 20%, transparent 70%);
-    border-radius: 50%;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, var(--glow-color) 20%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  animation: pulse-wave-glow 2s infinite ease-out;
+  box-shadow: 0 0 30px var(--glow-color), 0 0 60px var(--glow-color);
+  filter: blur(2px);
+  z-index: -1;
+}
+
+.telegram-icon {
+  width: 43px;
+  height: 43px;
+  display: block;
+}
+
+@keyframes pulse-wave-glow {
+  0% {
     transform: translate(-50%, -50%) scale(0.8);
-    animation: pulse-wave-glow 2s infinite ease-out;
-    box-shadow: 0 0 30px rgba(0, 198, 255, 0.7), 0 0 60px rgba(0, 198, 255, 0.5);
-    filter: blur(2px);
-    z-index: -1;
+    opacity: 1;
   }
-
-  @keyframes pulse-wave-glow {
-    0% {
-      transform: translate(-50%, -50%) scale(0.8);
-      opacity: 0.9;
-    }
-    50% {
-      transform: translate(-50%, -50%) scale(1.6);
-      opacity: 0.5;
-    }
-    100% {
-      transform: translate(-50%, -50%) scale(2.2);
-      opacity: 0;
-    }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
   }
-
+}
 
 
     .video-container {
@@ -268,7 +269,7 @@ body {
 </head>
 <body>
    <div class="site-header">
-    <h1>VIPTEAMMOD Movies - தமிழ் </h1>
+    <h1 id="dynamicText">VIPTEAMMOD Movies - தமிழ் </h1>
    
   </div>
   <input type="text" id="searchBox" placeholder="Search for a movie..." /><br/>
@@ -291,7 +292,6 @@ body {
     }
   });
 </script>
-
 
 <!-- CSS Styling -->
 <style>
@@ -338,7 +338,8 @@ body {
   color: #fff;
   padding: 15px 25px;
   border-radius: 12px;
-  box-shadow: 0 0 25px rgba(255, 0, 100, 0.8), 0 0 35px rgba(255, 75, 43, 0.8);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 35px rgba(255, 255, 255, 0.8);
+
   z-index: 9999;
   font-family: 'Segoe UI', sans-serif;
   font-size: 17px;
@@ -622,16 +623,11 @@ document.onkeydown = function (e) {
   <br/>
   <br/>
    <div class="telegram-center-wrapper">
-    <a href="https://t.me/CHEATERS_IS_BRAND" 
-       class="telegram-glow-btn" 
-       target="_self" 
-       rel="noopener noreferrer" 
-       title="Join our Telegram group">
-      <svg class="telegram-icon" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 240 240" fill="currentColor">
-        <circle cx="120" cy="120" r="120" fill="#0088cc"/>
-        <path fill="#fff" d="M180.5 65.8L160 176.4c-1.5 8-5.7 10-11.5 6.3l-32-23.6-15.4 14.9c-1.7 1.7-3.2 3.2-6.6 3.2l2.3-33.1 60.2-54c2.6-2.3-.6-3.6-4-1.3l-74.4 46.8-32-10c-7-2.2-7.2-7-1.5-9.3l124.7-48.2c5.8-2.1 10.8 1.3 9 9.1z"/>
-      </path></circle></svg>
-    </a>
+<a id="telegramLink" class="telegram-glow-btn" href="#" target="_blank" title="Join Telegram">
+  <img id="telegramIcon" class="telegram-icon" src="default.svg" />
+</a>
+
+    
   </div>
  <br/>
   <br/>
@@ -639,7 +635,39 @@ document.onkeydown = function (e) {
    <br/>
   <br/>
   <br/>
- 
+ <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+firebase.database().ref("social/telegram").on("value", (snapshot) => {
+  const data = snapshot.val();
+
+  if (data) {
+    if (data.url) {
+      document.getElementById("telegramLink").href = data.url;
+    }
+
+    if (data.icon) {
+      document.getElementById("telegramIcon").src = data.icon;
+    }
+
+    if (data.glowColor) {
+      document.documentElement.style.setProperty('--glow-color', data.glowColor);
+    }
+  }
+});
+
+</script>
+
   <footer1 style="text-align: center; padding: 20px; font-size: 14px; color: #888;">
  <p>
     We love cinema. We don’t support piracy.

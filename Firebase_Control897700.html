@@ -585,5 +585,36 @@
   }
 </script>
 
+
+<h2>🔧 Update Telegram Settings</h2>
+
+<label>Telegram URL:</label><br/>
+<input type="text" id="telegramUrl" placeholder="Enter Telegram Group Link" style="width: 300px;" /><br/><br/>
+
+<label>Telegram Icon URL:</label><br/>
+<input type="text" id="telegramIconUrl" placeholder="Enter Telegram SVG or PNG URL" style="width: 300px;" /><br/><br/>
+
+<label>Telegram Glow Color:</label><br/>
+<input type="color" id="telegramColor" value="#0088cc" style="width: 120px; height: 40px;" /><br/><br/>
+
+<button onclick="updateTelegram()">✅ Save to Firebase</button>
+
+<script>
+function updateTelegram() {
+  const url = document.getElementById("telegramUrl").value.trim();
+  const icon = document.getElementById("telegramIconUrl").value.trim();
+  const glowColor = document.getElementById("telegramColor").value;
+
+  if (url || icon || glowColor) {
+    firebase.database().ref("social/telegram").set({
+      url: url || "",
+      icon: icon || "",
+      glowColor: glowColor || "#0088cc"
+    });
+  }
+}
+</script>
+
+
 </body>
 </html>
