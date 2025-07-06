@@ -277,21 +277,40 @@ body {
     <div class="spinner"></div>
   </div><br/>
   <div id="results"></div>
-  <!-- Button HTML -->
-<button id="tamilDubbedBtn">🎥 All Tamil Dubbed Movies</button>
+<!-- Button HTML -->
+<button id="tamilDubbedBtn">All Tamil Dubbed Movies</button>
 
-<!-- JavaScript -->
-<script>
+<!-- Script -->
+<script type="module">
+  // Import Firebase (if not already included elsewhere)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+
   document.getElementById('tamilDubbedBtn').addEventListener('click', function () {
-    const allowed = sessionStorage.getItem("access_granted");
-    if (allowed !== "true") {
-      // If not allowed, send back
-      window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/AIDub.html';
-    } else {
-      
-    }
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // ✅ CHANGE your database reference path here
+    const refPath = ref(db, "tamil_movies/tamil_dubbed_status");
+
+    // Listen for changes
+    onValue(refPath, (snapshot) => {
+      const isOn = snapshot.val() === true;
+      if (isOn) {
+        window.location.href = "AIDub.html";
+      }
+    });
   });
 </script>
+
 
 <!-- CSS Styling -->
 <style>
@@ -1053,11 +1072,19 @@ window.onclick = function(event) {
     const visible = snapshot.val() === true;
     btn.style.display = visible ? "inline-block" : "none";
   });
-
+      // ✅ CHANGE your database reference path here
+    const refPath = ref(db, "tamil_movies/tamil_dubbed_status");
+    
   // ✅ Optional: Only redirect when visible
   btn.addEventListener("click", () => {
-    window.location.href = "https://vipteammod897.github.io/VIPTEAMMOD-AI/AIDub.html";
+  const isOn = snapshot.val() === true;
+      if (isOn) {
+        window.location.href = "AIDub.html";
+      }
+    
   });
+
+ 
 </script>
 
 <!-- Maintenance Message Box -->
@@ -1088,6 +1115,16 @@ window.onclick = function(event) {
   });
 </script>
 
+<audio id="autoPlayer" src="Maintenance.mp3" loop></audio>
+
+<script>
+  window.addEventListener("load", () => {
+    const audio = document.getElementById("autoPlayer");
+    audio.play().catch((err) => {
+     // console.log("Autoplay blocked. Will play on interaction.");
+    });
+  });
+</script>
 
   <br/>
   <br/>

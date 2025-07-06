@@ -449,7 +449,7 @@ function goBack() {
     loadPage(previous, true); // Load it and flag as 'back'
   } else {
     // Redirect to homepage when no history
-    window.location.href = 'https://vipteammod897.github.io/VIPTEAMMOD-AI/AIMovie.html';
+    window.location.href = 'AIMovie.html';
   }
 }
 
@@ -560,15 +560,30 @@ onValue(countRef, (snapshot) => {
 
 
 </script>
-  <script>
-    window.onload = () => {
-      const allowed = sessionStorage.getItem("access_granted");
-      if (allowed !== "true") {
-        // If not allowed, send back
-    //    alert("Access Denied! Redirecting to Main.html");
-        window.location.href = "AIMovie.html";
-      }
+
+
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
     };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const ref = db.ref("tamil_movies/tamil_dubbed_status");
+
+
+    ref.on("value", (snapshot) => {
+      const isOn = snapshot.val() === true;
+
+      if (!isOn) {
+  
+      }
+      // Maintenance off, return to main.html
+        window.location.href = "AIMovie.html";
+    });
   </script>
 
   <br/>

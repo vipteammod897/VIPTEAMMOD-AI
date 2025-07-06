@@ -615,6 +615,46 @@ function updateTelegram() {
 }
 </script>
 
+<h3 style="color:white;">🛡️ Tamil Dub Link Block</h3>
+<label class="switch">
+  <input type="checkbox" id="maintenanceToggle2">
+  <span class="slider"></span>
+</label>
+<span id="maintenanceStatus2" style="color:white;font-weight:bold;margin-left:10px;">Checking status...</span>
+
+<script type="module">
+  // ✅ Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+
+  // ✅ Prevent multiple initializations
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  const db = firebase.database();
+  const ref = db.ref("tamil_movies/tamil_dubbed_status");
+
+  // ✅ DOM elements
+  const toggle = document.getElementById("maintenanceToggle2");
+  const status = document.getElementById("maintenanceStatus2");
+
+  // ✅ Firebase real-time status update
+  ref.on("value", (snapshot) => {
+    const isOn = snapshot.val() === true;
+    toggle.checked = isOn;
+    status.textContent = isOn ? "🔐 Tamil Dub Link ON" : "🔓 Tamil Dub Link OFF";
+  });
+
+  // ✅ Direct toggle update (no password)
+  toggle.addEventListener("change", () => {
+    ref.set(toggle.checked);
+  });
+</script>
 
 </body>
 </html>
