@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Android Security Remover Tool</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #232526, #414345);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      letter-spacing: 2px;
+      font-weight: bold;
+      color: #00e676;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .card {
+      background: #2c2f33;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      background: #33373b;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #00e5ff;
+    }
+
+    .card p {
+      color: #ccc;
+      font-size: 16px;
+    }
+
+    .highlight {
+      color: #ff4081;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header>Android Security Remover Tool</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>1. Auto Delete Security</h2>
+    <p>🔍 <span class="highlight">Search:</span> <code>delete</code></p>
+    <p>🧹 Remove all code containing delete statements to bypass data self-destruct routines.</p>
+  </div>
+
+  <div class="card">
+    <h2>2. Auto Back Button Security</h2>
+    <p>🔍 <span class="highlight">Search:</span> <code>finish</code></p>
+    <p>🧹 Remove all code with finish() to avoid app closure when going back.</p>
+  </div>
+
+  <div class="card">
+    <h2>3. Toast & Dialog Box Security</h2>
+    <p>🔍 <span class="highlight">Search:</span> <code>show</code></p>
+    <p>🧹 Remove all toast, popup or alert security messages (like 'Illegal Action').</p>
+  </div>
+
+  <div class="card">
+    <h2>4. Else-Condition Based Security</h2>
+    <p>🔍 <span class="highlight">Search:</span> <code>if-eqz</code></p>
+    <p>🧹 Remove all conditional (false) checks that block further execution.</p>
+  </div>
+
+  <div class="card">
+    <h2>5. Forced Next Activity Security</h2>
+    <p>🔍 <span class="highlight">Search:</span> <code>startActivity</code></p>
+    <p>🧹 Remove forced activity jumps or lock screen triggers for better control.</p>
+  </div>
+  
+  
+<div class="card">
+  <h2>6. Confirmation Dialog Trigger</h2>
+  <p>📌 <span class="highlight">Smali Code:</span></p>
+  <pre style="background:#1e1e1e; color:#00ff90; padding:10px; border-radius:10px; overflow-x:auto;">
+invoke-virtual {p0}, Lcom/arbytecheats/MainActivity;->showConfirmationDialog()V
+  </pre>
+  <p>🧠 <strong>Explanation:</strong> This code calls a method <code>showConfirmationDialog()</code> inside the <code>MainActivity</code> class of the package <code>com.arbytecheats</code>. It likely shows a popup or alert asking the user to confirm something (like "Are you sure?").</p>
+  <p>🧹 <strong>To remove:</strong> You can search for <code>showConfirmationDialog</code> and delete this line or the method body to disable the popup confirmation.</p>
+</div>
+
+  
+
+</div>
+
+
+
+
+
+<div class="footer">
+  &copy; 2025 Android Reverse Engineering UI | Designed for Educational Use Only.
+</div>
+
+</body>
+</html>
