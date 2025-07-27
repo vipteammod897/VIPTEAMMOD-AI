@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ESP Rainbow Toggle | Java ↔ C++ JNI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: linear-gradient(to right, #2c0f0f, #440404, #1c0000);
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #1a0a0a;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 0 20px rgba(255,0,0,0.2);
+      border: 2px solid #ff2a2a;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      color: #ff4c4c;
+      text-shadow: 0 0 10px #ff0000;
+      margin-bottom: 20px;
+    }
+
+    select {
+      background: #2b0b0b;
+      color: white;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 15px;
+      border: 1px solid #ff3c3c;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      background-color: #330000;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 5px solid #ff4444;
+      border-radius: 12px;
+    }
+
+    .section h2 {
+      font-size: 18px;
+      color: #ff4d4d;
+    }
+
+    code {
+      display: block;
+      background: #1a000033;
+      padding: 12px;
+      border-radius: 10px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      color: #ffcccc;
+      border: 1px solid #ff4444;
+    }
+
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 12px;
+      color: #ffaaaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">Java ➜ Lib ESP Rainbow Toggle 🔴</h1>
+
+    <label>🌐 Language:</label>
+    <select onchange="switchLang()" id="lang">
+      <option value="en">English 🇬🇧</option>
+      <option value="hi">हिन्दी 🇮🇳</option>
+    </select>
+
+    <div class="section" id="desc">
+      <h2>Overview</h2>
+      <p>
+        This setup connects a Java floating menu toggle to a C++ ImGui checkbox (`ESP NAME RAINBOW`) via JNI. 
+        When the toggle is turned ON in Java, it calls a native function which sets a boolean (`EspRainbowT = true`) in C++.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2 id="java">🟥 Java Code</h2>
+      <code>
+package com.yourpackagename;
+
+public class NativeBridge {
+    static {
+        System.loadLibrary("your_native_lib");
+    }
+
+    public static native void setEspRainbow(boolean state);
+      </code>
+    </div>
+
+    <div class="section">
+      <h2 id="jni">🟥 JNI C++ Code</h2>
+      <code>
+bool EspRainbowT = false;
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_yourpackagename_NativeBridge_setEspRainbow(JNIEnv *env, jclass clazz, jboolean state) {
+    EspRainbowT = state;
+}
+      </code>
+    </div>
+
+    <div class="section">
+      <h2 id="imgui">🟥 ImGui Usage</h2>
+      <code>
+ImGui::Checkbox("ESP NAME RAINBOW", &EspRainbowT);
+
+if (EspRainbowT) {
+    monoString* Nick = get_NickName(Player);
+    std::string espName = "Unknown";
+    if (Nick != NULL) {
+        int nick_Len = Nick->getLength();
+        espName.clear();
+        for (int i = 0; i &lt; nick_Len; i++) {
+            char data = get_Chars(Nick, i);
+            espName += (isascii(data) &amp;&amp; data != '\0') ? data : '?';
+        }
+    }
+}
+      </code>
+    </div>
+
+    <div class="footer">
+      Made by <strong style="color:#ff4444;">VIPTEAMMOD</strong> • Java ↔ C++ ESP Feature Integration
+    </div>
+  </div>
+
+  <script>
+    function switchLang() {
+      const lang = document.getElementById("lang").value;
+      const title = document.getElementById("title");
+      const desc = document.getElementById("desc");
+      const java = document.getElementById("java");
+      const jni = document.getElementById("jni");
+      const imgui = document.getElementById("imgui");
+
+      if (lang === "hi") {
+        title.innerText = "जावा से LIB ESP रेनबो टॉगल 🔴";
+        desc.innerHTML = `
+          <h2>परिचय</h2>
+          <p>
+            यह सेटअप Java फ्लोटिंग मेनू के टॉगल को C++ ImGui चेकबॉक्स से जोड़ता है।
+            जब Java में ESP टॉगल चालू होता है, तो यह JNI के ज़रिए C++ वेरिएबल (EspRainbowT) को true कर देता है।
+          </p>
+        `;
+        java.innerText = "🟥 जावा कोड";
+        jni.innerText = "🟥 JNI C++ कोड";
+        imgui.innerText = "🟥 ImGui उपयोग";
+      } else {
+        title.innerText = "Java ➜ Lib ESP Rainbow Toggle 🔴";
+        desc.innerHTML = `
+          <h2>Overview</h2>
+          <p>
+            This setup connects a Java floating menu toggle to a C++ ImGui checkbox (\`ESP NAME RAINBOW\`) via JNI. 
+            When the toggle is turned ON in Java, it calls a native function which sets a boolean (\`EspRainbowT = true\`) in C++.
+          </p>
+        `;
+        java.innerText = "🟥 Java Code";
+        jni.innerText = "🟥 JNI C++ Code";
+        imgui.innerText = "🟥 ImGui Usage";
+      }
+    }
+  </script>
+</body>
+</html>
