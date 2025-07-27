@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speed Hack JNI Setup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #141e30, #243b55);
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      margin: 0;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .container {
+      max-width: 550px;
+      margin: auto;
+      background-color: #1f1f2e;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 25px rgba(0, 255, 247, 0.3);
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #00ffd9;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: scale(1.01);
+      box-shadow: 0 0 40px rgba(0, 255, 247, 0.6);
+    }
+
+    h1 {
+      text-align: center;
+      color: #00fff7;
+      font-size: 26px;
+      text-shadow: 0 0 8px #00fff7;
+    }
+
+    select {
+      background: #101018;
+      color: white;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #00fff7;
+      margin-bottom: 20px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    select:hover {
+      box-shadow: 0 0 10px #00fff7;
+    }
+
+    .section {
+      background-color: #2c2c44;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 5px solid #00fff7;
+      border-radius: 12px;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .section h2 {
+      font-size: 18px;
+      color: #00e6ff;
+      margin-bottom: 10px;
+    }
+
+    code {
+      display: block;
+      background: #00000055;
+      padding: 12px;
+      border-radius: 10px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      color: #d1f7ff;
+      border: 1px solid #00fff7;
+      box-shadow: inset 0 0 10px #00f7ff33;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 13px;
+      text-align: center;
+      color: #aaa;
+      animation: fadeIn 1.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">Speed Hack JNI Feature</h1>
+
+    <label for="lang">🌐 Language:</label>
+    <select id="lang" onchange="switchLanguage()">
+      <option value="en">English 🇬🇧</option>
+      <option value="hi">हिन्दी 🇮🇳</option>
+    </select>
+
+    <div class="section" id="desc">
+      <h2>Explanation</h2>
+      <p>
+        This code forces <strong>isSpeed = 3</strong> using JNI. No matter what value Java sends, the C++ side always sets it to 3. 
+        The hooked function returns <code>2.6f</code> speed scale for character movement.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2 id="java">Java Side</h2>
+      <code>
+package com.yourpackagename;
+
+public class NativeBridge {
+    static {
+        System.loadLibrary("your_native_lib");
+    }
+
+    public static native void setSpeedLevel(int level);
+}
+      </code>
+    </div>
+
+    <div class="section">
+      <h2 id="jni">JNI C++ Side</h2>
+      <code>
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_yourpackagename_NativeBridge_setSpeedLevel(JNIEnv *env, jclass clazz, jint level) {
+    isSpeed = 3;  // 🔒 Always 3
+}
+      </code>
+    </div>
+
+    <div class="section">
+      <h2 id="cpp">C++ Hook Function</h2>
+      <code>
+float _GetWeaponRunSpeedScale(void *instance) {
+    if (MFunction && instance != nullptr) {
+        switch (isSpeed) {
+            case 3: return 2.6f;
+            default: return GetWeaponRunSpeedScale(instance);
+        }
+    }
+    return GetWeaponRunSpeedScale(instance);
+}
+
+DobbyHook((void *)getRealOffset(0x29245bc), (void *)_GetWeaponRunSpeedScale, (void **)&GetWeaponRunSpeedScale);
+      </code>
+    </div>
+
+    <div class="footer">
+      Made by <strong style="color:#00fff7;">VIPTEAMMOD</strong> • Java + C++ JNI Integration Guide
+    </div>
+  </div>
+
+  <script>
+    function switchLanguage() {
+      const lang = document.getElementById("lang").value;
+      document.getElementById("title").innerText = (lang === "hi") ? "स्पीड हैक JNI फ़ीचर" : "Speed Hack JNI Feature";
+
+      document.getElementById("desc").innerHTML = (lang === "hi") ? `
+        <h2>व्याख्या</h2>
+        <p>
+          यह कोड हमेशा <strong>isSpeed = 3</strong> सेट करता है, चाहे Java कुछ भी भेजे। 
+          C++ हुक फ़ंक्शन <code>2.6f</code> स्पीड रिटर्न करता है जिससे कैरेक्टर तेज़ चलता है।
+        </p>
+      ` : `
+        <h2>Explanation</h2>
+        <p>
+          This code forces <strong>isSpeed = 3</strong> using JNI. No matter what value Java sends, the C++ side always sets it to 3. 
+          The hooked function returns <code>2.6f</code> speed scale for character movement.
+        </p>
+      `;
+
+      // Switch section titles
+      document.getElementById("java").innerText = (lang === "hi") ? "Java साइड" : "Java Side";
+      document.getElementById("jni").innerText = (lang === "hi") ? "JNI C++ साइड" : "JNI C++ Side";
+      document.getElementById("cpp").innerText  = (lang === "hi") ? "C++ हुक फ़ंक्शन" : "C++ Hook Function";
+    }
+  </script>
+</body>
+</html>
