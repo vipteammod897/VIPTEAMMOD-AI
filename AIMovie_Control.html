@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VIPTEAMMOD Alert + Design Panel</title>
+  <meta charset="UTF-8" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #000;
+      color: #0ff;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Share Tech Mono', monospace;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    /* Matrix rain background effect */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+                  url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+      z-index: -2;
+    }
+    
+    /* Canvas for Matrix effect */
+    #matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    /* Glitch effect for title */
+    h1, h2, h3 {
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      position: relative;
+      text-shadow: 
+        0 0 5px #0ff, 
+        0 0 10px #0ff, 
+        0 0 15px #0ff, 
+        0 0 20px #0ff;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    
+    h2 {
+      font-size: 24px;
+      color: #0ff;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #0ff;
+      border-radius: 5px;
+      background: rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      width: 100%;
+    }
+    
+    h3 {
+      font-size: 20px;
+      color: #f0f;
+      margin-top: 30px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #f0f;
+    }
+    
+    /* Terminal style panel */
+    .panel-box {
+      background: rgba(0, 20, 0, 0.7);
+      border: 1px solid #0ff;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 
+        0 0 10px rgba(0, 255, 0, 0.3),
+        inset 0 0 20px rgba(0, 255, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .panel-box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+                  transparent 0%, 
+                  rgba(0, 255, 0, 0.1) 50%, 
+                  transparent 100%);
+      animation: scan 8s linear infinite;
+    }
+    
+    @keyframes scan {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    /* Form elements */
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+      font-size: 15px;
+      color: #0ff;
+      text-shadow: 0 0 5px #0ff;
+    }
+    
+    input[type="text"], textarea, select, input[type="color"], input[type="email"], input[type="password"], input[type="number"], input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #0ff;
+      border-radius: 3px;
+      margin-top: 5px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #0ff;
+      font-size: 15px;
+      font-family: 'Share Tech Mono', monospace;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    }
+    
+    input[type="text"]:focus, textarea:focus, select:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+      background: rgba(0, 20, 0, 0.8);
+    }
+    
+    input[type="color"] {
+      height: 40px;
+      cursor: pointer;
+    }
+    
+    /* Buttons */
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid #0ff;
+      border-radius: 3px;
+      color: #0ff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 255, 0, 0.2);
+      transition: left 0.3s;
+    }
+    
+    button:hover::before {
+      left: 0;
+    }
+    
+    button:hover {
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+      text-shadow: 0 0 5px #0ff;
+    }
+    
+    /* Status display */
+    #statusDisplay, #popupStatus, #statusLabel, #btnLockStatus, #maintenanceStatus, #maintenanceStatus2 {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 15px;
+      text-align: center;
+      color: #0ff;
+      text-shadow: 0 0 5px #0ff;
+    }
+    
+    /* Toggle switches */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+      vertical-align: middle;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #333;
+      border: 1px solid #0ff;
+      transition: .4s;
+      border-radius: 30px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #0ff;
+      transition: .4s;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #0ff;
+    }
+    
+    input:checked + .slider {
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(30px);
+    }
+    
+    /* Horizontal rule */
+    hr {
+      margin: 20px 0;
+      width: 100%;
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #0ff, transparent);
+      box-shadow: 0 0 5px #0ff;
+    }
+    
+    /* Login popup */
+    #loginPopup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      border: 2px solid #0ff;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    }
+    
+    #loginPopup > div {
+      background: rgba(0, 20, 0, 0.9);
+      padding: 30px;
+      border-radius: 5px;
+      width: 350px;
+      text-align: center;
+      border: 1px solid #0ff;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    }
+    
+    #loginPopup h2 {
+      color: #0ff;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    
+    #loginPopup input {
+      margin-bottom: 15px;
+    }
+    
+    #loginPopup button {
+      background: transparent;
+      border: 1px solid #f00;
+      color: #f00;
+      width: 100%;
+    }
+    
+    #loginPopup button:hover {
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+      text-shadow: 0 0 5px #f00;
+    }
+    
+    /* ASCII art header */
+    .ascii-header {
+      color: #0ff;
+      font-family: 'Share Tech Mono', monospace;
+      white-space: pre;
+      text-align: center;
+      font-size: 10px;
+      line-height: 10px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px #0ff;
+    }
+    
+    /* Blinking cursor */
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 15px;
+      background-color: #0f0;
+      animation: blink 1s infinite;
+      vertical-align: text-bottom;
+      margin-left: 5px;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    
+    /* Glitch text effect */
+    .glitch {
+      position: relative;
+      color: #0ff;
+      font-size: 24px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .glitch::before {
+      left: 2px;
+      text-shadow: -1px 0 #f00;
+      clip: rect(44px, 450px, 56px, 0);
+      animation: glitch-anim 5s infinite linear alternate-reverse;
+    }
+    
+    .glitch::after {
+      left: -2px;
+      text-shadow: -1px 0 #00f;
+      clip: rect(44px, 450px, 56px, 0);
+      animation: glitch-anim2 1s infinite linear alternate-reverse;
+    }
+    
+    @keyframes glitch-anim {
+      0% { clip: rect(65px, 450px, 119px, 0); }
+      20% { clip: rect(29px, 450px, 16px, 0); }
+      40% { clip: rect(76px, 450px, 85px, 0); }
+      60% { clip: rect(42px, 450px, 24px, 0); }
+      80% { clip: rect(63px, 450px, 85px, 0); }
+      100% { clip: rect(34px, 450px, 85px, 0); }
+    }
+    
+    @keyframes glitch-anim2 {
+      0% { clip: rect(59px, 450px, 76px, 0); }
+      20% { clip: rect(65px, 450px, 85px, 0); }
+      40% { clip: rect(24px, 450px, 32px, 0); }
+      60% { clip: rect(76px, 450px, 85px, 0); }
+      80% { clip: rect(42px, 450px, 24px, 0); }
+      100% { clip: rect(34px, 450px, 85px, 0); }
+    }
+    
+    /* Notification style */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background: rgba(0, 20, 0, 0.9);
+      border: 1px solid #0ff;
+      border-radius: 5px;
+      color: #0ff;
+      font-family: 'Share Tech Mono', monospace;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+      z-index: 1000;
+      animation: slideIn 0.5s forwards, slideOut 0.5s 2.5s forwards;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    
+    @keyframes slideOut {
+      from { transform: translateX(0); }
+      to { transform: translateX(100%); }
+    }
+    
+    /* Loading indicator */
+    .loading {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #0ff;
+      animation: pulse 1.5s infinite ease-in-out;
+      margin-left: 5px;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(0.8); opacity: 0.7; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.8); opacity: 0.7; }
+    }
+    
+    /* Tab navigation */
+    .tab-nav {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #0ff;
+    }
+    
+    .tab-button {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      color: #0ff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s;
+    }
+    
+    .tab-button:hover {
+      color: #fff;
+    }
+    
+    .tab-button.active {
+      color: #fff;
+    }
+    
+    .tab-button.active::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #0ff;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Feature grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .feature-item {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid #0ff;
+      border-radius: 5px;
+      padding: 10px;
+      text-align: center;
+    }
+    
+    .feature-item h4 {
+      color: #f0f;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    
+    .feature-item .switch {
+      margin-top: 10px;
+    }
+    
+    .feature-item span {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+    
+    /* Preview box */
+    .preview-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px dashed #0ff;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 15px;
+      min-height: 100px;
+    }
+    
+    .preview-title {
+      color: #f0f;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    
+    /* Color picker group */
+    .color-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .color-item {
+      flex: 1;
+    }
+    
+    .color-item label {
+      font-size: 12px;
+      margin-top: 0;
+    }
+    
+    .color-item input[type="color"] {
+      width: 100%;
+      height: 30px;
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Matrix rain canvas -->
+  <canvas id="matrix"></canvas>
+  
+  <div class="panel-box">
+    <h2 class="glitch" data-text="🚀 VIPTEAMMOD Control Panel">🚀 VIPTEAMMOD Control Panel</h2>
+    
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+      <button class="tab-button active" onclick="openTab(event, 'alerts-tab')">Alerts</button>
+      <button class="tab-button" onclick="openTab(event, 'design-tab')">Design</button>
+      <button class="tab-button" onclick="openTab(event, 'features-tab')">Features</button>
+      <button class="tab-button" onclick="openTab(event, 'social-tab')">Social</button>
+      <button class="tab-button" onclick="openTab(event, 'advanced-tab')">Advanced</button>
+    </div>
+    
+    <!-- Alerts Tab -->
+    <div id="alerts-tab" class="tab-content active">
+      <label>Status:</label>
+      <select id="statusSelect">
+        <option value="true">✅ ON</option>
+        <option value="false">❌ OFF</option>
+      </select>
+      
+      <label>Message:</label>
+      <textarea id="messageInput" rows="3" placeholder="Enter alert message..."></textarea>
+      
+      <label>Link (optional):</label>
+      <input type="text" id="linkInput" placeholder="https://your-link.com" />
+      
+      <label>Alert Type:</label>
+      <select id="alertType">
+        <option value="info">ℹ️ Info</option>
+        <option value="warning">⚠️ Warning</option>
+        <option value="error">❌ Error</option>
+        <option value="success">✅ Success</option>
+      </select>
+      
+      <label>Expiration Date:</label>
+      <input type="date" id="expirationDate" />
+      
+      <button onclick="saveAlert()">💾 Save Alert</button>
+      
+      <div id="statusDisplay">System ready<span class="cursor"></span></div>
+    </div>
+    
+    <!-- Design Tab -->
+    <div id="design-tab" class="tab-content">
+      <label>Choose Website Alert Style:</label>
+      <select id="designSelect">
+        <option value="blue">🔵 Blue Gradient</option>
+        <option value="red">🔴 Red Alert</option>
+        <option value="green">🟢 Green Success</option>
+        <option value="purple">🟣 Purple Info</option>
+        <option value="orange">🟠 Orange Warning</option>
+        <option value="pink">🌸 Pink Blossom</option>
+        <option value="teal">🧊 Teal Cool</option>
+        <option value="gray">⚫ Gray Steel</option>
+        <option value="sunset">🌇 Sunset Vibe</option>
+        <option value="aqua">💧 Aqua Blue</option>
+      </select>
+      
+      <button onclick="saveStyle()">🎨 Save Style</button>
+      
+      <hr>
+      
+      <h3>Custom Theme Colors</h3>
+      <div class="color-group">
+        <div class="color-item">
+          <label>Primary</label>
+          <input type="color" id="primaryColor" value="#00c6ff" />
+        </div>
+        <div class="color-item">
+          <label>Secondary</label>
+          <input type="color" id="secondaryColor" value="#0ff" />
+        </div>
+        <div class="color-item">
+          <label>Accent</label>
+          <input type="color" id="accentColor" value="#f0f" />
+        </div>
+      </div>
+      
+      <button onclick="saveCustomColors()">💾 Save Colors</button>
+      
+      <div class="preview-box">
+        <div class="preview-title">Preview</div>
+        <div id="colorPreview" style="padding: 15px; border-radius: 5px; background: linear-gradient(135deg, #00c6ff, #0ff); color: #fff; text-align: center;">
+          This is how your theme will look
+        </div>
+      </div>
+    </div>
+    
+    <!-- Features Tab -->
+    <div id="features-tab" class="tab-content">
+      <h3>Feature Controls</h3>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <h4>🔍 Search Box</h4>
+          <label class="switch">
+            <input type="checkbox" id="searchToggle">
+            <span class="slider round"></span>
+          </label>
+          <span id="statusLabel">Checking...</span>
+        </div>
+        
+        <div class="feature-item">
+          <h4>🔒 Tamil Dubbed Button</h4>
+          <label class="switch">
+            <input type="checkbox" id="btnLockToggle">
+            <span class="slider round"></span>
+          </label>
+          <span id="btnLockStatus">Checking...</span>
+        </div>
+        
+        <div class="feature-item">
+          <h4>🛡️ Tamil Dub Link Block</h4>
+          <label class="switch">
+            <input type="checkbox" id="maintenanceToggle2">
+            <span class="slider"></span>
+          </label>
+          <span id="maintenanceStatus2">Checking status...</span>
+        </div>
+        
+        <div class="feature-item">
+          <h4>📢 Popup Messages</h4>
+          <label class="switch">
+            <input type="checkbox" id="popupToggle">
+            <span class="slider"></span>
+          </label>
+          <span id="popupToggleStatus">Checking status...</span>
+        </div>
+        
+        <div class="feature-item">
+          <h4>🎬 Movie Ratings</h4>
+          <label class="switch">
+            <input type="checkbox" id="ratingsToggle">
+            <span class="slider"></span>
+          </label>
+          <span id="ratingsStatus">Checking status...</span>
+        </div>
+        
+        <div class="feature-item">
+          <h4>👥 User Comments</h4>
+          <label class="switch">
+            <input type="checkbox" id="commentsToggle">
+            <span class="slider"></span>
+          </label>
+          <span id="commentsStatus">Checking status...</span>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <h3>💬 Popup Message Control</h3>
+      <input type="text" id="popupInput" placeholder="Enter popup message..." />
+      
+      <div style="display: flex; gap: 10px; margin: 15px 0;">
+        <select id="bgColor">
+          <option value="">🎨 Background</option>
+          <option value="black">Black</option>
+          <option value="red">Red</option>
+          <option value="blue">Blue</option>
+          <option value="green">Green</option>
+          <option value="yellow">Yellow</option>
+        </select>
+        
+        <select id="textColor">
+          <option value="">🖍 Text</option>
+          <option value="white">White</option>
+          <option value="black">Black</option>
+          <option value="red">Red</option>
+          <option value="lime">Lime</option>
+          <option value="orange">Orange</option>
+        </select>
+      </div>
+      
+      <div style="display: flex; gap: 10px;">
+        <button onclick="setPopupMessage()">✅ Set Message</button>
+        <button onclick="clearPopupMessage()">❌ Clear</button>
+      </div>
+      
+      <p id="popupStatus">📢 Current: Checking...</p>
+    </div>
+    
+    <!-- Social Tab -->
+    <div id="social-tab" class="tab-content">
+      <h2>🔧 Social Media Settings</h2>
+      
+      <label>Telegram URL:</label>
+      <input type="text" id="telegramUrl" placeholder="Enter Telegram Group Link" />
+      
+      <label>Telegram Icon URL:</label>
+      <input type="text" id="telegramIconUrl" placeholder="Enter Telegram SVG or PNG URL" />
+      
+      <label>Telegram Glow Color:</label>
+      <input type="color" id="telegramColor" value="#0088cc" />
+      
+      <hr>
+      
+      <label>Facebook URL:</label>
+      <input type="text" id="facebookUrl" placeholder="Enter Facebook Page Link" />
+      
+      <label>Twitter URL:</label>
+      <input type="text" id="twitterUrl" placeholder="Enter Twitter Profile Link" />
+      
+      <label>Instagram URL:</label>
+      <input type="text" id="instagramUrl" placeholder="Enter Instagram Profile Link" />
+      
+      <label>YouTube URL:</label>
+      <input type="text" id="youtubeUrl" placeholder="Enter YouTube Channel Link" />
+      
+      <button onclick="updateSocialMedia()">✅ Save Social Media</button>
+    </div>
+    
+    <!-- Advanced Tab -->
+    <div id="advanced-tab" class="tab-content">
+      <h3>♻️ Maintenance Mode</h3>
+      <label class="switch">
+        <input type="checkbox" id="maintenanceToggle">
+        <span class="slider"></span>
+      </label>
+      <span id="maintenanceStatus">Checking status...</span>
+      
+      <label>Maintenance Message:</label>
+      <textarea id="maintenanceMessage" rows="2" placeholder="Enter maintenance message..."></textarea>
+      
+      <hr>
+      
+      <h3>🔐 Security Settings</h3>
+      <label>API Key:</label>
+      <input type="text" id="apiKey" placeholder="Enter API key" />
+      
+      <label>Allowed Domains:</label>
+      <textarea id="allowedDomains" rows="2" placeholder="Enter allowed domains (comma separated)"></textarea>
+      
+      <button onclick="updateSecurity()">✅ Save Security Settings</button>
+      
+      <hr>
+      
+      <h3>📊 Analytics</h3>
+      <label>Google Analytics ID:</label>
+      <input type="text" id="analyticsId" placeholder="UA-XXXXXXXXX-X" />
+      
+      <label class="switch">
+        <input type="checkbox" id="analyticsToggle">
+        <span class="slider"></span>
+      </label>
+      <span>Enable Analytics</span>
+      
+      <button onclick="updateAnalytics()">✅ Save Analytics Settings</button>
+    </div>
+  </div>
+  
+  <!-- Login Popup -->
+  <div id="loginPopup">
+    <div>
+      <h2>VIPTEAMMOD CONTROL PANEL</h2>
+      <input type="email" id="email" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">LOGIN</button>
+    </div>
+  </div>
+  
+  <!-- Firebase Initialization Script -->
+  <script>
+    // Global Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    // Initialize Firebase only once
+    let firebaseApp;
+    let firebaseDB;
+    
+    function initializeFirebase() {
+      if (!firebaseApp) {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        firebaseDB = firebase.database();
+      }
+      return firebaseDB;
+    }
+    
+    // Show notification function
+    function showNotification(message, color) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.style.color = color;
+      notification.style.borderColor = color;
+      notification.style.boxShadow = `0 0 15px ${color}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+    
+    // Initialize Firebase when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeFirebase();
+    });
+    
+    // Tab navigation function
+    function openTab(evt, tabName) {
+      // Hide all tab content
+      const tabContents = document.getElementsByClassName('tab-content');
+      for (let i = 0; i < tabContents.length; i++) {
+        tabContents[i].classList.remove('active');
+      }
+      
+      // Remove active class from all tab buttons
+      const tabButtons = document.getElementsByClassName('tab-button');
+      for (let i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].classList.remove('active');
+      }
+      
+      // Show the specific tab content
+      document.getElementById(tabName).classList.add('active');
+      
+      // Add active class to the button that opened the tab
+      evt.currentTarget.classList.add('active');
+    }
+  </script>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+  
+  <!-- Script for Alert Panel -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const db = initializeFirebase();
+      const alertRef = db.ref("websiteAlert");
+      const styleRef = db.ref("designControl/style");
+      const customColorsRef = db.ref("designControl/customColors");
+      
+      // Load current alert data
+      alertRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById("statusSelect").value = data.status ? "true" : "false";
+          document.getElementById("messageInput").value = data.message || "";
+          document.getElementById("linkInput").value = data.link || "";
+          document.getElementById("alertType").value = data.type || "info";
+          document.getElementById("expirationDate").value = data.expiration || "";
+        }
+      }).catch(error => {
+        console.error("Error loading alert data:", error);
+        showNotification("❌ Error loading alert data", "#ff4d4d");
+      });
+      
+      // Load current style
+      styleRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          document.getElementById("designSelect").value = snapshot.val();
+        }
+      }).catch(error => {
+        console.error("Error loading style data:", error);
+        showNotification("❌ Error loading style data", "#ff4d4d");
+      });
+      
+      // Load custom colors
+      customColorsRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          const colors = snapshot.val();
+          document.getElementById("primaryColor").value = colors.primary || "#00c6ff";
+          document.getElementById("secondaryColor").value = colors.secondary || "#0ff";
+          document.getElementById("accentColor").value = colors.accent || "#f0f";
+          updateColorPreview();
+        }
+      }).catch(error => {
+        console.error("Error loading custom colors:", error);
+        showNotification("❌ Error loading custom colors", "#ff4d4d");
+      });
+      
+      // Save alert
+      window.saveAlert = () => {
+        const status = document.getElementById("statusSelect").value === "true";
+        const message = document.getElementById("messageInput").value.trim();
+        const link = document.getElementById("linkInput").value.trim();
+        const type = document.getElementById("alertType").value;
+        const expiration = document.getElementById("expirationDate").value;
+        
+        alertRef.set({ status, message, link, type, expiration })
+          .then(() => showNotification("✅ Alert saved successfully!", "#00ff99"))
+          .catch(error => {
+            console.error("Error saving alert:", error);
+            showNotification("❌ Failed to save alert.", "#ff4d4d");
+          });
+      };
+      
+      // Save design
+      window.saveStyle = () => {
+        const style = document.getElementById("designSelect").value;
+        
+        styleRef.set(style)
+          .then(() => showNotification("✅ Design saved successfully!", "#00ff99"))
+          .catch(error => {
+            console.error("Error saving design:", error);
+            showNotification("❌ Failed to save design.", "#ff4d4d");
+          });
+      };
+      
+      // Save custom colors
+      window.saveCustomColors = () => {
+        const primary = document.getElementById("primaryColor").value;
+        const secondary = document.getElementById("secondaryColor").value;
+        const accent = document.getElementById("accentColor").value;
+        
+        customColorsRef.set({ primary, secondary, accent })
+          .then(() => {
+            showNotification("✅ Colors saved successfully!", "#00ff99");
+            updateColorPreview();
+          })
+          .catch(error => {
+            console.error("Error saving custom colors:", error);
+            showNotification("❌ Failed to save colors.", "#ff4d4d");
+          });
+      };
+      
+      // Update color preview
+      function updateColorPreview() {
+        const primary = document.getElementById("primaryColor").value;
+        const secondary = document.getElementById("secondaryColor").value;
+        const preview = document.getElementById("colorPreview");
+        preview.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
+      }
+      
+      // Add event listeners for color inputs
+      document.getElementById("primaryColor").addEventListener("input", updateColorPreview);
+      document.getElementById("secondaryColor").addEventListener("input", updateColorPreview);
+    });
+  </script>
+  
+  <!-- Firebase Script for Search Box Toggle -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const db = initializeFirebase();
+      const toggleRef = db.ref("featureControl/searchEnabled");
+      const toggle = document.getElementById("searchToggle");
+      const statusLabel = document.getElementById("statusLabel");
+      
+      // Live Sync from Firebase
+      toggleRef.on("value", (snapshot) => {
+        const enabled = snapshot.val() === true;
+        toggle.checked = enabled;
+        statusLabel.textContent = enabled ? "Search Enabled ✅" : "Search Disabled ❌";
+      });
+      
+      // Update Firebase
+      toggle.addEventListener("change", () => {
+        const state = toggle.checked;
+        toggleRef.set(state)
+          .catch(error => {
+            console.error("Error updating search toggle:", error);
+            showNotification("❌ Error updating search toggle", "#ff4d4d");
+          });
+      });
+    });
+  </script>
+  
+  <!-- Firebase Script for Tamil Dubbed Lock -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const db = initializeFirebase();
+      const lockRef = db.ref("featureControl/lockTamilDubbed");
+      const toggle = document.getElementById("btnLockToggle");
+      const status = document.getElementById("btnLockStatus");
+      
+      lockRef.on("value", (snapshot) => {
+        const visible = snapshot.val() === true;
+        toggle.checked = visible;
+        status.textContent = visible ? "✅ Visible" : "❌ Hidden";
+      });
+      
+      toggle.addEventListener("change", () => {
+        lockRef.set(toggle.checked)
+          .catch(error => {
+            console.error("Error updating Tamil Dubbed lock:", error);
+            showNotification("❌ Error updating Tamil Dubbed lock", "#ff4d4d");
+          });
+      });
+    });
+  </script>
+  
+  <!-- Firebase Script for Popup Message -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const db = initializeFirebase();
+      const popupRef = db.ref("Message");
+      const popupToggleRef = db.ref("featureControl/popupEnabled");
+      const input = document.getElementById("popupInput");
+      const status = document.getElementById("popupStatus");
+      const bgColor = document.getElementById("bgColor");
+      const textColor = document.getElementById("textColor");
+      const popupToggle = document.getElementById("popupToggle");
+      const popupToggleStatus = document.getElementById("popupToggleStatus");
+      
+      // Live update
+      popupRef.on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.popup_message) {
+          status.innerHTML = `📢 <b>Current:</b> <span style="color:${data.text_color || 'lime'}; background:${data.bg_color || 'transparent'}; padding: 3px 6px; border-radius: 4px;">${data.popup_message}</span>`;
+        } else {
+          status.textContent = "📢 Current: No message set";
+        }
+      });
+      
+      // Popup toggle
+      popupToggleRef.on("value", (snapshot) => {
+        const enabled = snapshot.val() === true;
+        popupToggle.checked = enabled;
+        popupToggleStatus.textContent = enabled ? "Popups Enabled ✅" : "Popups Disabled ❌";
+      });
+      
+      popupToggle.addEventListener("change", () => {
+        popupToggleRef.set(popupToggle.checked)
+          .catch(error => {
+            console.error("Error updating popup toggle:", error);
+            showNotification("❌ Error updating popup toggle", "#ff4d4d");
+          });
+      });
+      
+      // Set popup message
+      window.setPopupMessage = function () {
+        const msg = input.value.trim();
+        const bg = bgColor.value || "";
+        const text = textColor.value || "";
+        
+        if (!msg) {
+          showNotification("⚠️ Please enter a message", "#ff9800");
+          return;
+        }
+        
+        popupRef.set({
+          popup_message: msg,
+          bg_color: bg,
+          text_color: text
+        }).then(() => {
+          showNotification("✅ Popup message updated!", "#00ff99");
+        }).catch(error => {
+          console.error("Error setting popup message:", error);
+          showNotification("❌ Failed to update message", "#ff4d4d");
+        });
+      };
+      
+      // Clear popup message
+      window.clearPopupMessage = function () {
+        popupRef.set({
+          popup_message: "",
+          bg_color: "",
+          text_color: ""
+        }).then(() => {
+          showNotification("❌ Message cleared", "#ff4d4d");
+        }).catch(error => {
+          console.error("Error clearing popup message:", error);
+          showNotification("❌ Failed to clear message", "#ff4d4d");
+        });
+      };
+    });
+  </script>
+  
+  <!-- Firebase Script for Maintenance Mode -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const db = initializeFirebase();
+      const ref = db.ref("controls/maintenance_mode");
+      const messageRef = db.ref("controls/maintenance_message");
+      const toggle = document.getElementById("maintenanceToggle");
+      const status = document.getElementById("maintenanceStatus");
+      const messageInput = document.getElementById("maintenanceMessage");
+      
+      // Listen to Firebase in real-time
+      ref.on("value", (snapshot) => {
+        const isOn = snapshot.val() === true;
+        toggle.checked = isOn;
+        status.textContent = isOn ? "🔧 Maintenance ON" : "✅ Maintenance OFF";
+      });
+      
+      // Load maintenance message
+      messageRef.on("value", (snapshot) => {
+        messageInput.value = snapshot.val() || "Site is under maintenance. Please check back later.";
+      });
+      
+      // Handle toggle
+      toggle.addEventListener("change", () => {
+        if (toggle.checked) {
+          const password = prompt("Enter password to enable Maintenance Mode:");
+          if (password === "16") {
+            ref.set(true)
+              .catch(error => {
+                console.error("Error enabling maintenance mode:", error);
+                showNotification("❌ Error enabling maintenance mode", "#ff4d4d");
+              });
+          } else {
+            alert("❌ Incorrect password!");
+            toggle.checked = false;
+          }
+        } else {
+          ref.set(false)
+            .catch(error => {
+              console.error("Error disabling maintenance mode:", error);
+              showNotification("❌ Error disabling maintenance mode", "#ff4d4d");
+            });
+        }
+      });
+      
+      // Save maintenance message
+      messageInput.addEventListener("blur", () => {
+        messageRef.set(messageInput.value)
+          .catch(error => {
+            console.error("Error updating maintenance message:", error);
+            showNotification("❌ Error updating maintenance message", "#ff4d4d");
+          });
+      });
+    });
+  </script>
+  
+  <!-- Firebase Script for Tamil Dub Link Block -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const db = initializeFirebase();
+      const ref = db.ref("tamil_movies/tamil_dubbed_status");
+      const toggle = document.getElementById("maintenanceToggle2");
+      const status = document.getElementById("maintenanceStatus2");
+      
+      // Firebase real-time status update
+      ref.on("value", (snapshot) => {
+        const isOn = snapshot.val() === true;
+        toggle.checked = isOn;
+        status.textContent = isOn ? "🔐 Tamil Dub Link ON" : "🔓 Tamil Dub Link OFF";
+      });
+      
+      // Direct toggle update (no password)
+      toggle.addEventListener("change", () => {
+        ref.set(toggle.checked)
+          .catch(error => {
+            console.error("Error updating Tamil Dub Link Block:", error);
+            showNotification("❌ Error updating Tamil Dub Link Block", "#ff4d4d");
+          });
+      });
+    });
+  </script>
+  
+  <!-- Firebase Script for Social Media -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const db = initializeFirebase();
+      const socialRef = db.ref("socialMedia");
+      
+      // Load social media data
+      socialRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById("telegramUrl").value = data.telegram?.url || "";
+          document.getElementById("telegramIconUrl").value = data.telegram?.icon || "";
+          document.getElementById("telegramColor").value = data.telegram?.glowColor || "#0088cc";
+          document.getElementById("facebookUrl").value = data.facebook || "";
+          document.getElementById("twitterUrl").value = data.twitter || "";
+          document.getElementById("instagramUrl").value = data.instagram || "";
+          document.getElementById("youtubeUrl").value = data.youtube || "";
+        }
+      }).catch(error => {
+        console.error("Error loading social media data:", error);
+        showNotification("❌ Error loading social media data", "#ff4d4d");
+      });
+      
+      // Update social media
+      window.updateSocialMedia = function() {
+        const telegram = {
+          url: document.getElementById("telegramUrl").value.trim(),
+          icon: document.getElementById("telegramIconUrl").value.trim(),
+          glowColor: document.getElementById("telegramColor").value
+        };
+        
+        const facebook = document.getElementById("facebookUrl").value.trim();
+        const twitter = document.getElementById("twitterUrl").value.trim();
+        const instagram = document.getElementById("instagramUrl").value.trim();
+        const youtube = document.getElementById("youtubeUrl").value.trim();
+        
+        socialRef.set({ telegram, facebook, twitter, instagram, youtube })
+          .then(() => showNotification("✅ Social media updated!", "#00ff99"))
+          .catch(error => {
+            console.error("Error updating social media:", error);
+            showNotification("❌ Failed to update social media", "#ff4d4d");
+          });
+      };
+    });
+  </script>
+  
+  <!-- Firebase Script for Additional Features -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const db = initializeFirebase();
+      
+      // Ratings toggle
+      const ratingsRef = db.ref("featureControl/ratingsEnabled");
+      const ratingsToggle = document.getElementById("ratingsToggle");
+      const ratingsStatus = document.getElementById("ratingsStatus");
+      
+      ratingsRef.on("value", (snapshot) => {
+        const enabled = snapshot.val() === true;
+        ratingsToggle.checked = enabled;
+        ratingsStatus.textContent = enabled ? "Ratings Enabled ✅" : "Ratings Disabled ❌";
+      });
+      
+      ratingsToggle.addEventListener("change", () => {
+        ratingsRef.set(ratingsToggle.checked)
+          .catch(error => {
+            console.error("Error updating ratings toggle:", error);
+            showNotification("❌ Error updating ratings toggle", "#ff4d4d");
+          });
+      });
+      
+      // Comments toggle
+      const commentsRef = db.ref("featureControl/commentsEnabled");
+      const commentsToggle = document.getElementById("commentsToggle");
+      const commentsStatus = document.getElementById("commentsStatus");
+      
+      commentsRef.on("value", (snapshot) => {
+        const enabled = snapshot.val() === true;
+        commentsToggle.checked = enabled;
+        commentsStatus.textContent = enabled ? "Comments Enabled ✅" : "Comments Disabled ❌";
+      });
+      
+      commentsToggle.addEventListener("change", () => {
+        commentsRef.set(commentsToggle.checked)
+          .catch(error => {
+            console.error("Error updating comments toggle:", error);
+            showNotification("❌ Error updating comments toggle", "#ff4d4d");
+          });
+      });
+      
+      // Security settings
+      const securityRef = db.ref("security");
+      
+      window.updateSecurity = function() {
+        const apiKey = document.getElementById("apiKey").value.trim();
+        const allowedDomains = document.getElementById("allowedDomains").value.trim();
+        
+        securityRef.set({ apiKey, allowedDomains })
+          .then(() => showNotification("✅ Security settings updated!", "#00ff99"))
+          .catch(error => {
+            console.error("Error updating security settings:", error);
+            showNotification("❌ Failed to update security settings", "#ff4d4d");
+          });
+      };
+      
+      // Analytics settings
+      const analyticsRef = db.ref("analytics");
+      const analyticsToggle = document.getElementById("analyticsToggle");
+      
+      window.updateAnalytics = function() {
+        const analyticsId = document.getElementById("analyticsId").value.trim();
+        const enabled = analyticsToggle.checked;
+        
+        analyticsRef.set({ analyticsId, enabled })
+          .then(() => showNotification("✅ Analytics settings updated!", "#00ff99"))
+          .catch(error => {
+            console.error("Error updating analytics settings:", error);
+            showNotification("❌ Failed to update analytics settings", "#ff4d4d");
+          });
+      };
+    });
+  </script>
+  
+  <!-- Login Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Hardcoded allowed credentials
+      const allowedEmail = "arun";
+      const allowedPassword = "897700";
+      
+      window.login = function() {
+        const email = document.getElementById("email").value.trim().toLowerCase();
+        const password = document.getElementById("password").value;
+        
+        if (email === allowedEmail && password === allowedPassword) {
+          showNotification("✅ Login successful", "#00ff99");
+          document.getElementById("loginPopup").style.display = "none";
+        } else if (email !== allowedEmail) {
+          showNotification("❌ User not found", "#ff4d4d");
+        } else {
+          showNotification("❌ Password Incorrect", "#ff4d4d");
+        }
+      };
+    });
+  </script>
+  
+  <!-- Matrix Rain Effect Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const canvas = document.getElementById('matrix');
+      const ctx = canvas.getContext('2d');
+      // Set canvas size
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+      const letters = 'V I P T E A M M O D M O V I E S';
+      const lettersArr = letters.split('');
+      const fontSize = 16;
+      const columns = canvas.width / fontSize;
+      const drops = Array(Math.floor(columns)).fill(1);
+      // Draw the characters
+      function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#00c6ff';
+        ctx.font = fontSize + 'px monospace';
+        for (let i = 0; i < drops.length; i++) {
+          const text = lettersArr[Math.floor(Math.random() * lettersArr.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      }
+      setInterval(draw, 33);
+      
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Digital+Numbers&display=swap" rel="stylesheet">
 <style>
    /* User Counter */
@@ -22,7 +20,6 @@
       justify-content: center;
       gap: 10px;
     }
-
     .user-counter h5 {
       color: var(--neon-green);
       font-size: 1rem;
@@ -30,7 +27,6 @@
       font-family: 'Orbitron', monospace;
       text-transform: uppercase;
     }
-
     #userCount {
       color: var(--neon-cyan);
       font-family: 'Digital Numbers', 'Share Tech Mono', monospace;
@@ -53,13 +49,11 @@
   --warning-yellow: #ffff00;
   --danger-red: #ff0040;
 }
-
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-
 body {
   background-color: var(--bg-dark);
   background-image: 
@@ -79,7 +73,6 @@ body {
   overflow-x: hidden;
   position: relative;
 }
-
 /* Scanning line animation */
 body::before {
   content: "";
@@ -93,12 +86,10 @@ body::before {
   animation: scan 8s linear infinite;
   pointer-events: none;
 }
-
 @keyframes scan {
   0% { transform: translateY(0); }
   100% { transform: translateY(100vh); }
 }
-
 /* Matrix Canvas */
 #matrix {
   position: fixed;
@@ -110,7 +101,6 @@ body::before {
   pointer-events: none;
   opacity: 0.6;
 }
-
 /* Header */
 .site-header {
   display: flex;
@@ -124,7 +114,6 @@ body::before {
   gap: 10px;
   position: relative;
 }
-
 .site-header::after {
   content: "SYSTEM ACTIVE";
   position: absolute;
@@ -135,7 +124,6 @@ body::before {
   background: var(--bg-dark);
   padding: 0 5px;
 }
-
 .site-header h1 {
   font-size: 2.2rem;
   font-family: 'Orbitron', monospace;
@@ -153,7 +141,6 @@ body::before {
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-
 /* Terminal-style command prompt */
 .command-prompt {
   display: flex;
@@ -161,14 +148,12 @@ body::before {
   margin: 15px 0;
   font-family: 'Share Tech Mono', monospace;
 }
-
 .command-prompt::before {
   content: ">";
   color: var(--terminal-green);
   margin-right: 8px;
   font-weight: bold;
 }
-
 /* Search Box */
 #searchBox {
   padding: 0.8rem;
@@ -186,7 +171,6 @@ body::before {
     inset 0 0 5px rgba(0, 198, 255, 0.2);
   transition: all 0.3s ease;
 }
-
 #searchBox:focus {
   box-shadow: 
     0 0 15px var(--neon-cyan),
@@ -194,7 +178,6 @@ body::before {
     inset 0 0 8px rgba(0, 198, 255, 0.3);
   border-color: var(--neon-green);
 }
-
 /* Link Container */
 .link-container {
   background: var(--glass-bg);
@@ -207,7 +190,6 @@ body::before {
   position: relative;
   overflow: hidden;
 }
-
 .link-container::before {
   content: "";
   position: absolute;
@@ -218,18 +200,15 @@ body::before {
   background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
   transition: left 0.5s ease;
 }
-
 .link-container:hover::before {
   left: 100%;
 }
-
 .link-container:hover {
   background: rgba(0, 255, 65, 0.1);
   transform: scale(1.02);
   box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
   border-color: var(--neon-green);
 }
-
 .link-name {
   font-weight: bold;
   font-size: 1.2rem;
@@ -240,7 +219,6 @@ body::before {
   position: relative;
   z-index: 1;
 }
-
 /* Glitch effect for titles */
 .glitch {
   position: relative;
@@ -253,7 +231,6 @@ body::before {
     0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
   animation: glitch 500ms infinite;
 }
-
 .glitch::before,
 .glitch::after {
   content: attr(data-text);
@@ -263,19 +240,16 @@ body::before {
   width: 100%;
   height: 100%;
 }
-
 .glitch::before {
   animation: glitch-1 500ms infinite;
   color: var(--neon-pink);
   z-index: -1;
 }
-
 .glitch::after {
   animation: glitch-2 500ms infinite;
   color: var(--neon-cyan);
   z-index: -2;
 }
-
 @keyframes glitch {
   0%, 100% { text-shadow: 
     0.05em 0 0 rgba(255, 0, 0, 0.75),
@@ -302,7 +276,6 @@ body::before {
     0.05em 0 0 rgba(0, 255, 0, 0.75),
     0 -0.05em 0 rgba(0, 0, 255, 0.75); }
 }
-
 @keyframes glitch-1 {
   0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
   20% { clip-path: inset(20% 0 30% 0); transform: translate(-2px, 2px); }
@@ -310,7 +283,6 @@ body::before {
   60% { clip-path: inset(10% 0 60% 0); transform: translate(-2px, 0); }
   80% { clip-path: inset(80% 0 5% 0); transform: translate(1px, 0); }
 }
-
 @keyframes glitch-2 {
   0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
   20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
@@ -318,7 +290,6 @@ body::before {
   60% { clip-path: inset(30% 0 40% 0); transform: translate(1px, 2px); }
   80% { clip-path: inset(5% 0 80% 0); transform: translate(-1px, -2px); }
 }
-
 /* Section Title */
 .section-title {
   font-size: 1.6rem;
@@ -332,7 +303,6 @@ body::before {
   position: relative;
   display: inline-block;
 }
-
 .section-title::after {
   content: "";
   position: absolute;
@@ -342,7 +312,6 @@ body::before {
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
 }
-
 /* Details */
 .details {
   margin: 20px 0;
@@ -357,28 +326,23 @@ body::before {
   text-shadow: 0 0 3px var(--neon-cyan);
   box-shadow: 0 0 10px rgba(0, 255, 247, 0.1);
 }
-
 .details table {
   width: 100%;
   border-collapse: collapse;
 }
-
 .details th {
   color: var(--neon-green);
   text-align: left;
   padding: 8px;
   border-bottom: 1px solid var(--glass-border);
 }
-
 .details td {
   padding: 8px;
   border-bottom: 1px solid rgba(0, 255, 247, 0.1);
 }
-
 .details tr:last-child td {
   border-bottom: none;
 }
-
 /* Binary code background effect */
 .binary-bg {
   position: fixed;
@@ -391,7 +355,6 @@ body::before {
   overflow: hidden;
   pointer-events: none;
 }
-
 .binary-bg::before {
   content: "01001001 01001110 01010100 01000101 01010010 01000011 01000101 01010000 01010100";
   position: absolute;
@@ -402,7 +365,6 @@ body::before {
   transform: rotate(-15deg);
   white-space: nowrap;
 }
-
 /* Spinner */
 .spinner-container {
   display: flex;
@@ -410,7 +372,6 @@ body::before {
   align-items: center;
   min-height: 80px;
 }
-
 .spinner {
   width: 40px;
   height: 40px;
@@ -420,23 +381,19 @@ body::before {
   animation: spin 1s linear infinite;
   box-shadow: 0 0 10px var(--neon-green);
 }
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
-
 /* Loading text with dots */
 .loading-text {
   display: inline-block;
 }
-
 .loading-text::after {
   content: "";
   animation: loading-dots 1.5s infinite;
 }
-
 @keyframes loading-dots {
   0% { content: ""; }
   25% { content: "."; }
@@ -444,7 +401,6 @@ body::before {
   75% { content: "..."; }
   100% { content: ""; }
 }
-
 /* Terminal window */
 .terminal-window {
   background-color: var(--bg-darker);
@@ -457,40 +413,33 @@ body::before {
   width: 100%;
   max-width: 800px;
 }
-
 .terminal-header {
   background-color: #1e1e1e;
   padding: 8px 15px;
   display: flex;
   align-items: center;
 }
-
 .terminal-button {
   width: 12px;
   height: 12px;
   border-radius: 50%;
   margin-right: 6px;
 }
-
 .terminal-button.close {
   background-color: #ff5f56;
 }
-
 .terminal-button.minimize {
   background-color: #ffbd2e;
 }
-
 .terminal-button.maximize {
   background-color: #27c93f;
 }
-
 .terminal-title {
   color: #ccc;
   font-size: 0.8rem;
   margin-left: auto;
   margin-right: auto;
 }
-
 .terminal-body {
   padding: 15px;
   color: var(--terminal-green);
@@ -499,44 +448,35 @@ body::before {
   max-height: 300px;
   overflow-y: auto;
 }
-
 .terminal-body::-webkit-scrollbar {
   width: 8px;
 }
-
 .terminal-body::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.3);
 }
-
 .terminal-body::-webkit-scrollbar-thumb {
   background: rgba(0, 255, 65, 0.3);
   border-radius: 4px;
 }
-
 .terminal-body::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 255, 65, 0.5);
 }
-
 .terminal-line {
   margin: 5px 0;
   display: flex;
 }
-
 .terminal-line .prompt {
   color: var(--neon-green);
   margin-right: 8px;
 }
-
 .terminal-line .command {
   color: var(--neon-cyan);
 }
-
 .terminal-line .response {
   color: #ccc;
   margin-left: 16px;
   white-space: pre-wrap;
 }
-
 /* Typing animation */
 .typing {
   overflow: hidden;
@@ -544,17 +484,14 @@ body::before {
   white-space: nowrap;
   animation: typing 2s steps(30, end), blink-caret 0.75s step-end infinite;
 }
-
 @keyframes typing {
   from { width: 0; }
   to { width: 100%; }
 }
-
 @keyframes blink-caret {
   from, to { border-color: transparent; }
   50% { border-color: var(--neon-green); }
 }
-
 /* Cyberpunk grid background */
 .cyber-grid {
   position: fixed;
@@ -570,7 +507,6 @@ body::before {
   opacity: 0.2;
   pointer-events: none;
 }
-
 /* Responsive */
 @media (max-width: 600px) {
   .site-header h1 {
@@ -599,7 +535,6 @@ body::before {
     font-size: 5rem;
   }
 }
-
 /* Neon toggle switch */
 .toggle-switch {
   position: relative;
@@ -608,13 +543,11 @@ body::before {
   height: 30px;
   margin: 10px;
 }
-
 .toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
-
 .toggle-slider {
   position: absolute;
   cursor: pointer;
@@ -627,7 +560,6 @@ body::before {
   transition: .4s;
   border-radius: 30px;
 }
-
 .toggle-slider:before {
   position: absolute;
   content: "";
@@ -640,18 +572,15 @@ body::before {
   border-radius: 50%;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
-
 input:checked + .toggle-slider {
   background-color: rgba(0, 255, 65, 0.2);
   box-shadow: 0 0 10px var(--neon-green);
 }
-
 input:checked + .toggle-slider:before {
   transform: translateX(30px);
   background-color: var(--neon-green);
   box-shadow: 0 0 10px var(--neon-green);
 }
-
 /* Cyberpunk progress bar */
 .progress-bar {
   width: 100%;
@@ -663,7 +592,6 @@ input:checked + .toggle-slider:before {
   border: 1px solid var(--neon-blue);
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
-
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
@@ -674,7 +602,6 @@ input:checked + .toggle-slider:before {
   position: relative;
   overflow: hidden;
 }
-
 .progress-fill::after {
   content: "";
   position: absolute;
@@ -691,13 +618,11 @@ input:checked + .toggle-slider:before {
   transform: translateX(-100%);
   animation: shimmer 2s infinite;
 }
-
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
   }
 }
-
 /* Holographic card effect */
 .holographic-card {
   background: linear-gradient(135deg, 
@@ -716,13 +641,11 @@ input:checked + .toggle-slider:before {
   position: relative;
   overflow: hidden;
 }
-
 @keyframes holographic-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
 /* Digital clock */
 .digital-clock {
   font-family: 'Digital Numbers', 'Share Tech Mono', monospace;
@@ -732,7 +655,6 @@ input:checked + .toggle-slider:before {
   margin: 10px 0;
   letter-spacing: 2px;
 }
-
 /* Cyberpunk button */
 .cyber-btn {
   display: inline-block;
@@ -751,7 +673,6 @@ input:checked + .toggle-slider:before {
   transition: all 0.3s ease;
   z-index: 1;
 }
-
 .cyber-btn::before {
   content: "";
   position: absolute;
@@ -763,16 +684,13 @@ input:checked + .toggle-slider:before {
   transition: left 0.3s ease;
   z-index: -1;
 }
-
 .cyber-btn:hover::before {
   left: 0;
 }
-
 .cyber-btn:hover {
   color: var(--bg-dark);
   box-shadow: 0 0 15px var(--neon-green);
 }
-
 /* Telegram Glow Button */
 .telegram-glow-btn {
   display: inline-block;
@@ -785,7 +703,6 @@ input:checked + .toggle-slider:before {
   text-decoration: none;
   position: relative;
 }
-
 .telegram-glow-btn::before {
   content: '';
   position: absolute;
@@ -801,13 +718,11 @@ input:checked + .toggle-slider:before {
   filter: blur(2px);
   z-index: -1;
 }
-
 .telegram-icon {
   width: 43px;
   height: 43px;
   display: block;
 }
-
 @keyframes pulse-wave-glow {
   0% {
     transform: translate(-50%, -50%) scale(0.8);
@@ -818,7 +733,6 @@ input:checked + .toggle-slider:before {
     opacity: 0;
   }
 }
-
 /* Video Box */
 .video-container {
   width: 100%;
@@ -826,7 +740,6 @@ input:checked + .toggle-slider:before {
   margin: 20px auto;
   position: relative;
 }
-
 .video-container::before {
   content: "LIVE";
   position: absolute;
@@ -841,13 +754,11 @@ input:checked + .toggle-slider:before {
   z-index: 10;
   animation: pulse 1.5s infinite;
 }
-
 @keyframes pulse {
   0% { opacity: 1; }
   50% { opacity: 0.7; }
   100% { opacity: 1; }
 }
-
 .video {
   width: 100%;
   height: 300px;
@@ -856,7 +767,6 @@ input:checked + .toggle-slider:before {
   border: 1px solid var(--neon-blue);
   box-shadow: 0 0 20px rgba(0, 198, 255, 0.3);
 }
-
 /* Popup */
 #popup {
   position: fixed;
@@ -871,7 +781,6 @@ input:checked + .toggle-slider:before {
   z-index: 9999;
   backdrop-filter: blur(5px);
 }
-
 #popup div {
   background: linear-gradient(135deg, #0c1f18, #0a1512);
   padding: 30px;
@@ -885,7 +794,6 @@ input:checked + .toggle-slider:before {
   max-width: 90%;
   animation: popup-appear 0.3s ease;
 }
-
 @keyframes popup-appear {
   from {
     opacity: 0;
@@ -896,7 +804,6 @@ input:checked + .toggle-slider:before {
     transform: scale(1);
   }
 }
-
 #popup button {
   margin: 10px;
   padding: 10px 20px;
@@ -912,13 +819,11 @@ input:checked + .toggle-slider:before {
   font-weight: bold;
   text-transform: uppercase;
 }
-
 #popup button:hover {
   background-color: #009fcc;
   box-shadow: 0 0 15px var(--neon-blue);
   transform: translateY(-2px);
 }
-
 /* Notification */
 .notification {
   position: fixed;
@@ -935,11 +840,9 @@ input:checked + .toggle-slider:before {
   transition: transform 0.3s ease;
   max-width: 300px;
 }
-
 .notification.show {
   transform: translateX(0);
 }
-
 .notification .close {
   margin-left: 15px;
   color: var(--neon-green);
@@ -947,11 +850,9 @@ input:checked + .toggle-slider:before {
   float: right;
   font-weight: bold;
 }
-
 .notification .close:hover {
   color: var(--neon-cyan);
 }
-
 /* Data stream animation */
 .data-stream {
   position: fixed;
@@ -964,7 +865,6 @@ input:checked + .toggle-slider:before {
   opacity: 0.3;
   pointer-events: none;
 }
-
 .data-stream-column {
   position: absolute;
   top: -100%;
@@ -974,13 +874,11 @@ input:checked + .toggle-slider:before {
   font-size: 14px;
   animation: data-stream-fall linear infinite;
 }
-
 @keyframes data-stream-fall {
   to {
     transform: translateY(calc(100vh + 100%));
   }
 }
-
 /* Cyberpunk badge */
 .cyber-badge {
   display: inline-block;
@@ -992,14 +890,12 @@ input:checked + .toggle-slider:before {
   margin: 0 5px;
   border: 1px solid var(--neon-green);
 }
-
 /* Access level indicator */
 .access-level {
   display: flex;
   align-items: center;
   margin: 10px 0;
 }
-
 .access-level .level {
   display: inline-block;
   width: 10px;
@@ -1007,16 +903,13 @@ input:checked + .toggle-slider:before {
   border-radius: 50%;
   margin-right: 5px;
 }
-
 .access-level .level.active {
   background-color: var(--neon-green);
   box-shadow: 0 0 5px var(--neon-green);
 }
-
 .access-level .level.inactive {
   background-color: rgba(255, 255, 255, 0.2);
 }
-
 /* Hacker-style terminal input */
 .terminal-input {
   display: flex;
@@ -1027,12 +920,10 @@ input:checked + .toggle-slider:before {
   border-radius: 4px;
   border: 1px solid var(--neon-blue);
 }
-
 .terminal-input .prompt {
   color: var(--neon-green);
   margin-right: 8px;
 }
-
 .terminal-input input {
   background: transparent;
   border: none;
@@ -1041,11 +932,9 @@ input:checked + .toggle-slider:before {
   outline: none;
   flex: 1;
 }
-
 .terminal-input input::placeholder {
   color: rgba(0, 255, 247, 0.5);
 }
-
 /* Breach animation */
 .breach {
   position: fixed;
@@ -1058,26 +947,216 @@ input:checked + .toggle-slider:before {
   pointer-events: none;
   z-index: 9998;
 }
-
 .breach.active {
   animation: breach-pulse 0.5s ease;
 }
-
 @keyframes breach-pulse {
   0% { opacity: 0; }
   50% { opacity: 0.5; }
   100% { opacity: 0; }
 }
+
+/* Movie Rating Styles */
+.movie-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.movie-rating .star {
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.movie-rating .star:hover,
+.movie-rating .star.active {
+  color: #ffd700;
+}
+
+.movie-rating .rating-value {
+  margin-left: 10px;
+  font-weight: bold;
+  color: var(--neon-cyan);
+}
+
+.rating-container {
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+}
+
+.rating-container h4 {
+  color: var(--neon-green);
+  margin-bottom: 10px;
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.rating-feedback {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  display: none;
+}
+
+.rating-feedback.success {
+  background: rgba(0, 255, 65, 0.2);
+  color: var(--neon-green);
+  border: 1px solid var(--neon-green);
+}
+
+.rating-feedback.error {
+  background: rgba(255, 0, 64, 0.2);
+  color: var(--danger-red);
+  border: 1px solid var(--danger-red);
+}
+
+/* Comments Section Styles */
+.comments-section {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+}
+
+.comments-section h4 {
+  color: var(--neon-green);
+  margin-bottom: 10px;
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.comment-form {
+  margin-bottom: 15px;
+}
+
+.comment-form textarea {
+  width: 100%;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--neon-blue);
+  border-radius: 5px;
+  color: var(--neon-cyan);
+  font-family: 'Share Tech Mono', monospace;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.comment-form button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  background: var(--neon-blue);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: bold;
+}
+
+.comment-form button:hover {
+  background: #009fcc;
+}
+
+.comments-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.comment {
+  padding: 10px;
+  margin-bottom: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  border-left: 3px solid var(--neon-blue);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.comment-author {
+  font-weight: bold;
+  color: var(--neon-cyan);
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.comment-text {
+  color: #ccc;
+}
+
+.comment-feedback {
+  margin-top: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  text-align: center;
+  font-size: 0.9rem;
+  display: none;
+}
+
+.comment-feedback.success {
+  background: rgba(0, 255, 65, 0.2);
+  color: var(--neon-green);
+}
+
+.comment-feedback.error {
+  background: rgba(255, 0, 64, 0.2);
+  color: var(--danger-red);
+}
+
+/* Loading indicator for video */
+.video-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-cyan);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.video-loading-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.video-loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(0, 198, 255, 0.3);
+  border-top: 3px solid var(--neon-cyan);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
 </style>
 </head>
 <body>
  <canvas id="matrix"></canvas>
-
   <div class="content">
     <!-- your other site content -->
   </div>
 </body>
-
    <div class="site-header">
     <h1 id="dynamicText">VIPTEAMMOD Movies - தமிழ் </h1>
    
@@ -1089,13 +1168,11 @@ input:checked + .toggle-slider:before {
   <div id="results"></div>
 <!-- Button HTML -->
 <button id="tamilDubbedBtn">All Tamil Dubbed Movies</button>
-
 <!-- Script -->
 <script type="module">
   // Import Firebase (if not already included elsewhere)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
-
   document.getElementById('tamilDubbedBtn').addEventListener('click', function () {
     const firebaseConfig = {
       apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
@@ -1103,14 +1180,11 @@ input:checked + .toggle-slider:before {
       appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
       databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
     };
-
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
     // ✅ CHANGE your database reference path here
     const refPath = ref(db, "tamil_movies/tamil_dubbed_status");
-
     // Listen for changes
     onValue(refPath, (snapshot) => {
       const isOn = snapshot.val() === true;
@@ -1120,7 +1194,6 @@ input:checked + .toggle-slider:before {
     });
   });
 </script>
-
 
 <!-- CSS Styling -->
 <style>
@@ -1137,7 +1210,6 @@ input:checked + .toggle-slider:before {
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
     margin-top: 20px;
   }
-
   #tamilDubbedBtn:hover {
     background-color: #009ecb;
     transform: translateY(-1px);
@@ -1145,15 +1217,37 @@ input:checked + .toggle-slider:before {
   }
 </style>
   <div id="videoPlayer"></div>
-
  <div id="popup" style="display: none;"><div>
   <button id="closePopupBtn" style="position: absolute; top: 10px; right: 10px;">✖</button>
    <p>What do you want to do?</p>
-  <!-- Your popup content goes here -->
- 
+   
+   <!-- Movie Rating Section -->
+   <div class="rating-container" id="popupRatingContainer">
+     <h4>Rate this movie</h4>
+     <div class="movie-rating" id="movieRating">
+       <span class="star" data-rating="1">★</span>
+       <span class="star" data-rating="2">★</span>
+       <span class="star" data-rating="3">★</span>
+       <span class="star" data-rating="4">★</span>
+       <span class="star" data-rating="5">★</span>
+       <span class="rating-value" id="ratingValue">0.0</span>
+     </div>
+     <div class="rating-feedback" id="ratingFeedback"></div>
+   </div>
+   
+   <!-- Comments Section -->
+   <div class="comments-section" id="popupCommentsSection">
+     <h4>Comments</h4>
+     <div class="comment-form">
+       <textarea id="commentText" placeholder="Share your thoughts about this movie..."></textarea>
+       <button id="submitComment">Post Comment</button>
+     </div>
+     <div class="comment-feedback" id="commentFeedback"></div>
+     <div class="comments-list" id="commentsList"></div>
+   </div>
+   
   <button id="downloadBtn">Download</button>
-<button id="streamBtn" style="position: relative; left: 10px;">Play Video</button>
-
+  <button id="streamBtn" style="position: relative; left: 10px;">Play Video</button>
 </div>
  </div>
 <!-- 🔔 Popup Message Box -->
@@ -1168,7 +1262,6 @@ input:checked + .toggle-slider:before {
   padding: 15px 25px;
   border-radius: 12px;
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 35px rgba(255, 255, 255, 0.8);
-
   z-index: 9999;
   font-family: 'Segoe UI', sans-serif;
   font-size: 17px;
@@ -1181,7 +1274,6 @@ input:checked + .toggle-slider:before {
 ">
   <span id="popupText"></span>
 </div>
-
 <!-- ✨ Animation Keyframes -->
 <style>
   @keyframes fadeInUp {
@@ -1195,11 +1287,9 @@ input:checked + .toggle-slider:before {
     }
   }
 </style>
-
 <!-- ✅ Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
-
 <!-- ✅ Firebase Popup Script with Colors -->
 <script>
   window.onload = function () {
@@ -1209,35 +1299,27 @@ input:checked + .toggle-slider:before {
       appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
       databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const ref = db.ref("Message");
-
     const popup = document.getElementById("popupMessage");
     const text = document.getElementById("popupText");
-
     let lastShown = "";
-
     ref.on("value", (snapshot) => {
       const data = snapshot.val();
       if (!data || !data.popup_message || data.popup_message.trim() === "") {
         popup.style.display = "none";
         return;
       }
-
       const msg = data.popup_message;
       const bg = data.bg_color || "#0072ff";
       const color = data.text_color || "#ffffff";
-
       if (msg !== lastShown) {
         lastShown = msg;
-
         text.textContent = msg;
         popup.style.background = bg;
         popup.style.color = color;
         popup.style.display = "block";
-
         // Auto-hide after 10s
         setTimeout(() => {
           popup.style.display = "none";
@@ -1246,8 +1328,11 @@ input:checked + .toggle-slider:before {
     });
   };
 </script>
-
   <script>
+    // Global variables for feature toggles
+    let ratingsEnabled = true;
+    let commentsEnabled = true;
+    
     const searchBox = document.getElementById("searchBox");
     const resultsDiv = document.getElementById("results");
     const spinner = document.getElementById("spinner");
@@ -1255,10 +1340,13 @@ input:checked + .toggle-slider:before {
     const baseURL = "https://www.tamilprint45.art";
     const searchPrefix = baseURL + "/search.php?source=";
     const downloadPrefix = "https://tamilprint44.art/filedownload.php?fid=";
-
     let debounce;
-
+    
+    // Clear video player when starting a new search
     searchBox.addEventListener("input", () => {
+      // Clear video player when starting a new search
+      document.getElementById("videoPlayer").innerHTML = "";
+      
       clearTimeout(debounce);
       const keyword = searchBox.value.trim();
       if (!keyword) {
@@ -1269,7 +1357,7 @@ input:checked + .toggle-slider:before {
         fetchAndRender(searchPrefix + encodeURIComponent(keyword));
       }, 350);
     });
-
+    
     async function fetchAndRender(url, attempt = 1) {
       spinner.style.display = "block";
       resultsDiv.innerHTML = "";
@@ -1278,26 +1366,54 @@ input:checked + .toggle-slider:before {
         const html = await res.text();
         const fastChunk = html.split('<div class="tamilprintda"')[0];
         const matches = [...fastChunk.matchAll(/<div class="M1">.*?<a[^>]+href=\"([^\"]+)\"[^>]*>(.*?)<\/a><br>(.*?)<\/td>/gs)];
-
         for (const m of matches) {
           const href = m[1];
           const title = m[2].trim()
   .replace(/TamilPrint/g, "VIPTEAMMOD Movies - தமிழ்")
   .replace(/Tamil Print/g, "VIPTEAMMOD Movies - தமிழ் ");
           const desc = m[3].replace(/<[^>]+>/g, '').trim();
-
           const item = document.createElement("div");
           item.className = "link-container";
-          item.innerHTML = `<a class="link-name">${title}</a><small style="display:block;text-align:center;">${desc}</small>`;
-
+          
+          // Add movie ID as data attribute
           const matchId = href.match(/(\d{2,7})\/?$/);
+          const movieId = matchId ? matchId[1] : "";
+          
+          item.innerHTML = `
+            <a class="link-name">${title}</a>
+            <small style="display:block;text-align:center;">${desc}</small>
+            <div class="movie-rating" data-movie-id="${movieId}" style="display: ${ratingsEnabled ? 'flex' : 'none'}">
+              <span class="star" data-rating="1">★</span>
+              <span class="star" data-rating="2">★</span>
+              <span class="star" data-rating="3">★</span>
+              <span class="star" data-rating="4">★</span>
+              <span class="star" data-rating="5">★</span>
+              <span class="rating-value">0.0</span>
+            </div>
+            <div class="comments-section" data-movie-id="${movieId}" style="display: ${commentsEnabled ? 'block' : 'none'}">
+              <h4>Comments</h4>
+              <div class="comments-list"></div>
+            </div>
+          `;
+          
+          // Add click event for the movie item
           if (matchId) {
-            item.onclick = () => showPopup(matchId[1]);
+            item.onclick = () => showPopup(matchId[1], title);
           } else {
             item.onclick = () => fetchAndRender(baseURL + href);
           }
-
+          
           resultsDiv.appendChild(item);
+          
+          // Load rating for this movie
+          if (movieId && ratingsEnabled) {
+            loadMovieRating(movieId);
+          }
+          
+          // Load comments for this movie
+          if (movieId && commentsEnabled) {
+            loadMovieComments(movieId);
+          }
         }
       } catch (e) {
         if (attempt < 3) {
@@ -1310,43 +1426,385 @@ input:checked + .toggle-slider:before {
         spinner.style.display = "none";
       }
     }
-
-   function showPopup(fid) {
+    
+    // Function to load movie rating
+    function loadMovieRating(movieId) {
+      if (!firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+          projectId: "vipteammod-movies",
+          appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+          databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+        });
+      }
+      
+      const db = firebase.database();
+      const ratingsRef = db.ref(`movieRatings/${movieId}`);
+      
+      ratingsRef.once('value').then(snapshot => {
+        const ratings = snapshot.val();
+        if (ratings) {
+          const totalRatings = Object.keys(ratings).length;
+          const sumRatings = Object.values(ratings).reduce((sum, rating) => sum + rating, 0);
+          const averageRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : "0.0";
+          
+          // Update rating display for this movie
+          const ratingElement = document.querySelector(`.movie-rating[data-movie-id="${movieId}"] .rating-value`);
+          if (ratingElement) {
+            ratingElement.textContent = averageRating;
+          }
+        }
+      }).catch(error => {
+        console.error("Error loading movie rating:", error);
+      });
+    }
+    
+    // Function to save movie rating
+    function saveMovieRating(movieId, rating) {
+      if (!firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+          projectId: "vipteammod-movies",
+          appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+          databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+        });
+      }
+      
+      const db = firebase.database();
+      const deviceId = localStorage.getItem("deviceId") || `device_${Date.now()}`;
+      localStorage.setItem("deviceId", deviceId);
+      
+      const ratingsRef = db.ref(`movieRatings/${movieId}/${deviceId}`);
+      
+      ratingsRef.set(rating).then(() => {
+        // Update the rating display
+        loadMovieRating(movieId);
+        
+        // Show success feedback
+        const feedback = document.getElementById("ratingFeedback");
+        feedback.textContent = "Thank you for rating!";
+        feedback.className = "rating-feedback success";
+        feedback.style.display = "block";
+        
+        setTimeout(() => {
+          feedback.style.display = "none";
+        }, 3000);
+      }).catch(error => {
+        console.error("Error saving movie rating:", error);
+        
+        // Show error feedback
+        const feedback = document.getElementById("ratingFeedback");
+        feedback.textContent = "Error saving rating. Please try again.";
+        feedback.className = "rating-feedback error";
+        feedback.style.display = "block";
+        
+        setTimeout(() => {
+          feedback.style.display = "none";
+        }, 3000);
+      });
+    }
+    
+    // Function to load movie comments
+    function loadMovieComments(movieId) {
+      if (!firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+          projectId: "vipteammod-movies",
+          appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+          databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+        });
+      }
+      
+      const db = firebase.database();
+      const commentsRef = db.ref(`movieComments/${movieId}`);
+      
+      commentsRef.once('value').then(snapshot => {
+        const comments = snapshot.val();
+        const commentsList = document.querySelector(`.comments-section[data-movie-id="${movieId}"] .comments-list`);
+        
+        if (commentsList) {
+          commentsList.innerHTML = "";
+          
+          if (comments) {
+            Object.keys(comments).forEach(commentId => {
+              const comment = comments[commentId];
+              const commentElement = document.createElement("div");
+              commentElement.className = "comment";
+              
+              const date = new Date(comment.timestamp);
+              const formattedDate = date.toLocaleDateString() + " " + date.toLocaleTimeString();
+              
+              commentElement.innerHTML = `
+                <div class="comment-header">
+                  <span class="comment-author">${comment.author || "Anonymous"}</span>
+                  <span class="comment-date">${formattedDate}</span>
+                </div>
+                <div class="comment-text">${comment.text}</div>
+              `;
+              
+              commentsList.appendChild(commentElement);
+            });
+          } else {
+            commentsList.innerHTML = "<p style='text-align: center; color: #888;'>No comments yet. Be the first to comment!</p>";
+          }
+        }
+      }).catch(error => {
+        console.error("Error loading movie comments:", error);
+      });
+    }
+    
+    // Function to save movie comment
+    function saveMovieComment(movieId, text) {
+      if (!firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+          projectId: "vipteammod-movies",
+          appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+          databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+        });
+      }
+      
+      const db = firebase.database();
+      const deviceId = localStorage.getItem("deviceId") || `device_${Date.now()}`;
+      localStorage.setItem("deviceId", deviceId);
+      
+      const commentsRef = db.ref(`movieComments/${movieId}`).push();
+      
+      const commentData = {
+        text: text,
+        author: "User", // Could be enhanced to allow user to enter name
+        timestamp: Date.now(),
+        deviceId: deviceId
+      };
+      
+      commentsRef.set(commentData).then(() => {
+        // Clear the comment textarea
+        document.getElementById("commentText").value = "";
+        
+        // Reload comments
+        loadMovieComments(movieId);
+        
+        // Show success feedback
+        const feedback = document.getElementById("commentFeedback");
+        feedback.textContent = "Comment posted successfully!";
+        feedback.className = "comment-feedback success";
+        feedback.style.display = "block";
+        
+        setTimeout(() => {
+          feedback.style.display = "none";
+        }, 3000);
+      }).catch(error => {
+        console.error("Error saving movie comment:", error);
+        
+        // Show error feedback
+        const feedback = document.getElementById("commentFeedback");
+        feedback.textContent = "Error posting comment. Please try again.";
+        feedback.className = "comment-feedback error";
+        feedback.style.display = "block";
+        
+        setTimeout(() => {
+          feedback.style.display = "none";
+        }, 3000);
+      });
+    }
+    
+    // Set up rating stars click handlers
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('star')) {
+        const rating = parseInt(e.target.getAttribute('data-rating'));
+        const movieRating = e.target.closest('.movie-rating');
+        const movieId = movieRating.getAttribute('data-movie-id');
+        
+        if (movieId) {
+          // Update star display
+          const stars = movieRating.querySelectorAll('.star');
+          stars.forEach((star, index) => {
+            if (index < rating) {
+              star.classList.add('active');
+            } else {
+              star.classList.remove('active');
+            }
+          });
+          
+          // Save rating
+          saveMovieRating(movieId, rating);
+        }
+      }
+    });
+    
+    // Set up rating stars hover effects
+    document.addEventListener('mouseover', function(e) {
+      if (e.target.classList.contains('star')) {
+        const rating = parseInt(e.target.getAttribute('data-rating'));
+        const movieRating = e.target.closest('.movie-rating');
+        const stars = movieRating.querySelectorAll('.star');
+        
+        stars.forEach((star, index) => {
+          if (index < rating) {
+            star.style.color = '#ffd700';
+          } else {
+            star.style.color = '';
+          }
+        });
+      }
+    });
+    
+    document.addEventListener('mouseout', function(e) {
+      if (e.target.classList.contains('star')) {
+        const movieRating = e.target.closest('.movie-rating');
+        const stars = movieRating.querySelectorAll('.star');
+        
+        stars.forEach(star => {
+          if (!star.classList.contains('active')) {
+            star.style.color = '';
+          }
+        });
+      }
+    });
+    
+   function showPopup(fid, title) {
+  // Clear any existing video player
+  const videoPlayer = document.getElementById("videoPlayer");
+  videoPlayer.innerHTML = "";
+  
   const popup = document.getElementById("popup");
   popup.style.display = "flex";
-
-const streamBtn = document.getElementById("streamBtn");
+  
+  // Set movie title in the popup
+  const popupTitle = document.querySelector("#popup h3");
+  if (!popupTitle) {
+    const titleElement = document.createElement("h3");
+    titleElement.textContent = title;
+    titleElement.style.color = "var(--neon-cyan)";
+    titleElement.style.marginBottom = "15px";
+    document.querySelector("#popup > div").insertBefore(titleElement, document.querySelector("#popup > div").firstChild.nextSibling);
+  } else {
+    popupTitle.textContent = title;
+  }
+  
+  // Show/hide rating and comments sections based on toggle states
+  document.getElementById("popupRatingContainer").style.display = ratingsEnabled ? "block" : "none";
+  document.getElementById("popupCommentsSection").style.display = commentsEnabled ? "block" : "none";
+  
+  // Set up movie rating in popup
+  const movieRating = document.getElementById("movieRating");
+  movieRating.setAttribute("data-movie-id", fid);
+  
+  // Load current rating for this movie
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    });
+  }
+  
+  const db = firebase.database();
+  const ratingsRef = db.ref(`movieRatings/${fid}`);
+  
+  ratingsRef.once('value').then(snapshot => {
+    const ratings = snapshot.val();
+    if (ratings) {
+      const totalRatings = Object.keys(ratings).length;
+      const sumRatings = Object.values(ratings).reduce((sum, rating) => sum + rating, 0);
+      const averageRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : "0.0";
+      
+      // Update rating display
+      document.getElementById("ratingValue").textContent = averageRating;
+      
+      // Check if current user has rated this movie
+      const deviceId = localStorage.getItem("deviceId") || `device_${Date.now()}`;
+      if (ratings[deviceId]) {
+        const userRating = ratings[deviceId];
+        const stars = movieRating.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+          if (index < userRating) {
+            star.classList.add('active');
+          } else {
+            star.classList.remove('active');
+          }
+        });
+      }
+    }
+  });
+  
+  // Load comments for this movie
+  loadMovieComments(fid);
+  
+  // Set up rating stars click handlers in popup
+  const popupStars = movieRating.querySelectorAll('.star');
+  popupStars.forEach(star => {
+    star.onclick = function() {
+      const rating = parseInt(this.getAttribute('data-rating'));
+      
+      // Update star display
+      popupStars.forEach((s, index) => {
+        if (index < rating) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+      
+      // Save rating
+      saveMovieRating(fid, rating);
+    };
+  });
+  
+  // Set up comment submission in popup
+  const submitCommentBtn = document.getElementById("submitComment");
+  submitCommentBtn.onclick = function() {
+    const commentText = document.getElementById("commentText").value.trim();
+    if (commentText) {
+      saveMovieComment(fid, commentText);
+    }
+  };
+  
+  const streamBtn = document.getElementById("streamBtn");
   const downloadBtn = document.getElementById("downloadBtn");
   const closeBtn = document.getElementById("closePopupBtn");
-
   streamBtn.onclick = () => {
     popup.style.display = "none";
+    
+    // Show loading indicator
     const videoPlayer = document.getElementById("videoPlayer");
     videoPlayer.innerHTML = `
-      <div class="video-container">
-        <video class="video" controls autoplay>
-          <source src="${downloadPrefix + fid}" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
+      <div class="video-loading">
+        <div class="video-loading-text">
+          <div class="video-loading-spinner"></div>
+          <span>Loading video...</span>
+        </div>
       </div>`;
+    
+    // Scroll to video player
     window.scrollTo({ top: videoPlayer.offsetTop, behavior: "smooth" });
+    
+    // Load the video after a short delay to allow the loading indicator to show
+    setTimeout(() => {
+      videoPlayer.innerHTML = `
+        <div class="video-container">
+          <video class="video" controls autoplay>
+            <source src="${downloadPrefix + fid}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>`;
+    }, 500);
   };
-
+  
   downloadBtn.onclick = () => {
     const popup1 = document.getElementById("popup1");
     popup1.style.display = "block";
     setTimeout(() => { popup1.style.display = "none"; }, 10000);
     setTimeout(() => { window.open(downloadPrefix + fid, "_self"); }, 500);
   };
-
+  
   // Close button handler
   closeBtn.onclick = () => {
     popup.style.display = "none";
   };
 }
-
   </script>
-
     <style>
     #popup1 {
       position: fixed;
@@ -1360,39 +1818,31 @@ const streamBtn = document.getElementById("streamBtn");
       justify-content: center;
       z-index: 9999;
     }
-
     #popup1  div {
       background: #1a2b3c;
       padding: 20px 30px;
       border-radius: 10px;
       text-align: center;
     }
-
    
     </style>
-
    <br/><br/>
 <div id="popup1"><div>
-
   <strong style="display:block; font-size: 1.5rem; margin-bottom: 8px;">Thanks for downloading</strong>
   <span style="font-size: 1rem;">Please wait...</span>
-</div>
-</div>
-
+</div></div>
 
 <script>
     // Disable right-click
 document.addEventListener("contextmenu", function (e) {
     e.preventDefault();
 });
-
 // Disable keyboard shortcuts for DevTools
 document.addEventListener("keydown", function (e) {
     if (e.ctrlKey && (e.key === "u" || e.key === "U" || e.key === "s" || e.key === "S" || e.key === "i" || e.key === "I" || e.key === "j" || e.key === "J" || e.key === "c" || e.key === "C")) {
         e.preventDefault();
     }
 });
-
 // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J
 document.onkeydown = function (e) {
     if (e.keyCode == 123) { return false; } // F12
@@ -1402,15 +1852,12 @@ document.onkeydown = function (e) {
   </script>
 <script>
     const blockScreen = document.getElementById('blockScreen');
-
     function detectDevTools() {
       const widthDiff = window.outerWidth - window.innerWidth;
       const heightDiff = window.outerHeight - window.innerHeight;
       const threshold = 120;
-
       // True if dimensions indicate DevTools or if debugger gets trapped
       let devtoolsOpen = widthDiff > threshold || heightDiff > threshold;
-
       // Mobile-specific trap
       const trap = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (trap) {
@@ -1419,7 +1866,6 @@ document.onkeydown = function (e) {
         const end = new Date();
         if (end - start > 100) devtoolsOpen = true;
       }
-
       if (devtoolsOpen) {
       
       } else {
@@ -1427,12 +1873,9 @@ document.onkeydown = function (e) {
         document.body.style.pointerEvents = 'auto';
       }
     }
-
     setInterval(detectDevTools, 600);
-
     // Block right-click
     document.addEventListener('contextmenu', e => e.preventDefault());
-
     // Block common dev hotkeys
     document.addEventListener('keydown', function (event) {
       if (
@@ -1454,7 +1897,6 @@ document.onkeydown = function (e) {
 <a id="telegramLink" class="telegram-glow-btn" href="#" target="_blank" title="Join Telegram">
   <img id="telegramIcon" class="telegram-icon" src="default.svg" />
 </a>
-
     
   </div>
  <br/>
@@ -1465,7 +1907,6 @@ document.onkeydown = function (e) {
   <br/>
  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
@@ -1473,37 +1914,30 @@ document.onkeydown = function (e) {
     appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
     databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 firebase.database().ref("social/telegram").on("value", (snapshot) => {
   const data = snapshot.val();
-
   if (data) {
     if (data.url) {
       document.getElementById("telegramLink").href = data.url;
     }
-
     if (data.icon) {
       document.getElementById("telegramIcon").src = data.icon;
     }
-
     if (data.glowColor) {
       document.documentElement.style.setProperty('--glow-color', data.glowColor);
     }
   }
 });
-
 </script>
-
   <footer1 style="text-align: center; padding: 20px; font-size: 14px; color: #888;">
  <p>
-    We love cinema. We don’t support piracy.
+    We love cinema. We don't support piracy.
     But when theatres price water, popcorn, parking, and basic comforts higher than the experience itself — this is not theft, it's a protest.<br>
-    Fix the system, and we’ll pay happily to watch cinema in theatre.
+    Fix the system, and we'll pay happily to watch cinema in theatre.
   </p>
 </footer1>
-
 <style>
 .modal {
   display: none;
@@ -1516,7 +1950,6 @@ firebase.database().ref("social/telegram").on("value", (snapshot) => {
   background: rgba(0, 0, 0, 0.75);
   overflow: auto;
 }
-
 .modal-content {
   background-color: #1c1c1c;
   margin: 80px auto;
@@ -1527,7 +1960,6 @@ firebase.database().ref("social/telegram").on("value", (snapshot) => {
   position: relative;
   animation: fadeIn 0.3s ease;
 }
-
 .close-btn {
   position: absolute;
   top: 15px;
@@ -1536,29 +1968,24 @@ firebase.database().ref("social/telegram").on("value", (snapshot) => {
   font-size: 1.8rem;
   cursor: pointer;
 }
-
 .close-btn:hover {
   color: #fff;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
-
  .footer-links {
   display: contents;
   justify-content: center; /* center horizontally */
   gap: 10px;               /* space between buttons */
   padding: 10px;           /* optional padding */
 }
-
 .footer-links button {
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
 }
-
   
 .footer-links button {
 font-weight:600;
@@ -1570,7 +1997,6 @@ font-weight:600;
   cursor: pointer;
   transition: color 0.3s;
 }
-
 .footer-links button:hover {
   color: #ffffff;
 }
@@ -1591,14 +2017,11 @@ font-weight:600;
  
 </footer>
 
-
 <script>
 const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modal-body');
-
 function openModal(type) {
   let content = '';
-
   switch (type) {
     case 'home':
       content = `
@@ -1607,7 +2030,6 @@ function openModal(type) {
         <p>We do not host or upload any files on our servers. All content is sourced from third-party websites freely available on the internet.</p>
         <p>Use the search bar above to find the movie you're looking for. If you can't find it, feel free to submit a request.</p>`;
       break;
-
     case 'disclaimer':
       content = `
         <h2>Disclaimer</h2>
@@ -1615,7 +2037,6 @@ function openModal(type) {
         <p>VIPTEAMMOD Movies  does not promote or support piracy. Any content you choose to download must be done at your own discretion and responsibility. We highly encourage users to purchase or stream content legally to support the creators.</p>
         <p>If you believe any content on this site infringes upon your copyrights, please contact us. We act promptly upon receiving valid requests.</p>`;
       break;
-
     case 'dmca':
       content = `
         <h2>DMCA Policy</h2>
@@ -1630,7 +2051,6 @@ function openModal(type) {
         <p>Email your notice to: <strong>dmca@moviehub.com</strong><br>
         We aim to respond within 48 hours of receiving a valid notice.</p>`;
       break;
-
     case 'privacy':
       content = `
         <h2>Privacy Policy</h2>
@@ -1649,61 +2069,15 @@ function openModal(type) {
         <p>We reserve the right to modify this privacy policy at any time. Updates will be posted on this page.</p>`;
       break;
   }
-
   modalBody.innerHTML = content;
   modal.style.display = 'block';
 }
-
 function closeModal() {
   modal.style.display = 'none';
 }
-
 window.onclick = function(event) {
   if (event.target == modal) closeModal();
 };
-</script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-  import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
-    projectId: "vipteammod-movies",
-    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
-    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // Unique per-device ID (stored in localStorage)
-  let deviceId = localStorage.getItem("deviceId");
-  if (!deviceId) {
-    deviceId = Date.now() + "_" + Math.random().toString(36).substring(2);
-    localStorage.setItem("deviceId", deviceId);
-  }
-
-  // Extract model info from userAgent
-  const ua = navigator.userAgent;
-  const platform = navigator.platform;
-
-  const userRef = ref(db, "onlineUsers/" + deviceId);
-
-  const data = {
-    device: ua,
-    platform: platform,
-    time: new Date().toISOString()
-  };
-
-  set(userRef, data);
-  onDisconnect(userRef).remove();
-
-  // User count
-  const countRef = ref(db, "onlineUsers");
-  onValue(countRef, (snapshot) => {
-    const count = snapshot.size || snapshot.numChildren();
-    document.getElementById("userCount").textContent = count;
-  });
 </script>
 
 <!-- 🔔 Alert Box -->
@@ -1723,17 +2097,14 @@ window.onclick = function(event) {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
     projectId: "vipteammod-movies",
     appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
     databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
   };
-
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-
   // 🎨 Available design themes
   const styleMap = {
   blue: "linear-gradient(to right, #00c6ff, #0072ff)",
@@ -1748,29 +2119,24 @@ window.onclick = function(event) {
   aqua: "linear-gradient(to right, #13547a, #80d0c7)"
 };
 
-
   // 🔁 Listen for style changes
   const styleRef = ref(db, "designControl/style");
   onValue(styleRef, (snapshot) => {
     const key = snapshot.val();
     const bg = styleMap[key] || "#0f2027";
-
     // Apply background to <body>
     //document.body.style.background = bg;
-
     // Apply same style to alert box (if present)
     const alertDiv = document.getElementById("firebaseAlert");
     if (alertDiv) {
       alertDiv.style.background = bg;
     }
   });
-
   // 🔔 Alert system live update
   const alertRef = ref(db, "websiteAlert");
   onValue(alertRef, (snapshot) => {
     const data = snapshot.val();
     const alertDiv = document.getElementById("firebaseAlert");
-
     if (data && data.status === true && data.message) {
       alertDiv.style.display = "block";
       alertDiv.textContent = data.message;
@@ -1784,23 +2150,18 @@ window.onclick = function(event) {
   });
 </script>
 
-
-
 <!-- Firebase Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
   import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
     projectId: "vipteammod-movies",
     appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
     databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
   };
-
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-
   const alertRef = ref(db, "websiteAlert");
 /*
   // OPTIONAL: Auto-set default alert (only if you want to force one)
@@ -1809,11 +2170,9 @@ window.onclick = function(event) {
     message: "",
     link: "https://example.com/download"
   });*/
-
   onValue(alertRef, (snapshot) => {
     const data = snapshot.val();
     const alertDiv = document.getElementById("firebaseAlert");
-
     if (data && data.status === true && data.message) {
       alertDiv.style.display = "block";
       alertDiv.textContent = data.message;
@@ -1827,26 +2186,20 @@ window.onclick = function(event) {
       alertDiv.onclick = null;
     }
   });
-
 </script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
-    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
     projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
     databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
   };
-
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-
   const toggleRef = ref(db, "featureControl/searchEnabled");
-
   const searchBox = document.getElementById("searchBox");
-
   // Disable or enable searchBox based on Firebase flag
   onValue(toggleRef, (snapshot) => {
     const enabled = snapshot.val();
@@ -1859,23 +2212,19 @@ window.onclick = function(event) {
     }
   });
 </script>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
     projectId: "vipteammod-movies",
     appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
     databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
   };
-
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   const btn = document.getElementById("tamilDubbedBtn");
   const lockRef = ref(db, "featureControl/lockTamilDubbed");
-
   // 🔄 Live Button Visibility Control
   onValue(lockRef, (snapshot) => {
     const visible = snapshot.val() === true;
@@ -1892,15 +2241,12 @@ window.onclick = function(event) {
       }
     
   });
-
  
 </script>
-
 <!-- Maintenance Message Box -->
 <div id="maintenanceMessage" style="display: none; color: red; font-size: 20px; text-align: center; margin-top: 50px;">
   🔧 Site is Under Maintenance. Please check back later.
 </div>
-
 <script type="module">
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
@@ -1908,24 +2254,19 @@ window.onclick = function(event) {
     appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
     databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
   const ref = db.ref("controls/maintenance_mode");
-
   // Live listener — works without refresh
   ref.on("value", (snapshot) => {
     const isOn = snapshot.val() === true;
     if (isOn) {
      
       window.location.href = "Maintenance.html";
-
     }
   });
 </script>
-
 <audio id="autoPlayer" src="Maintenance.mp3" loop></audio>
-
 <script>
   window.addEventListener("load", () => {
     const audio = document.getElementById("autoPlayer");
@@ -1937,39 +2278,29 @@ window.onclick = function(event) {
 <script>
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
-
 // Set canvas size
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
-
 const letters = 'V I P T E A M M O D M O V I E S';
 const lettersArr = letters.split('');
-
 const fontSize = 16;
 const columns = canvas.width / fontSize;
-
 const drops = Array(Math.floor(columns)).fill(1);
-
 // Draw the characters
 function draw() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   ctx.fillStyle = '#00c6ff';
   ctx.font = fontSize + 'px monospace';
-
   for (let i = 0; i < drops.length; i++) {
     const text = lettersArr[Math.floor(Math.random() * lettersArr.length)];
     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
     if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
       drops[i] = 0;
     }
-
     drops[i]++;
   }
 }
-
 setInterval(draw, 33);
 </script>
   <br/>
@@ -1978,5 +2309,309 @@ setInterval(draw, 33);
     <h5>👥 Users Online</h5>
     <div id="userCount">0</div>
   </div>
+  
+  <!-- User Counter Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Firebase if not already initialized
+      if (typeof firebase === 'undefined') {
+        console.error("Firebase not loaded");
+        return;
+      }
+      
+      // Check if Firebase is already initialized
+      if (!firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+          projectId: "vipteammod-movies",
+          appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+          databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+        });
+      }
+      
+      const db = firebase.database();
+      
+      // Generate or retrieve device ID
+      let deviceId = localStorage.getItem("deviceId");
+      if (!deviceId) {
+        deviceId = Date.now() + "_" + Math.random().toString(36).substring(2);
+        localStorage.setItem("deviceId", deviceId);
+      }
+      
+      // Get user agent info
+      const ua = navigator.userAgent;
+      const platform = navigator.platform;
+      
+      // Create user reference
+      const userRef = db.ref("onlineUsers/" + deviceId);
+      const userData = {
+        device: ua,
+        platform: platform,
+        time: new Date().toISOString()
+      };
+      
+      // Set user data and configure disconnect
+      userRef.set(userData).then(() => {
+        console.log("User registered in online users");
+      }).catch(error => {
+        console.error("Error registering user:", error);
+      });
+      
+      userRef.onDisconnect().remove();
+      
+      // Update user count
+      const countRef = db.ref("onlineUsers");
+      countRef.on("value", (snapshot) => {
+        // Use numChildren() to get the count of users
+        const count = snapshot.numChildren();
+        document.getElementById("userCount").textContent = count;
+        console.log("Online users count updated:", count);
+      });
+    });
+  </script>
+  
+  <!-- Custom Theme Colors Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Listen for custom color changes
+    const customColorsRef = ref(db, "designControl/customColors");
+    onValue(customColorsRef, (snapshot) => {
+      const colors = snapshot.val();
+      if (colors) {
+        if (colors.primary) {
+          document.documentElement.style.setProperty('--neon-blue', colors.primary);
+        }
+        if (colors.secondary) {
+          document.documentElement.style.setProperty('--neon-cyan', colors.secondary);
+        }
+        if (colors.accent) {
+          document.documentElement.style.setProperty('--neon-pink', colors.accent);
+        }
+      }
+    });
+  </script>
+  
+  <!-- Ratings Toggle Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Listen for ratings toggle
+    const ratingsRef = ref(db, "featureControl/ratingsEnabled");
+    onValue(ratingsRef, (snapshot) => {
+      const enabled = snapshot.val() === true;
+      // Update global variable
+      ratingsEnabled = enabled;
+      
+      // Show/hide rating elements based on the toggle
+      const ratingElements = document.querySelectorAll('.movie-rating');
+      ratingElements.forEach(element => {
+        element.style.display = enabled ? 'flex' : 'none';
+      });
+      
+      // Also update popup rating container
+      const popupRatingContainer = document.getElementById("popupRatingContainer");
+      if (popupRatingContainer) {
+        popupRatingContainer.style.display = enabled ? 'block' : 'none';
+      }
+    });
+  </script>
+  
+  <!-- Comments Toggle Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Listen for comments toggle
+    const commentsRef = ref(db, "featureControl/commentsEnabled");
+    onValue(commentsRef, (snapshot) => {
+      const enabled = snapshot.val() === true;
+      // Update global variable
+      commentsEnabled = enabled;
+      
+      // Show/hide comments elements based on the toggle
+      const commentsElements = document.querySelectorAll('.comments-section');
+      commentsElements.forEach(element => {
+        element.style.display = enabled ? 'block' : 'none';
+      });
+      
+      // Also update popup comments section
+      const popupCommentsSection = document.getElementById("popupCommentsSection");
+      if (popupCommentsSection) {
+        popupCommentsSection.style.display = enabled ? 'block' : 'none';
+      }
+    });
+  </script>
+  
+  <!-- Popup Toggle Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Listen for popup toggle
+    const popupToggleRef = ref(db, "featureControl/popupEnabled");
+    onValue(popupToggleRef, (snapshot) => {
+      const enabled = snapshot.val() === true;
+      // Apply popup display based on the toggle
+      const popupMessage = document.getElementById("popupMessage");
+      if (!enabled && popupMessage) {
+        popupMessage.style.display = "none";
+      }
+    });
+  </script>
+  
+  <!-- Social Media Settings Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Listen for social media settings
+    const socialRef = ref(db, "socialMedia");
+    onValue(socialRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Update Facebook link if exists
+        if (data.facebook) {
+          // Implementation would depend on how Facebook link is displayed
+          console.log("Facebook URL:", data.facebook);
+        }
+        
+        // Update Twitter link if exists
+        if (data.twitter) {
+          // Implementation would depend on how Twitter link is displayed
+          console.log("Twitter URL:", data.twitter);
+        }
+        
+        // Update Instagram link if exists
+        if (data.instagram) {
+          // Implementation would depend on how Instagram link is displayed
+          console.log("Instagram URL:", data.instagram);
+        }
+        
+        // Update YouTube link if exists
+        if (data.youtube) {
+          // Implementation would depend on how YouTube link is displayed
+          console.log("YouTube URL:", data.youtube);
+        }
+      }
+    });
+  </script>
+  
+  <!-- Security Settings Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Listen for security settings
+    const securityRef = ref(db, "security");
+    onValue(securityRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Apply API key if exists
+        if (data.apiKey) {
+          // Implementation would depend on how API key is used
+          console.log("API Key:", data.apiKey);
+        }
+        
+        // Apply allowed domains if exists
+        if (data.allowedDomains) {
+          // Implementation would depend on how allowed domains are enforced
+          console.log("Allowed Domains:", data.allowedDomains);
+        }
+      }
+    });
+  </script>
+  
+  <!-- Analytics Settings Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Listen for analytics settings
+    const analyticsRef = ref(db, "analytics");
+    onValue(analyticsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Apply analytics if enabled
+        if (data.enabled && data.analyticsId) {
+          // Implementation would depend on how analytics is integrated
+          console.log("Analytics ID:", data.analyticsId);
+          console.log("Analytics enabled:", data.enabled);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
