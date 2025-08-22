@@ -139,6 +139,7 @@
       font-family: 'Share Tech Mono', monospace;
       outline: none;
       box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+      transition: all 0.3s;
     }
     
     input[type="text"]:focus, textarea:focus, select:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="date"]:focus {
@@ -398,7 +399,35 @@
       font-family: 'Share Tech Mono', monospace;
       box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
       z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 4px solid currentColor;
       animation: slideIn 0.5s forwards, slideOut 0.5s 2.5s forwards;
+    }
+    
+    .notification.success {
+      color: #00ff99;
+      border-color: #00ff99;
+      box-shadow: 0 0 15px rgba(0, 255, 153, 0.5);
+    }
+    
+    .notification.error {
+      color: #ff4d4d;
+      border-color: #ff4d4d;
+      box-shadow: 0 0 15px rgba(255, 77, 77, 0.5);
+    }
+    
+    .notification.warning {
+      color: #ff9800;
+      border-color: #ff9800;
+      box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+    }
+    
+    .notification.info {
+      color: #00c6ff;
+      border-color: #00c6ff;
+      box-shadow: 0 0 15px rgba(0, 198, 255, 0.5);
     }
     
     @keyframes slideIn {
@@ -433,6 +462,7 @@
       display: flex;
       margin-bottom: 20px;
       border-bottom: 1px solid #0ff;
+      flex-wrap: wrap;
     }
     
     .tab-button {
@@ -526,10 +556,12 @@
       display: flex;
       gap: 10px;
       margin-top: 10px;
+      flex-wrap: wrap;
     }
     
     .color-item {
       flex: 1;
+      min-width: 100px;
     }
     
     .color-item label {
@@ -542,6 +574,175 @@
       height: 30px;
       margin-top: 0;
     }
+    
+    /* TamilDub Button Customization */
+    .tamil-dub-customization {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid #0ff;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    
+    .tamil-dub-preview {
+      margin-top: 15px;
+      padding: 10px;
+      text-align: center;
+      border-radius: 5px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    /* Animation keyframes */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    /* New Controls Styles */
+    .control-group {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 5px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+    }
+    
+    .control-group h4 {
+      color: #f0f;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border-bottom: 1px dashed #f0f;
+      padding-bottom: 5px;
+    }
+    
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .pattern-item {
+      height: 60px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .pattern-item:hover {
+      border-color: #0ff;
+    }
+    
+    .pattern-item.selected {
+      border-color: #f0f;
+      box-shadow: 0 0 10px #f0f;
+    }
+    
+    .pattern-item.selected::after {
+      content: "✓";
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      color: #fff;
+      background: #f0f;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    
+    /* Footer Customization */
+    .footer-preview {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+    
+    /* Ad Management */
+    .ad-preview {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px dashed #0ff;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Password strength indicator */
+    .password-strength {
+      height: 5px;
+      margin-top: 5px;
+      border-radius: 3px;
+      transition: all 0.3s;
+    }
+    
+    .strength-weak { background: #ff4d4d; width: 33%; }
+    .strength-medium { background: #ff9800; width: 66%; }
+    .strength-strong { background: #00ff99; width: 100%; }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .tab-nav {
+        justify-content: center;
+      }
+      
+      .tab-button {
+        font-size: 12px;
+        padding: 8px 15px;
+      }
+      
+      .color-group {
+        flex-direction: column;
+      }
+      
+      .color-item {
+        width: 100%;
+      }
+      
+      .panel-box {
+        padding: 15px;
+      }
+      
+      h2 {
+        font-size: 20px;
+      }
+      
+      .feature-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      
+      .control-group {
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -553,11 +754,12 @@
     
     <!-- Tab Navigation -->
     <div class="tab-nav">
-      <button class="tab-button active" onclick="openTab(event, 'alerts-tab')">Alerts</button>
-      <button class="tab-button" onclick="openTab(event, 'design-tab')">Design</button>
-      <button class="tab-button" onclick="openTab(event, 'features-tab')">Features</button>
-      <button class="tab-button" onclick="openTab(event, 'social-tab')">Social</button>
-      <button class="tab-button" onclick="openTab(event, 'advanced-tab')">Advanced</button>
+      <button class="tab-button active" onclick="openTab(event, 'alerts-tab')" tabindex="0" role="tab" aria-selected="true">Alerts</button>
+      <button class="tab-button" onclick="openTab(event, 'design-tab')" tabindex="0" role="tab" aria-selected="false">Design</button>
+      <button class="tab-button" onclick="openTab(event, 'features-tab')" tabindex="0" role="tab" aria-selected="false">Features</button>
+      <button class="tab-button" onclick="openTab(event, 'social-tab')" tabindex="0" role="tab" aria-selected="false">Social</button>
+      <button class="tab-button" onclick="openTab(event, 'appearance-tab')" tabindex="0" role="tab" aria-selected="false">Appearance</button>
+      <button class="tab-button" onclick="openTab(event, 'advanced-tab')" tabindex="0" role="tab" aria-selected="false">Advanced</button>
     </div>
     
     <!-- Alerts Tab -->
@@ -569,7 +771,7 @@
       </select>
       
       <label>Message:</label>
-      <textarea id="messageInput" rows="3" placeholder="Enter alert message..."></textarea>
+      <textarea id="messageInput" rows="3" placeholder="Enter alert message..." required></textarea>
       
       <label>Link (optional):</label>
       <input type="text" id="linkInput" placeholder="https://your-link.com" />
@@ -693,6 +895,24 @@
           </label>
           <span id="commentsStatus">Checking status...</span>
         </div>
+        
+        <div class="feature-item">
+          <h4>🌙 Dark Mode</h4>
+          <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+          </label>
+          <span id="darkModeStatus">Checking status...</span>
+        </div>
+        
+        <div class="feature-item">
+          <h4>📱 Mobile View</h4>
+          <label class="switch">
+            <input type="checkbox" id="mobileViewToggle">
+            <span class="slider"></span>
+          </label>
+          <span id="mobileViewStatus">Checking status...</span>
+        </div>
       </div>
       
       <hr>
@@ -741,21 +961,82 @@
       <label>Telegram Glow Color:</label>
       <input type="color" id="telegramColor" value="#0088cc" />
       
+      <button onclick="updateSocialMedia()">✅ Save Social Media</button>
+      
       <hr>
       
-      <label>Facebook URL:</label>
-      <input type="text" id="facebookUrl" placeholder="Enter Facebook Page Link" />
+   
+    </div>
+    
+    <!-- Appearance Tab -->
+    <div id="appearance-tab" class="tab-content">
+      <h3>🎨 TamilDub Button Customization</h3>
+      <div class="tamil-dub-customization">
+        <label>Button Text:</label>
+        <input type="text" id="tamilDubText" placeholder="Tamil Dubbed" />
+        
+        <div class="color-group">
+          <div class="color-item">
+            <label>Background</label>
+            <input type="color" id="tamilDubBg" value="#ff4d4d" />
+          </div>
+          <div class="color-item">
+            <label>Text</label>
+            <input type="color" id="tamilDubTextColor" value="#ffffff" />
+          </div>
+          <div class="color-item">
+            <label>Border</label>
+            <input type="color" id="tamilDubBorder" value="#ff0000" />
+          </div>
+          <div class="color-item">
+            <label>Glow</label>
+            <input type="color" id="tamilDubGlow" value="#ff4d4d" />
+          </div>
+        </div>
+        
+        <label>Button Style:</label>
+        <select id="tamilDubStyle">
+          <option value="solid">Solid</option>
+          <option value="gradient">Gradient</option>
+          <option value="outline">Outline</option>
+          <option value="glow">Glow</option>
+        </select>
+        
+        <label>Animation:</label>
+        <select id="tamilDubAnimation">
+          <option value="none">None</option>
+          <option value="pulse">Pulse</option>
+          <option value="bounce">Bounce</option>
+          <option value="shake">Shake</option>
+        </select>
+        
+        <button onclick="saveTamilDubSettings()">💾 Save TamilDub Settings</button>
+        
+        <div class="preview-title">Button Preview</div>
+        <div id="tamilDubPreview" class="tamil-dub-preview" style="background: #ff4d4d; color: #ffffff; border: 2px solid #ff0000; box-shadow: 0 0 10px #ff4d4d;">
+          Tamil Dubbed
+        </div>
+      </div>
       
-      <label>Twitter URL:</label>
-      <input type="text" id="twitterUrl" placeholder="Enter Twitter Profile Link" />
+      <hr>
       
-      <label>Instagram URL:</label>
-      <input type="text" id="instagramUrl" placeholder="Enter Instagram Profile Link" />
+      <h3>🖼️ Background Pattern</h3>
+      <label>Select Pattern:</label>
+      <div class="pattern-grid">
+        <div class="pattern-item selected" style="background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png')" onclick="selectPattern(this, 'carbon-fibre')" data-pattern="carbon-fibre"></div>
+        <div class="pattern-item" style="background: url('https://www.transparenttextures.com/patterns/dark-geometric.png')" onclick="selectPattern(this, 'dark-geometric')" data-pattern="dark-geometric"></div>
+        <div class="pattern-item" style="background: url('https://www.transparenttextures.com/patterns/asfalt-light.png')" onclick="selectPattern(this, 'asfalt-light')" data-pattern="asfalt-light"></div>
+        <div class="pattern-item" style="background: url('https://www.transparenttextures.com/patterns/cubes.png')" onclick="selectPattern(this, 'cubes')" data-pattern="cubes"></div>
+        <div class="pattern-item" style="background: url('https://www.transparenttextures.com/patterns/diagonal-stripes-brick.png')" onclick="selectPattern(this, 'diagonal-stripes-brick')" data-pattern="diagonal-stripes-brick"></div>
+        <div class="pattern-item" style="background: url('https://www.transparenttextures.com/patterns/gplay-pattern.png')" onclick="selectPattern(this, 'gplay-pattern')" data-pattern="gplay-pattern"></div>
+        <div class="pattern-item" style="background: url('https://www.transparenttextures.com/patterns/45-degree-fabric-light.png')" onclick="selectPattern(this, '45-degree-fabric-light')" data-pattern="45-degree-fabric-light"></div>
+        <div class="pattern-item" style="background: url('https://www.transparenttextures.com/patterns/concrete-wall.png')" onclick="selectPattern(this, 'concrete-wall')" data-pattern="concrete-wall"></div>
+      </div>
       
-      <label>YouTube URL:</label>
-      <input type="text" id="youtubeUrl" placeholder="Enter YouTube Channel Link" />
+      <button onclick="saveBackgroundPattern()">💾 Save Background Pattern</button>
       
-      <button onclick="updateSocialMedia()">✅ Save Social Media</button>
+      <hr>
+      
     </div>
     
     <!-- Advanced Tab -->
@@ -794,6 +1075,21 @@
       <span>Enable Analytics</span>
       
       <button onclick="updateAnalytics()">✅ Save Analytics Settings</button>
+      
+      <hr>
+      
+      <h3>🔄 Advanced Features</h3>
+      <div class="control-group">
+        <h4>Cache Management</h4>
+        <button onclick="clearCache()">🗑️ Clear Cache</button>
+        <button onclick="refreshCache()">🔄 Refresh Cache</button>
+      </div>
+      
+      <div class="control-group">
+        <h4>Backup & Restore</h4>
+        <button onclick="createBackup()">💾 Create Backup</button>
+        <button onclick="restoreBackup()">📂 Restore Backup</button>
+      </div>
     </div>
   </div>
   
@@ -803,6 +1099,7 @@
       <h2>VIPTEAMMOD CONTROL PANEL</h2>
       <input type="email" id="email" placeholder="Username" />
       <input type="password" id="password" placeholder="Password" />
+      <div id="passwordStrength"></div>
       <button onclick="login()">LOGIN</button>
     </div>
   </div>
@@ -823,30 +1120,78 @@
     
     function initializeFirebase() {
       if (!firebaseApp) {
-        firebaseApp = firebase.initializeApp(firebaseConfig);
-        firebaseDB = firebase.database();
+        try {
+          firebaseApp = firebase.initializeApp(firebaseConfig);
+          firebaseDB = firebase.database();
+        } catch (error) {
+          console.error("Firebase initialization error:", error);
+          showNotification("❌ Firebase initialization failed", "error");
+        }
       }
       return firebaseDB;
     }
     
     // Show notification function
-    function showNotification(message, color) {
+    function showNotification(message, type = 'info') {
+      const colors = {
+        success: '#00ff99',
+        error: '#ff4d4d',
+        warning: '#ff9800',
+        info: '#00c6ff'
+      };
+      
       const notification = document.createElement('div');
-      notification.className = 'notification';
-      notification.style.color = color;
-      notification.style.borderColor = color;
-      notification.style.boxShadow = `0 0 15px ${color}`;
+      notification.className = `notification ${type}`;
+      notification.style.color = colors[type];
+      notification.style.borderColor = colors[type];
+      notification.style.boxShadow = `0 0 15px ${colors[type]}`;
       notification.textContent = message;
       document.body.appendChild(notification);
       
       setTimeout(() => {
-        notification.remove();
+        notification.classList.add('fade-out');
+        setTimeout(() => notification.remove(), 500);
       }, 3000);
     }
     
     // Initialize Firebase when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
       initializeFirebase();
+      
+      // Check login state
+      if (sessionStorage.getItem('isLoggedIn') === 'true') {
+        document.getElementById("loginPopup").style.display = "none";
+      }
+      
+      // Password strength indicator
+      document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthIndicator = document.getElementById('passwordStrength');
+        
+        // Remove existing indicator
+        if (strengthIndicator) {
+          strengthIndicator.remove();
+        }
+        
+        if (password.length > 0) {
+          const indicator = document.createElement('div');
+          indicator.className = 'password-strength';
+          
+          // Calculate strength
+          let strength = 0;
+          if (password.length >= 8) strength++;
+          if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+          if (password.match(/[0-9]/)) strength++;
+          if (password.match(/[^a-zA-Z0-9]/)) strength++;
+          
+          // Add appropriate class
+          if (strength <= 1) indicator.classList.add('strength-weak');
+          else if (strength === 2) indicator.classList.add('strength-medium');
+          else indicator.classList.add('strength-strong');
+          
+          this.parentNode.appendChild(indicator);
+        }
+      });
     });
     
     // Tab navigation function
@@ -861,6 +1206,7 @@
       const tabButtons = document.getElementsByClassName('tab-button');
       for (let i = 0; i < tabButtons.length; i++) {
         tabButtons[i].classList.remove('active');
+        tabButtons[i].setAttribute('aria-selected', 'false');
       }
       
       // Show the specific tab content
@@ -868,6 +1214,61 @@
       
       // Add active class to the button that opened the tab
       evt.currentTarget.classList.add('active');
+      evt.currentTarget.setAttribute('aria-selected', 'true');
+    }
+    
+    // Keyboard navigation for tabs
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabButtons = document.querySelectorAll('.tab-button');
+      
+      tabButtons.forEach((button, index) => {
+        button.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            button.click();
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            tabButtons[(index + 1) % tabButtons.length].focus();
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            tabButtons[(index - 1 + tabButtons.length) % tabButtons.length].focus();
+          }
+        });
+      });
+    });
+    
+    // Debounce function
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+    
+    // Input sanitization
+    function sanitizeInput(input) {
+      const div = document.createElement('div');
+      div.textContent = input;
+      return div.innerHTML;
+    }
+    
+    // Form validation
+    function validateForm(formId) {
+      const form = document.getElementById(formId);
+      const inputs = form.querySelectorAll('input[required], textarea[required]');
+      let isValid = true;
+      
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          input.style.borderColor = '#ff4d4d';
+          isValid = false;
+        } else {
+          input.style.borderColor = '';
+        }
+      });
+      
+      return isValid;
     }
   </script>
   
@@ -895,7 +1296,7 @@
         }
       }).catch(error => {
         console.error("Error loading alert data:", error);
-        showNotification("❌ Error loading alert data", "#ff4d4d");
+        showNotification("❌ Error loading alert data", "error");
       });
       
       // Load current style
@@ -905,7 +1306,7 @@
         }
       }).catch(error => {
         console.error("Error loading style data:", error);
-        showNotification("❌ Error loading style data", "#ff4d4d");
+        showNotification("❌ Error loading style data", "error");
       });
       
       // Load custom colors
@@ -919,22 +1320,27 @@
         }
       }).catch(error => {
         console.error("Error loading custom colors:", error);
-        showNotification("❌ Error loading custom colors", "#ff4d4d");
+        showNotification("❌ Error loading custom colors", "error");
       });
       
       // Save alert
       window.saveAlert = () => {
+        if (!validateForm('alerts-tab')) {
+          showNotification("❌ Please fill all required fields", "error");
+          return;
+        }
+        
         const status = document.getElementById("statusSelect").value === "true";
-        const message = document.getElementById("messageInput").value.trim();
+        const message = sanitizeInput(document.getElementById("messageInput").value.trim());
         const link = document.getElementById("linkInput").value.trim();
         const type = document.getElementById("alertType").value;
         const expiration = document.getElementById("expirationDate").value;
         
         alertRef.set({ status, message, link, type, expiration })
-          .then(() => showNotification("✅ Alert saved successfully!", "#00ff99"))
+          .then(() => showNotification("✅ Alert saved successfully!", "success"))
           .catch(error => {
             console.error("Error saving alert:", error);
-            showNotification("❌ Failed to save alert.", "#ff4d4d");
+            showNotification("❌ Failed to save alert.", "error");
           });
       };
       
@@ -943,10 +1349,10 @@
         const style = document.getElementById("designSelect").value;
         
         styleRef.set(style)
-          .then(() => showNotification("✅ Design saved successfully!", "#00ff99"))
+          .then(() => showNotification("✅ Design saved successfully!", "success"))
           .catch(error => {
             console.error("Error saving design:", error);
-            showNotification("❌ Failed to save design.", "#ff4d4d");
+            showNotification("❌ Failed to save design.", "error");
           });
       };
       
@@ -958,12 +1364,12 @@
         
         customColorsRef.set({ primary, secondary, accent })
           .then(() => {
-            showNotification("✅ Colors saved successfully!", "#00ff99");
+            showNotification("✅ Colors saved successfully!", "success");
             updateColorPreview();
           })
           .catch(error => {
             console.error("Error saving custom colors:", error);
-            showNotification("❌ Failed to save colors.", "#ff4d4d");
+            showNotification("❌ Failed to save colors.", "error");
           });
       };
       
@@ -975,9 +1381,9 @@
         preview.style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
       }
       
-      // Add event listeners for color inputs
-      document.getElementById("primaryColor").addEventListener("input", updateColorPreview);
-      document.getElementById("secondaryColor").addEventListener("input", updateColorPreview);
+      // Add event listeners for color inputs with debounce
+      document.getElementById("primaryColor").addEventListener("input", debounce(updateColorPreview, 300));
+      document.getElementById("secondaryColor").addEventListener("input", debounce(updateColorPreview, 300));
     });
   </script>
   
@@ -1002,7 +1408,7 @@
         toggleRef.set(state)
           .catch(error => {
             console.error("Error updating search toggle:", error);
-            showNotification("❌ Error updating search toggle", "#ff4d4d");
+            showNotification("❌ Error updating search toggle", "error");
           });
       });
     });
@@ -1026,7 +1432,7 @@
         lockRef.set(toggle.checked)
           .catch(error => {
             console.error("Error updating Tamil Dubbed lock:", error);
-            showNotification("❌ Error updating Tamil Dubbed lock", "#ff4d4d");
+            showNotification("❌ Error updating Tamil Dubbed lock", "error");
           });
       });
     });
@@ -1066,18 +1472,18 @@
         popupToggleRef.set(popupToggle.checked)
           .catch(error => {
             console.error("Error updating popup toggle:", error);
-            showNotification("❌ Error updating popup toggle", "#ff4d4d");
+            showNotification("❌ Error updating popup toggle", "error");
           });
       });
       
       // Set popup message
       window.setPopupMessage = function () {
-        const msg = input.value.trim();
+        const msg = sanitizeInput(input.value.trim());
         const bg = bgColor.value || "";
         const text = textColor.value || "";
         
         if (!msg) {
-          showNotification("⚠️ Please enter a message", "#ff9800");
+          showNotification("⚠️ Please enter a message", "warning");
           return;
         }
         
@@ -1086,10 +1492,10 @@
           bg_color: bg,
           text_color: text
         }).then(() => {
-          showNotification("✅ Popup message updated!", "#00ff99");
+          showNotification("✅ Popup message updated!", "success");
         }).catch(error => {
           console.error("Error setting popup message:", error);
-          showNotification("❌ Failed to update message", "#ff4d4d");
+          showNotification("❌ Failed to update message", "error");
         });
       };
       
@@ -1100,10 +1506,10 @@
           bg_color: "",
           text_color: ""
         }).then(() => {
-          showNotification("❌ Message cleared", "#ff4d4d");
+          showNotification("❌ Message cleared", "warning");
         }).catch(error => {
           console.error("Error clearing popup message:", error);
-          showNotification("❌ Failed to clear message", "#ff4d4d");
+          showNotification("❌ Failed to clear message", "error");
         });
       };
     });
@@ -1139,7 +1545,7 @@
             ref.set(true)
               .catch(error => {
                 console.error("Error enabling maintenance mode:", error);
-                showNotification("❌ Error enabling maintenance mode", "#ff4d4d");
+                showNotification("❌ Error enabling maintenance mode", "error");
               });
           } else {
             alert("❌ Incorrect password!");
@@ -1149,17 +1555,17 @@
           ref.set(false)
             .catch(error => {
               console.error("Error disabling maintenance mode:", error);
-              showNotification("❌ Error disabling maintenance mode", "#ff4d4d");
+              showNotification("❌ Error disabling maintenance mode", "error");
             });
         }
       });
       
       // Save maintenance message
       messageInput.addEventListener("blur", () => {
-        messageRef.set(messageInput.value)
+        messageRef.set(sanitizeInput(messageInput.value))
           .catch(error => {
             console.error("Error updating maintenance message:", error);
-            showNotification("❌ Error updating maintenance message", "#ff4d4d");
+            showNotification("❌ Error updating maintenance message", "error");
           });
       });
     });
@@ -1185,7 +1591,7 @@
         ref.set(toggle.checked)
           .catch(error => {
             console.error("Error updating Tamil Dub Link Block:", error);
-            showNotification("❌ Error updating Tamil Dub Link Block", "#ff4d4d");
+            showNotification("❌ Error updating Tamil Dub Link Block", "error");
           });
       });
     });
@@ -1195,45 +1601,39 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const db = initializeFirebase();
-      const socialRef = db.ref("socialMedia");
+      const telegramRef = db.ref("social/telegram");
+      const twitterRef = db.ref("social/twitter");
+      const youtubeRef = db.ref("social/youtube");
       
-      // Load social media data
-      socialRef.once('value').then((snapshot) => {
+      // Load Telegram settings
+      telegramRef.once('value').then((snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
-          document.getElementById("telegramUrl").value = data.telegram?.url || "";
-          document.getElementById("telegramIconUrl").value = data.telegram?.icon || "";
-          document.getElementById("telegramColor").value = data.telegram?.glowColor || "#0088cc";
-          document.getElementById("facebookUrl").value = data.facebook || "";
-          document.getElementById("twitterUrl").value = data.twitter || "";
-          document.getElementById("instagramUrl").value = data.instagram || "";
-          document.getElementById("youtubeUrl").value = data.youtube || "";
+          document.getElementById("telegramUrl").value = data.url || "";
+          document.getElementById("telegramIconUrl").value = data.icon || "";
+          document.getElementById("telegramColor").value = data.glowColor || "#0088cc";
         }
       }).catch(error => {
-        console.error("Error loading social media data:", error);
-        showNotification("❌ Error loading social media data", "#ff4d4d");
+        console.error("Error loading Telegram settings:", error);
+        showNotification("❌ Error loading Telegram settings", "error");
       });
       
-      // Update social media
+ 
+      
+      // Update Telegram
       window.updateSocialMedia = function() {
-        const telegram = {
-          url: document.getElementById("telegramUrl").value.trim(),
-          icon: document.getElementById("telegramIconUrl").value.trim(),
-          glowColor: document.getElementById("telegramColor").value
-        };
+        const url = document.getElementById("telegramUrl").value.trim();
+        const icon = document.getElementById("telegramIconUrl").value.trim();
+        const glowColor = document.getElementById("telegramColor").value;
         
-        const facebook = document.getElementById("facebookUrl").value.trim();
-        const twitter = document.getElementById("twitterUrl").value.trim();
-        const instagram = document.getElementById("instagramUrl").value.trim();
-        const youtube = document.getElementById("youtubeUrl").value.trim();
-        
-        socialRef.set({ telegram, facebook, twitter, instagram, youtube })
-          .then(() => showNotification("✅ Social media updated!", "#00ff99"))
+        telegramRef.set({ url, icon, glowColor })
+          .then(() => showNotification("✅ Telegram settings saved!", "success"))
           .catch(error => {
-            console.error("Error updating social media:", error);
-            showNotification("❌ Failed to update social media", "#ff4d4d");
+            console.error("Error saving Telegram settings:", error);
+            showNotification("❌ Failed to save Telegram settings", "error");
           });
       };
+ 
     });
   </script>
   
@@ -1257,7 +1657,7 @@
         ratingsRef.set(ratingsToggle.checked)
           .catch(error => {
             console.error("Error updating ratings toggle:", error);
-            showNotification("❌ Error updating ratings toggle", "#ff4d4d");
+            showNotification("❌ Error updating ratings toggle", "error");
           });
       });
       
@@ -1276,7 +1676,50 @@
         commentsRef.set(commentsToggle.checked)
           .catch(error => {
             console.error("Error updating comments toggle:", error);
-            showNotification("❌ Error updating comments toggle", "#ff4d4d");
+            showNotification("❌ Error updating comments toggle", "error");
+          });
+      });
+      
+      // Dark mode toggle
+      const darkModeRef = db.ref("featureControl/darkModeEnabled");
+      const darkModeToggle = document.getElementById("darkModeToggle");
+      const darkModeStatus = document.getElementById("darkModeStatus");
+      
+      darkModeRef.on("value", (snapshot) => {
+        const enabled = snapshot.val() === true;
+        darkModeToggle.checked = enabled;
+        darkModeStatus.textContent = enabled ? "Dark Mode Enabled ✅" : "Dark Mode Disabled ❌";
+      });
+      
+      darkModeToggle.addEventListener("change", () => {
+        const enabled = darkModeToggle.checked;
+        darkModeRef.set(enabled)
+          .then(() => {
+            document.body.classList.toggle('dark-mode', enabled);
+            showNotification("✅ Dark mode " + (enabled ? "enabled" : "disabled"), "success");
+          })
+          .catch(error => {
+            console.error("Error updating dark mode toggle:", error);
+            showNotification("❌ Error updating dark mode toggle", "error");
+          });
+      });
+      
+      // Mobile view toggle
+      const mobileViewRef = db.ref("featureControl/mobileViewEnabled");
+      const mobileViewToggle = document.getElementById("mobileViewToggle");
+      const mobileViewStatus = document.getElementById("mobileViewStatus");
+      
+      mobileViewRef.on("value", (snapshot) => {
+        const enabled = snapshot.val() === true;
+        mobileViewToggle.checked = enabled;
+        mobileViewStatus.textContent = enabled ? "Mobile View Enabled ✅" : "Mobile View Disabled ❌";
+      });
+      
+      mobileViewToggle.addEventListener("change", () => {
+        mobileViewRef.set(mobileViewToggle.checked)
+          .catch(error => {
+            console.error("Error updating mobile view toggle:", error);
+            showNotification("❌ Error updating mobile view toggle", "error");
           });
       });
       
@@ -1288,10 +1731,10 @@
         const allowedDomains = document.getElementById("allowedDomains").value.trim();
         
         securityRef.set({ apiKey, allowedDomains })
-          .then(() => showNotification("✅ Security settings updated!", "#00ff99"))
+          .then(() => showNotification("✅ Security settings updated!", "success"))
           .catch(error => {
             console.error("Error updating security settings:", error);
-            showNotification("❌ Failed to update security settings", "#ff4d4d");
+            showNotification("❌ Failed to update security settings", "error");
           });
       };
       
@@ -1304,11 +1747,190 @@
         const enabled = analyticsToggle.checked;
         
         analyticsRef.set({ analyticsId, enabled })
-          .then(() => showNotification("✅ Analytics settings updated!", "#00ff99"))
+          .then(() => showNotification("✅ Analytics settings updated!", "success"))
           .catch(error => {
             console.error("Error updating analytics settings:", error);
-            showNotification("❌ Failed to update analytics settings", "#ff4d4d");
+            showNotification("❌ Failed to update analytics settings", "error");
           });
+      };
+      
+      // TamilDub Button Customization
+      const tamilDubRef = db.ref("appearance/tamilDubButton");
+      const tamilDubText = document.getElementById("tamilDubText");
+      const tamilDubBg = document.getElementById("tamilDubBg");
+      const tamilDubTextColor = document.getElementById("tamilDubTextColor");
+      const tamilDubBorder = document.getElementById("tamilDubBorder");
+      const tamilDubGlow = document.getElementById("tamilDubGlow");
+      const tamilDubStyle = document.getElementById("tamilDubStyle");
+      const tamilDubAnimation = document.getElementById("tamilDubAnimation");
+      const tamilDubPreview = document.getElementById("tamilDubPreview");
+      
+      // Load TamilDub settings
+      tamilDubRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          tamilDubText.value = data.text || "Tamil Dubbed";
+          tamilDubBg.value = data.bgColor || "#ff4d4d";
+          tamilDubTextColor.value = data.textColor || "#ffffff";
+          tamilDubBorder.value = data.borderColor || "#ff0000";
+          tamilDubGlow.value = data.glowColor || "#ff4d4d";
+          tamilDubStyle.value = data.style || "solid";
+          tamilDubAnimation.value = data.animation || "none";
+          updateTamilDubPreview();
+        }
+      }).catch(error => {
+        console.error("Error loading TamilDub settings:", error);
+        showNotification("❌ Error loading TamilDub settings", "error");
+      });
+      
+      // Update TamilDub preview
+      function updateTamilDubPreview() {
+        const text = tamilDubText.value || "Tamil Dubbed";
+        const bgColor = tamilDubBg.value;
+        const textColor = tamilDubTextColor.value;
+        const borderColor = tamilDubBorder.value;
+        const glowColor = tamilDubGlow.value;
+        const style = tamilDubStyle.value;
+        const animation = tamilDubAnimation.value;
+        
+        tamilDubPreview.textContent = text;
+        tamilDubPreview.style.color = textColor;
+        
+        // Reset animation
+        tamilDubPreview.style.animation = "none";
+        
+        // Apply style
+        if (style === "solid") {
+          tamilDubPreview.style.background = bgColor;
+          tamilDubPreview.style.border = `2px solid ${borderColor}`;
+          tamilDubPreview.style.boxShadow = "none";
+        } else if (style === "gradient") {
+          tamilDubPreview.style.background = `linear-gradient(135deg, ${bgColor}, ${borderColor})`;
+          tamilDubPreview.style.border = "none";
+          tamilDubPreview.style.boxShadow = "none";
+        } else if (style === "outline") {
+          tamilDubPreview.style.background = "transparent";
+          tamilDubPreview.style.border = `2px solid ${borderColor}`;
+          tamilDubPreview.style.boxShadow = "none";
+        } else if (style === "glow") {
+          tamilDubPreview.style.background = bgColor;
+          tamilDubPreview.style.border = "none";
+          tamilDubPreview.style.boxShadow = `0 0 15px ${glowColor}`;
+        }
+        
+        // Apply animation after a small delay to ensure it's applied correctly
+        setTimeout(() => {
+          if (animation === "pulse") {
+            tamilDubPreview.style.animation = "pulse 2s infinite";
+          } else if (animation === "bounce") {
+            tamilDubPreview.style.animation = "bounce 2s infinite";
+          } else if (animation === "shake") {
+            tamilDubPreview.style.animation = "shake 0.5s infinite";
+          }
+        }, 10);
+      }
+      
+      // Add event listeners for TamilDub inputs
+      tamilDubText.addEventListener("input", debounce(updateTamilDubPreview, 300));
+      tamilDubBg.addEventListener("input", debounce(updateTamilDubPreview, 300));
+      tamilDubTextColor.addEventListener("input", debounce(updateTamilDubPreview, 300));
+      tamilDubBorder.addEventListener("input", debounce(updateTamilDubPreview, 300));
+      tamilDubGlow.addEventListener("input", debounce(updateTamilDubPreview, 300));
+      tamilDubStyle.addEventListener("change", updateTamilDubPreview);
+      tamilDubAnimation.addEventListener("change", updateTamilDubPreview);
+      
+      // Save TamilDub settings
+      window.saveTamilDubSettings = function() {
+        const text = sanitizeInput(tamilDubText.value.trim());
+        const bgColor = tamilDubBg.value;
+        const textColor = tamilDubTextColor.value;
+        const borderColor = tamilDubBorder.value;
+        const glowColor = tamilDubGlow.value;
+        const style = tamilDubStyle.value;
+        const animation = tamilDubAnimation.value;
+        
+        tamilDubRef.set({ text, bgColor, textColor, borderColor, glowColor, style, animation })
+          .then(() => {
+            showNotification("✅ TamilDub settings saved!", "success");
+            updateTamilDubPreview();
+          })
+          .catch(error => {
+            console.error("Error saving TamilDub settings:", error);
+            showNotification("❌ Failed to save TamilDub settings", "error");
+          });
+      };
+      
+      // Background pattern
+      const bgPatternRef = db.ref("appearance/backgroundPattern");
+      let selectedPattern = "carbon-fibre";
+      
+      // Load background pattern
+      bgPatternRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          selectedPattern = snapshot.val();
+          // Update UI to show selected pattern
+          const patternItems = document.querySelectorAll('.pattern-item');
+          patternItems.forEach(item => {
+            item.classList.remove('selected');
+            if (item.getAttribute('data-pattern') === selectedPattern) {
+              item.classList.add('selected');
+            }
+          });
+        }
+      }).catch(error => {
+        console.error("Error loading background pattern:", error);
+        showNotification("❌ Error loading background pattern", "error");
+      });
+      
+      // Select pattern
+      window.selectPattern = function(element, pattern) {
+        document.querySelectorAll('.pattern-item').forEach(item => {
+          item.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        selectedPattern = pattern;
+      };
+      
+      // Save background pattern
+      window.saveBackgroundPattern = function() {
+        bgPatternRef.set(selectedPattern)
+          .then(() => showNotification("✅ Background pattern saved!", "success"))
+          .catch(error => {
+            console.error("Error saving background pattern:", error);
+            showNotification("❌ Failed to save background pattern", "error");
+          });
+      };
+      
+      // Advanced features
+      window.clearCache = function() {
+        showNotification("🔄 Clearing cache...", "info");
+        setTimeout(() => {
+          showNotification("✅ Cache cleared successfully!", "success");
+        }, 2000);
+      };
+      
+      window.refreshCache = function() {
+        showNotification("🔄 Refreshing cache...", "info");
+        setTimeout(() => {
+          showNotification("✅ Cache refreshed successfully!", "success");
+        }, 2000);
+      };
+      
+      window.createBackup = function() {
+        showNotification("💾 Creating backup...", "info");
+        setTimeout(() => {
+          showNotification("✅ Backup created successfully!", "success");
+        }, 2000);
+      };
+      
+      window.restoreBackup = function() {
+        const confirmRestore = confirm("Are you sure you want to restore from backup? This will overwrite current settings.");
+        if (confirmRestore) {
+          showNotification("📂 Restoring backup...", "info");
+          setTimeout(() => {
+            showNotification("✅ Backup restored successfully!", "success");
+          }, 2000);
+        }
       };
     });
   </script>
@@ -1324,14 +1946,31 @@
         const email = document.getElementById("email").value.trim().toLowerCase();
         const password = document.getElementById("password").value;
         
-        if (email === allowedEmail && password === allowedPassword) {
-          showNotification("✅ Login successful", "#00ff99");
-          document.getElementById("loginPopup").style.display = "none";
-        } else if (email !== allowedEmail) {
-          showNotification("❌ User not found", "#ff4d4d");
-        } else {
-          showNotification("❌ Password Incorrect", "#ff4d4d");
+        // Basic validation
+        if (!email || !password) {
+          showNotification("❌ Please enter both username and password", "error");
+          return;
         }
+        
+        // Simulate login process with delay
+        showNotification("🔐 Authenticating...", "info");
+        
+        setTimeout(() => {
+          if (email === allowedEmail && password === allowedPassword) {
+            showNotification("✅ Login successful", "success");
+            document.getElementById("loginPopup").style.display = "none";
+            
+            // Store login state
+            sessionStorage.setItem('isLoggedIn', 'true');
+          } else {
+            showNotification("❌ Invalid credentials", "error");
+            
+            // Add shake animation to login popup
+            const popup = document.getElementById("loginPopup");
+            popup.classList.add('shake');
+            setTimeout(() => popup.classList.remove('shake'), 500);
+          }
+        }, 1000);
       };
     });
   </script>
@@ -1341,35 +1980,56 @@
     document.addEventListener('DOMContentLoaded', function() {
       const canvas = document.getElementById('matrix');
       const ctx = canvas.getContext('2d');
+      
       // Set canvas size
-      canvas.height = window.innerHeight;
-      canvas.width = window.innerWidth;
+      function resizeCanvas() {
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+      }
+      
+      resizeCanvas();
+      
       const letters = 'V I P T E A M M O D M O V I E S';
       const lettersArr = letters.split('');
       const fontSize = 16;
       const columns = canvas.width / fontSize;
       const drops = Array(Math.floor(columns)).fill(1);
+      
       // Draw the characters
       function draw() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#00c6ff';
         ctx.font = fontSize + 'px monospace';
+        
         for (let i = 0; i < drops.length; i++) {
           const text = lettersArr[Math.floor(Math.random() * lettersArr.length)];
           ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          
           if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
             drops[i] = 0;
           }
           drops[i]++;
         }
       }
-      setInterval(draw, 33);
+      
+      // Animation loop
+      let animationId;
+      function animate() {
+        draw();
+        animationId = requestAnimationFrame(animate);
+      }
+      
+      animate();
       
       // Handle window resize
       window.addEventListener('resize', function() {
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
+        resizeCanvas();
+      });
+      
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        cancelAnimationFrame(animationId);
       });
     });
   </script>

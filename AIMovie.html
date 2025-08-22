@@ -955,7 +955,6 @@ input:checked + .toggle-slider:before {
   50% { opacity: 0.5; }
   100% { opacity: 0; }
 }
-
 /* Movie Rating Styles */
 .movie-rating {
   display: flex;
@@ -964,25 +963,21 @@ input:checked + .toggle-slider:before {
   margin-top: 10px;
   gap: 5px;
 }
-
 .movie-rating .star {
   font-size: 20px;
   color: #888;
   cursor: pointer;
   transition: color 0.2s;
 }
-
 .movie-rating .star:hover,
 .movie-rating .star.active {
   color: #ffd700;
 }
-
 .movie-rating .rating-value {
   margin-left: 10px;
   font-weight: bold;
   color: var(--neon-cyan);
 }
-
 .rating-container {
   margin: 15px 0;
   padding: 10px;
@@ -990,7 +985,6 @@ input:checked + .toggle-slider:before {
   border-radius: 8px;
   border: 1px solid var(--glass-border);
 }
-
 .rating-container h4 {
   color: var(--neon-green);
   margin-bottom: 10px;
@@ -998,7 +992,6 @@ input:checked + .toggle-slider:before {
   text-transform: uppercase;
   font-size: 1rem;
 }
-
 .rating-feedback {
   margin-top: 10px;
   padding: 8px;
@@ -1007,19 +1000,16 @@ input:checked + .toggle-slider:before {
   font-weight: bold;
   display: none;
 }
-
 .rating-feedback.success {
   background: rgba(0, 255, 65, 0.2);
   color: var(--neon-green);
   border: 1px solid var(--neon-green);
 }
-
 .rating-feedback.error {
   background: rgba(255, 0, 64, 0.2);
   color: var(--danger-red);
   border: 1px solid var(--danger-red);
 }
-
 /* Comments Section Styles */
 .comments-section {
   margin-top: 15px;
@@ -1028,7 +1018,6 @@ input:checked + .toggle-slider:before {
   border-radius: 8px;
   border: 1px solid var(--glass-border);
 }
-
 .comments-section h4 {
   color: var(--neon-green);
   margin-bottom: 10px;
@@ -1037,11 +1026,9 @@ input:checked + .toggle-slider:before {
   font-size: 1rem;
   text-align: center;
 }
-
 .comment-form {
   margin-bottom: 15px;
 }
-
 .comment-form textarea {
   width: 100%;
   padding: 10px;
@@ -1053,7 +1040,6 @@ input:checked + .toggle-slider:before {
   resize: vertical;
   min-height: 80px;
 }
-
 .comment-form button {
   margin-top: 10px;
   padding: 8px 15px;
@@ -1065,16 +1051,13 @@ input:checked + .toggle-slider:before {
   font-family: 'Share Tech Mono', monospace;
   font-weight: bold;
 }
-
 .comment-form button:hover {
   background: #009fcc;
 }
-
 .comments-list {
   max-height: 200px;
   overflow-y: auto;
 }
-
 .comment {
   padding: 10px;
   margin-bottom: 10px;
@@ -1082,27 +1065,22 @@ input:checked + .toggle-slider:before {
   border-radius: 5px;
   border-left: 3px solid var(--neon-blue);
 }
-
 .comment-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
 }
-
 .comment-author {
   font-weight: bold;
   color: var(--neon-cyan);
 }
-
 .comment-date {
   font-size: 0.8rem;
   color: #888;
 }
-
 .comment-text {
   color: #ccc;
 }
-
 .comment-feedback {
   margin-top: 10px;
   padding: 5px;
@@ -1111,17 +1089,14 @@ input:checked + .toggle-slider:before {
   font-size: 0.9rem;
   display: none;
 }
-
 .comment-feedback.success {
   background: rgba(0, 255, 65, 0.2);
   color: var(--neon-green);
 }
-
 .comment-feedback.error {
   background: rgba(255, 0, 64, 0.2);
   color: var(--danger-red);
 }
-
 /* Loading indicator for video */
 .video-loading {
   display: flex;
@@ -1134,13 +1109,11 @@ input:checked + .toggle-slider:before {
   color: var(--neon-cyan);
   font-family: 'Share Tech Mono', monospace;
 }
-
 .video-loading-text {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 .video-loading-spinner {
   width: 30px;
   height: 30px;
@@ -1148,6 +1121,104 @@ input:checked + .toggle-slider:before {
   border-top: 3px solid var(--neon-cyan);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+/* TamilDub Button Customization */
+.tamil-dub-customization {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--neon-blue);
+  border-radius: 5px;
+  padding: 15px;
+  margin-top: 15px;
+}
+.tamil-dub-preview {
+  margin-top: 15px;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+/* New Controls Styles */
+.control-group {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+.control-group h4 {
+  color: var(--neon-pink);
+  margin-bottom: 10px;
+  font-size: 16px;
+  border-bottom: 1px dashed var(--neon-pink);
+  padding-bottom: 5px;
+}
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.pattern-item {
+  height: 60px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.pattern-item:hover {
+  border-color: var(--neon-blue);
+}
+.pattern-item.selected {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 10px var(--neon-pink);
+}
+.pattern-item.selected::after {
+  content: "✓";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: #fff;
+  background: var(--neon-pink);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+/* Footer Customization */
+.footer-preview {
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+}
+/* Ad Management */
+.ad-preview {
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 5px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px dashed var(--neon-blue);
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pattern-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
 }
 </style>
 </head>
@@ -1173,28 +1244,41 @@ input:checked + .toggle-slider:before {
   // Import Firebase (if not already included elsewhere)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
-  document.getElementById('tamilDubbedBtn').addEventListener('click', function () {
-    const firebaseConfig = {
-      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
-      projectId: "vipteammod-movies",
-      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
-      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
-    };
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    // ✅ CHANGE your database reference path here
-    const refPath = ref(db, "tamil_movies/tamil_dubbed_status");
-    // Listen for changes
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    projectId: "vipteammod-movies",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+  };
+  
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  
+  // Tamil Dubbed Button
+  const btn = document.getElementById("tamilDubbedBtn");
+  const lockRef = ref(db, "featureControl/lockTamilDubbed");
+  
+  // Live Button Visibility Control
+  onValue(lockRef, (snapshot) => {
+    const visible = snapshot.val() === true;
+    btn.style.display = visible ? "inline-block" : "none";
+  });
+  
+  // Tamil Dubbed Status
+  const refPath = ref(db, "tamil_movies/tamil_dubbed_status");
+  
+  // Button click handler
+  btn.addEventListener("click", () => {
     onValue(refPath, (snapshot) => {
       const isOn = snapshot.val() === true;
       if (isOn) {
         window.location.href = "AIDub.html";
       }
-    });
+    }, { onlyOnce: true });
   });
 </script>
-
 <!-- CSS Styling -->
 <style>
   #tamilDubbedBtn {
@@ -1831,7 +1915,6 @@ input:checked + .toggle-slider:before {
   <strong style="display:block; font-size: 1.5rem; margin-bottom: 8px;">Thanks for downloading</strong>
   <span style="font-size: 1rem;">Please wait...</span>
 </div></div>
-
 <script>
     // Disable right-click
 document.addEventListener("contextmenu", function (e) {
@@ -1931,7 +2014,7 @@ firebase.database().ref("social/telegram").on("value", (snapshot) => {
   }
 });
 </script>
-  <footer1 style="text-align: center; padding: 20px; font-size: 14px; color: #888;">
+    <footer1 style="text-align: center; padding: 20px; font-size: 14px; color: #888;">
  <p>
     We love cinema. We don't support piracy.
     But when theatres price water, popcorn, parking, and basic comforts higher than the experience itself — this is not theft, it's a protest.<br>
@@ -2016,7 +2099,6 @@ font-weight:600;
   </div>
  
 </footer>
-
 <script>
 const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modal-body');
@@ -2079,7 +2161,6 @@ window.onclick = function(event) {
   if (event.target == modal) closeModal();
 };
 </script>
-
 <!-- 🔔 Alert Box -->
 <div id="firebaseAlert" style="
   display: none;
@@ -2118,7 +2199,6 @@ window.onclick = function(event) {
   sunset: "linear-gradient(to right, #0b486b, #f56217)",
   aqua: "linear-gradient(to right, #13547a, #80d0c7)"
 };
-
   // 🔁 Listen for style changes
   const styleRef = ref(db, "designControl/style");
   onValue(styleRef, (snapshot) => {
@@ -2149,7 +2229,6 @@ window.onclick = function(event) {
     }
   });
 </script>
-
 <!-- Firebase Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
@@ -2223,45 +2302,50 @@ window.onclick = function(event) {
   };
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
+  
+  // Tamil Dubbed Button
   const btn = document.getElementById("tamilDubbedBtn");
   const lockRef = ref(db, "featureControl/lockTamilDubbed");
-  // 🔄 Live Button Visibility Control
+  
+  // Live Button Visibility Control
   onValue(lockRef, (snapshot) => {
     const visible = snapshot.val() === true;
     btn.style.display = visible ? "inline-block" : "none";
   });
-      // ✅ CHANGE your database reference path here
-    const refPath = ref(db, "tamil_movies/tamil_dubbed_status");
-    
-  // ✅ Optional: Only redirect when visible
+  
+  // Tamil Dubbed Status
+  const refPath = ref(db, "tamil_movies/tamil_dubbed_status");
+  
+  // Button click handler
   btn.addEventListener("click", () => {
-  const isOn = snapshot.val() === true;
+    onValue(refPath, (snapshot) => {
+      const isOn = snapshot.val() === true;
       if (isOn) {
         window.location.href = "AIDub.html";
       }
-    
+    }, { onlyOnce: true });
   });
- 
 </script>
 <!-- Maintenance Message Box -->
 <div id="maintenanceMessage" style="display: none; color: red; font-size: 20px; text-align: center; margin-top: 50px;">
   🔧 Site is Under Maintenance. Please check back later.
 </div>
 <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
   const firebaseConfig = {
     apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
     projectId: "vipteammod-movies",
     appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
     databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
   };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
   const ref = db.ref("controls/maintenance_mode");
   // Live listener — works without refresh
   ref.on("value", (snapshot) => {
     const isOn = snapshot.val() === true;
     if (isOn) {
-     
       window.location.href = "Maintenance.html";
     }
   });
@@ -2423,7 +2507,7 @@ setInterval(draw, 33);
     onValue(ratingsRef, (snapshot) => {
       const enabled = snapshot.val() === true;
       // Update global variable
-      ratingsEnabled = enabled;
+      window.ratingsEnabled = enabled;
       
       // Show/hide rating elements based on the toggle
       const ratingElements = document.querySelectorAll('.movie-rating');
@@ -2459,7 +2543,7 @@ setInterval(draw, 33);
     onValue(commentsRef, (snapshot) => {
       const enabled = snapshot.val() === true;
       // Update global variable
-      commentsEnabled = enabled;
+      window.commentsEnabled = enabled;
       
       // Show/hide comments elements based on the toggle
       const commentsElements = document.querySelectorAll('.comments-section');
@@ -2613,5 +2697,360 @@ setInterval(draw, 33);
       }
     });
   </script>
+  
+  <!-- TamilDub Button Customization Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // TamilDub Button Customization
+    const tamilDubRef = ref(db, "appearance/tamilDubButton");
+    const tamilDubBtn = document.getElementById("tamilDubbedBtn");
+    
+    // Load TamilDub settings
+    onValue(tamilDubRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Apply text
+        if (data.text) {
+          tamilDubBtn.textContent = data.text;
+        }
+        
+        // Apply colors
+        if (data.bgColor) {
+          tamilDubBtn.style.backgroundColor = data.bgColor;
+        }
+        
+        if (data.textColor) {
+          tamilDubBtn.style.color = data.textColor;
+        }
+        
+        if (data.borderColor) {
+          tamilDubBtn.style.borderColor = data.borderColor;
+        }
+        
+        if (data.glowColor) {
+          tamilDubBtn.style.boxShadow = `0 0 15px ${data.glowColor}`;
+        }
+        
+        // Apply style
+        if (data.style) {
+          if (data.style === "solid") {
+            tamilDubBtn.style.background = data.bgColor || "#00c6ff";
+            tamilDubBtn.style.border = `2px solid ${data.borderColor || "#0072ff"}`;
+          } else if (data.style === "gradient") {
+            tamilDubBtn.style.background = `linear-gradient(135deg, ${data.bgColor || "#00c6ff"}, ${data.borderColor || "#0072ff"})`;
+            tamilDubBtn.style.border = "none";
+          } else if (data.style === "outline") {
+            tamilDubBtn.style.background = "transparent";
+            tamilDubBtn.style.border = `2px solid ${data.borderColor || "#0072ff"}`;
+          } else if (data.style === "glow") {
+            tamilDubBtn.style.background = data.bgColor || "#00c6ff";
+            tamilDubBtn.style.border = "none";
+            tamilDubBtn.style.boxShadow = `0 0 15px ${data.glowColor || "#00c6ff"}`;
+          }
+        }
+        
+        // Apply animation
+        if (data.animation) {
+          if (data.animation === "pulse") {
+            tamilDubBtn.style.animation = "pulse 2s infinite";
+          } else if (data.animation === "bounce") {
+            tamilDubBtn.style.animation = "bounce 2s infinite";
+          } else if (data.animation === "shake") {
+            tamilDubBtn.style.animation = "shake 0.5s infinite";
+          } else {
+            tamilDubBtn.style.animation = "none";
+          }
+        }
+      }
+    });
+  </script>
+  
+  <!-- Background Pattern Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Background Pattern
+    const bgPatternRef = ref(db, "appearance/backgroundPattern");
+    
+    onValue(bgPatternRef, (snapshot) => {
+      const pattern = snapshot.val();
+      if (pattern) {
+        document.body.style.backgroundImage = `url('https://www.transparenttextures.com/patterns/${pattern}.png')`;
+      }
+    });
+  </script>
+
+  <!-- Dark Mode Toggle Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Dark Mode Toggle
+    const darkModeRef = ref(db, "featureControl/darkModeEnabled");
+    
+    onValue(darkModeRef, (snapshot) => {
+      const enabled = snapshot.val() === true;
+      if (enabled) {
+        document.body.classList.add("dark-mode");
+        document.body.style.backgroundColor = "#000";
+        document.body.style.color = "#0ff";
+      } else {
+        document.body.classList.remove("dark-mode");
+        document.body.style.backgroundColor = "";
+        document.body.style.color = "";
+      }
+    });
+  </script>
+  
+  <!-- Mobile View Toggle Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Mobile View Toggle
+    const mobileViewRef = ref(db, "featureControl/mobileViewEnabled");
+    
+    onValue(mobileViewRef, (snapshot) => {
+      const enabled = snapshot.val() === true;
+      if (enabled && window.innerWidth <= 768) {
+        document.body.classList.add("mobile-view");
+        // Apply mobile-specific styles
+        document.querySelector(".site-header h1").style.fontSize = "1.5rem";
+        document.querySelector("#searchBox").style.fontSize = "0.9rem";
+      } else {
+        document.body.classList.remove("mobile-view");
+        // Reset styles
+        document.querySelector(".site-header h1").style.fontSize = "";
+        document.querySelector("#searchBox").style.fontSize = "";
+      }
+    });
+  </script>
+  
+  <!-- Additional Social Media Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Additional Social Media
+    const twitterRef = ref(db, "social/twitter");
+    const youtubeRef = ref(db, "social/youtube");
+    
+    // Twitter
+    onValue(twitterRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Create or update Twitter button if not exists
+        let twitterBtn = document.getElementById("twitterBtn");
+        if (!twitterBtn && data.url) {
+          twitterBtn = document.createElement("a");
+          twitterBtn.id = "twitterBtn";
+          twitterBtn.className = "telegram-glow-btn";
+          twitterBtn.href = data.url;
+          twitterBtn.target = "_blank";
+          twitterBtn.title = "Follow on Twitter";
+          twitterBtn.style.marginLeft = "10px";
+          
+          const icon = document.createElement("img");
+          icon.className = "telegram-icon";
+          icon.src = data.icon || "twitter-icon.svg";
+          
+          twitterBtn.appendChild(icon);
+          document.querySelector(".telegram-center-wrapper").appendChild(twitterBtn);
+          
+          // Apply glow color
+          if (data.glowColor) {
+            twitterBtn.style.setProperty('--glow-color', data.glowColor);
+          }
+        }
+      }
+    });
+    
+    // YouTube
+    onValue(youtubeRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Create or update YouTube button if not exists
+        let youtubeBtn = document.getElementById("youtubeBtn");
+        if (!youtubeBtn && data.url) {
+          youtubeBtn = document.createElement("a");
+          youtubeBtn.id = "youtubeBtn";
+          youtubeBtn.className = "telegram-glow-btn";
+          youtubeBtn.href = data.url;
+          youtubeBtn.target = "_blank";
+          youtubeBtn.title = "Subscribe on YouTube";
+          youtubeBtn.style.marginLeft = "10px";
+          
+          const icon = document.createElement("img");
+          icon.className = "telegram-icon";
+          icon.src = data.icon || "youtube-icon.svg";
+          
+          youtubeBtn.appendChild(icon);
+          document.querySelector(".telegram-center-wrapper").appendChild(youtubeBtn);
+          
+          // Apply glow color
+          if (data.glowColor) {
+            youtubeBtn.style.setProperty('--glow-color', data.glowColor);
+          }
+        }
+      }
+    });
+  </script>
+  
+  <!-- Cache Management Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+      projectId: "vipteammod-movies",
+      appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+      databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    // Cache Management
+    const cacheRef = ref(db, "cacheManagement");
+    
+    onValue(cacheRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        if (data.clearCache) {
+          // Clear browser cache
+          if ('caches' in window) {
+            caches.keys().then(names => {
+              names.forEach(name => {
+                caches.delete(name);
+              });
+            });
+          }
+          // Clear localStorage
+          localStorage.clear();
+          // Clear sessionStorage
+          sessionStorage.clear();
+          
+          // Reset flag
+          db.ref("cacheManagement/clearCache").set(false);
+          
+          // Show notification
+          showNotification("Cache cleared successfully!", "#00ff99");
+        }
+        
+        if (data.refreshCache) {
+          // Reload page to refresh cache
+          window.location.reload();
+          
+          // Reset flag
+          db.ref("cacheManagement/refreshCache").set(false);
+        }
+      }
+    });
+  </script>
+  
+  <!-- Notification Function -->
+  <script>
+    function showNotification(message, color) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.style.color = color;
+      notification.style.borderColor = color;
+      notification.style.boxShadow = `0 0 15px ${color}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }, 3000);
+    }
+  </script>
+  
+  <!-- Window Resize Handler -->
+  <script>
+    window.addEventListener('resize', function() {
+      // Resize matrix canvas
+      const canvas = document.getElementById('matrix');
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+    });
+  </script>
+  
+  <!-- Initialize Firebase on Load -->
+  <script>
+    window.addEventListener('load', function() {
+      // Initialize Firebase if not already initialized
+      if (!firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+          projectId: "vipteammod-movies",
+          appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+          databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+        });
+      }
+    });
+  </script>
+  <br><br>
+
 </body>
 </html>
