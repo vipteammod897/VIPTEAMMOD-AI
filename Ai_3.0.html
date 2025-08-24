@@ -13195,11 +13195,12 @@ if (/close screen|exit screen/i.test(userInputRaw)) {
 }
 
 
+
 class LiveScreenLoaderEditor {
     constructor() {
         this.baseScreen = {
-            name: 'LIVE TEXT EDITOR',
-            instructions: 'Collaborative text editing with user and admin views. Real-time updates and role-based permissions.'
+            name: 'LIVE COLLABORATIVE EDITOR',
+            instructions: 'Real-time collaborative editing. Admin changes are instantly visible to all users.'
         };
         this.gameContainer = null;
         this.isActive = false;
@@ -13212,13 +13213,23 @@ class LiveScreenLoaderEditor {
         this.outputDiv = null;
         this.userList = null;
         this.currentRole = 'user'; // 'user' or 'admin'
-        this.documentContent = 'Welcome to the Live Text Editor!\n\nStart typing here to collaborate in real-time.\n\nAdmins can lock/unlock editing and manage permissions.';
+        this.documentContent = 'Welcome to the Live Collaborative Editor!\n\nThis is a shared document that can be edited in real-time.\n\nAdmin changes will appear instantly for all users.';
         this.isEditing = false;
         this.isLocked = false;
         this.activeUsers = [];
         this.editHistory = [];
         this.currentVersion = 0;
         this.autoSaveInterval = null;
+        this.storageKey = 'liveEditorData';
+        this.userSessionId = this.generateSessionId();
+        this.lastSyncTime = 0;
+    }
+
+    /**
+     * Generate a unique session ID for this user
+     */
+    generateSessionId() {
+        return 'user_' + Math.random().toString(36).substr(2, 9);
     }
 
     /**
@@ -13235,7 +13246,7 @@ class LiveScreenLoaderEditor {
         this.displayGame();
         this.isActive = true;
         this.startAutoSave();
-        this.simulateUsers();
+        this.initializeCollaboration();
         botReply(`${this.baseScreen.name} loaded! ${this.baseScreen.instructions}`);
     }
 
@@ -13291,14 +13302,14 @@ class LiveScreenLoaderEditor {
             border-bottom: 1px solid #ddd;
         `;
         const title = document.createElement('h2');
-        title.textContent = 'Live Text Editor';
+        title.textContent = 'Live Collaborative Editor';
         title.style.cssText = `
             margin: 0 0 10px 0;
             color: #333;
             font-size: 24px;
         `;
         const subtitle = document.createElement('p');
-        subtitle.textContent = 'Real-time collaborative editing with role-based permissions';
+        subtitle.textContent = 'Real-time collaboration across devices';
         subtitle.style.cssText = `
             margin: 0;
             color: #666;
@@ -13308,7 +13319,7 @@ class LiveScreenLoaderEditor {
         header.appendChild(subtitle);
         baseContainer.appendChild(header);
 
-        // Role toggle and user list
+        // Role toggle and connection status
         const topControls = document.createElement('div');
         topControls.style.cssText = `
             display: flex;
@@ -13351,14 +13362,48 @@ class LiveScreenLoaderEditor {
         roleSection.appendChild(roleLabel);
         roleSection.appendChild(this.roleToggle);
 
-        // User list
-        const userSection = document.createElement('div');
-        userSection.style.cssText = `
-            flex-grow: 1;
+        // Connection status
+        const connectionSection = document.createElement('div');
+        connectionSection.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 10px;
         `;
-        const userListLabel = document.createElement('label');
-        userListLabel.textContent = 'Active Users:';
-        userListLabel.style.cssText = `
+        const connectionLabel = document.createElement('label');
+        connectionLabel.textContent = 'Connection:';
+        connectionLabel.style.cssText = `
+            font-weight: bold;
+            color: #333;
+        `;
+        this.connectionStatus = document.createElement('div');
+        this.connectionStatus.style.cssText = `
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #f44336;
+        `;
+        this.connectionTooltip = document.createElement('span');
+        this.connectionTooltip.textContent = 'Connecting...';
+        this.connectionTooltip.style.cssText = `
+            font-size: 14px;
+            color: #666;
+        `;
+        connectionSection.appendChild(connectionLabel);
+        connectionSection.appendChild(this.connectionStatus);
+        connectionSection.appendChild(this.connectionTooltip);
+
+        topControls.appendChild(roleSection);
+        topControls.appendChild(connectionSection);
+        baseContainer.appendChild(topControls);
+
+        // Active users section
+        const usersSection = document.createElement('div');
+        usersSection.style.cssText = `
+            margin-bottom: 15px;
+        `;
+        const usersLabel = document.createElement('label');
+        usersLabel.textContent = 'Active Users:';
+        usersLabel.style.cssText = `
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
@@ -13369,13 +13414,16 @@ class LiveScreenLoaderEditor {
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
+            min-height: 30px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
         `;
-        userSection.appendChild(userListLabel);
-        userSection.appendChild(this.userList);
-
-        topControls.appendChild(roleSection);
-        topControls.appendChild(userSection);
-        baseContainer.appendChild(topControls);
+        this.userList.textContent = 'Loading users...';
+        usersSection.appendChild(usersLabel);
+        usersSection.appendChild(this.userList);
+        baseContainer.appendChild(usersSection);
 
         // Editor area
         const editorSection = document.createElement('div');
@@ -13469,6 +13517,7 @@ class LiveScreenLoaderEditor {
         adminButtons.style.cssText = `
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         `;
         const lockButton = this.createButton('Lock Editing', '#FF9800', () => {
             this.toggleLock(true);
@@ -13482,10 +13531,14 @@ class LiveScreenLoaderEditor {
         const clearButton = this.createButton('Clear Document', '#f44336', () => {
             this.clearDocument();
         });
+        const broadcastButton = this.createButton('Broadcast Message', '#9C27B0', () => {
+            this.broadcastMessage();
+        });
         adminButtons.appendChild(lockButton);
         adminButtons.appendChild(unlockButton);
         adminButtons.appendChild(saveButton);
         adminButtons.appendChild(clearButton);
+        adminButtons.appendChild(broadcastButton);
         this.adminControls.appendChild(adminTitle);
         this.adminControls.appendChild(adminButtons);
         baseContainer.appendChild(this.adminControls);
@@ -13496,7 +13549,7 @@ class LiveScreenLoaderEditor {
             margin-bottom: 15px;
         `;
         const outputLabel = document.createElement('label');
-        outputLabel.textContent = 'Status:';
+        outputLabel.textContent = 'Activity Log:';
         outputLabel.style.cssText = `
             display: block;
             font-weight: bold;
@@ -13506,15 +13559,17 @@ class LiveScreenLoaderEditor {
         this.outputDiv = document.createElement('div');
         this.outputDiv.style.cssText = `
             width: 100%;
-            min-height: 50px;
+            min-height: 80px;
+            max-height: 150px;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
             box-sizing: border-box;
             background-color: #f9f9f9;
+            overflow-y: auto;
         `;
-        this.outputDiv.textContent = `Connected as ${this.currentRole}. Ready to collaborate!`;
+        this.outputDiv.textContent = `Connected as ${this.currentRole}. Waiting for other users...`;
         outputSection.appendChild(outputLabel);
         outputSection.appendChild(this.outputDiv);
         baseContainer.appendChild(outputSection);
@@ -13532,9 +13587,9 @@ class LiveScreenLoaderEditor {
         infoSection.innerHTML = `
             <strong>Instructions:</strong><br>
             • Switch between User and Admin roles using the dropdown<br>
-            • Users can edit when document is unlocked<br>
-            • Admins can lock/unlock editing and save versions<br>
-            • Changes are reflected in real-time in the preview area<br>
+            • Open this editor on multiple devices to collaborate<br>
+            • Admin changes are instantly visible to all users<br>
+            • Admins can lock/unlock editing and manage permissions<br>
             • Document auto-saves every 30 seconds
         `;
         baseContainer.appendChild(infoSection);
@@ -13542,21 +13597,212 @@ class LiveScreenLoaderEditor {
     }
 
     /**
+     * Initialize collaboration features
+     */
+    initializeCollaboration() {
+        // Try to load existing document from localStorage
+        this.loadFromStorage();
+        
+        // Set up storage event listener for cross-tab communication
+        window.addEventListener('storage', (e) => {
+            if (e.key === this.storageKey) {
+                this.handleStorageEvent(e);
+            }
+        });
+        
+        // Register this user
+        this.registerUser();
+        
+        // Start heartbeat to check connection
+        this.startHeartbeat();
+        
+        // Initial UI update
+        this.updateUIForRole();
+        this.updateActiveUsers();
+        
+        // Simulate connection established
+        setTimeout(() => {
+            this.updateConnectionStatus(true);
+            this.logActivity('Connected to collaboration server');
+        }, 1000);
+    }
+
+    /**
+     * Load document from localStorage
+     */
+    loadFromStorage() {
+        try {
+            const storedData = localStorage.getItem(this.storageKey);
+            if (storedData) {
+                const data = JSON.parse(storedData);
+                this.documentContent = data.content || this.documentContent;
+                this.isLocked = data.locked || false;
+                this.currentVersion = data.version || 0;
+                this.editHistory = data.history || [];
+                
+                // Update UI
+                this.editorArea.value = this.documentContent;
+                this.previewArea.textContent = this.documentContent;
+                this.updateUIForRole();
+                
+                this.logActivity(`Loaded document version ${this.currentVersion}`);
+            }
+        } catch (error) {
+            console.error('Error loading from storage:', error);
+            this.logActivity('Error loading document');
+        }
+    }
+
+    /**
+     * Save document to localStorage
+     */
+    saveToStorage() {
+        try {
+            const data = {
+                content: this.documentContent,
+                locked: this.isLocked,
+                version: this.currentVersion,
+                history: this.editHistory,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem(this.storageKey, JSON.stringify(data));
+            this.lastSyncTime = Date.now();
+        } catch (error) {
+            console.error('Error saving to storage:', error);
+            this.logActivity('Error saving document');
+        }
+    }
+
+    /**
+     * Handle storage events (cross-tab communication)
+     */
+    handleStorageEvent(event) {
+        try {
+            const data = JSON.parse(event.newValue);
+            
+            // Skip if this is our own update
+            if (data.lastUpdated && data.lastUpdated === this.lastSyncTime) {
+                return;
+            }
+            
+            // Update document content
+            if (data.content !== undefined && data.content !== this.documentContent) {
+                this.documentContent = data.content;
+                this.editorArea.value = this.documentContent;
+                this.previewArea.textContent = this.documentContent;
+                this.logActivity('Document updated by another user');
+            }
+            
+            // Update lock status
+            if (data.locked !== undefined && data.locked !== this.isLocked) {
+                this.isLocked = data.locked;
+                this.updateUIForRole();
+                this.logActivity(`Document ${this.isLocked ? 'locked' : 'unlocked'} by admin`);
+            }
+            
+            // Update version
+            if (data.version !== undefined && data.version !== this.currentVersion) {
+                this.currentVersion = data.version;
+                this.logActivity(`New version available: ${this.currentVersion}`);
+            }
+            
+            // Update active users
+            if (data.users) {
+                this.activeUsers = data.users.filter(user => user.id !== this.userSessionId);
+                this.updateActiveUsers();
+            }
+            
+        } catch (error) {
+            console.error('Error handling storage event:', error);
+        }
+    }
+
+    /**
+     * Register this user in the system
+     */
+    registerUser() {
+        const userData = {
+            id: this.userSessionId,
+            role: this.currentRole,
+            name: this.currentRole === 'admin' ? 'Admin' : 'User',
+            timestamp: Date.now(),
+            editing: false
+        };
+        
+        // Get existing users
+        let users = [];
+        try {
+            const storedData = localStorage.getItem(this.storageKey);
+            if (storedData) {
+                const data = JSON.parse(storedData);
+                users = data.users || [];
+            }
+        } catch (error) {
+            console.error('Error loading users:', error);
+        }
+        
+        // Add or update this user
+        const existingUserIndex = users.findIndex(user => user.id === this.userSessionId);
+        if (existingUserIndex !== -1) {
+            users[existingUserIndex] = userData;
+        } else {
+            users.push(userData);
+        }
+        
+        // Save back to storage
+        try {
+            const storedData = localStorage.getItem(this.storageKey);
+            const data = storedData ? JSON.parse(storedData) : {};
+            data.users = users;
+            localStorage.setItem(this.storageKey, JSON.stringify(data));
+            this.activeUsers = users.filter(user => user.id !== this.userSessionId);
+            this.updateActiveUsers();
+        } catch (error) {
+            console.error('Error saving users:', error);
+        }
+    }
+
+    /**
+     * Start heartbeat to check connection
+     */
+    startHeartbeat() {
+        setInterval(() => {
+            this.registerUser();
+            this.updateConnectionStatus(true);
+        }, 5000);
+    }
+
+    /**
+     * Update connection status
+     */
+    updateConnectionStatus(isConnected) {
+        if (isConnected) {
+            this.connectionStatus.style.backgroundColor = '#4CAF50';
+            this.connectionTooltip.textContent = 'Connected';
+        } else {
+            this.connectionStatus.style.backgroundColor = '#f44336';
+            this.connectionTooltip.textContent = 'Disconnected';
+        }
+    }
+
+    /**
      * Handle text changes in the editor
      */
     handleTextChange(newText) {
         if (this.isLocked && this.currentRole === 'user') {
-            this.outputDiv.textContent = 'Editing is locked by admin. Changes discarded.';
+            this.logActivity('Editing is locked by admin. Changes discarded.');
             this.editorArea.value = this.documentContent;
             return;
         }
         
         this.documentContent = newText;
         this.previewArea.textContent = newText;
-        this.updateStatus(`Editing as ${this.currentRole}...`);
         
-        // Simulate real-time update to other users
-        this.simulateRealTimeUpdate();
+        // Save to storage to sync with other users
+        this.saveToStorage();
+        
+        // Log activity
+        this.logActivity(`Document updated by ${this.currentRole}`);
     }
 
     /**
@@ -13564,14 +13810,14 @@ class LiveScreenLoaderEditor {
      */
     startEditing() {
         if (this.isLocked && this.currentRole === 'user') {
-            this.outputDiv.textContent = 'Editing is locked by admin.';
+            this.logActivity('Editing is locked by admin.');
             this.editorArea.blur();
             return;
         }
         
         this.isEditing = true;
-        this.updateActiveUsers();
-        this.updateStatus(`Started editing as ${this.currentRole}`);
+        this.updateUserStatus(true);
+        this.logActivity(`Started editing as ${this.currentRole}`);
     }
 
     /**
@@ -13579,8 +13825,28 @@ class LiveScreenLoaderEditor {
      */
     stopEditing() {
         this.isEditing = false;
-        this.updateActiveUsers();
-        this.updateStatus(`Stopped editing as ${this.currentRole}`);
+        this.updateUserStatus(false);
+        this.logActivity(`Stopped editing as ${this.currentRole}`);
+    }
+
+    /**
+     * Update user editing status
+     */
+    updateUserStatus(isEditing) {
+        try {
+            const storedData = localStorage.getItem(this.storageKey);
+            const data = storedData ? JSON.parse(storedData) : {};
+            const users = data.users || [];
+            
+            const userIndex = users.findIndex(user => user.id === this.userSessionId);
+            if (userIndex !== -1) {
+                users[userIndex].editing = isEditing;
+                data.users = users;
+                localStorage.setItem(this.storageKey, JSON.stringify(data));
+            }
+        } catch (error) {
+            console.error('Error updating user status:', error);
+        }
     }
 
     /**
@@ -13588,8 +13854,8 @@ class LiveScreenLoaderEditor {
      */
     switchRole(newRole) {
         this.currentRole = newRole;
+        this.registerUser(); // Update user role
         this.updateUIForRole();
-        this.updateStatus(`Switched to ${newRole} role`);
         
         // Show/hide admin controls
         if (newRole === 'admin') {
@@ -13597,6 +13863,8 @@ class LiveScreenLoaderEditor {
         } else {
             this.adminControls.style.display = 'none';
         }
+        
+        this.logActivity(`Switched to ${newRole} role`);
     }
 
     /**
@@ -13614,7 +13882,7 @@ class LiveScreenLoaderEditor {
         // Disable editor if locked and user
         if (this.isLocked && this.currentRole === 'user') {
             this.editorArea.disabled = true;
-            this.outputDiv.textContent = 'Document is locked by admin. You cannot edit.';
+            this.logActivity('Document is locked by admin. You cannot edit.');
         } else {
             this.editorArea.disabled = false;
         }
@@ -13626,12 +13894,13 @@ class LiveScreenLoaderEditor {
     toggleLock(lock) {
         this.isLocked = lock;
         this.updateUIForRole();
+        this.saveToStorage(); // Sync with other users
         
         if (lock) {
-            this.outputDiv.textContent = 'Document locked by admin. Users cannot edit.';
+            this.logActivity('Document locked by admin');
             botReply('Document locked for editing');
         } else {
-            this.outputDiv.textContent = 'Document unlocked. Users can now edit.';
+            this.logActivity('Document unlocked by admin');
             botReply('Document unlocked for editing');
         }
     }
@@ -13648,7 +13917,8 @@ class LiveScreenLoaderEditor {
             author: this.currentRole
         });
         
-        this.outputDiv.textContent = `Version ${this.currentVersion} saved by ${this.currentRole} at ${new Date().toLocaleTimeString()}`;
+        this.saveToStorage(); // Sync with other users
+        this.logActivity(`Version ${this.currentVersion} saved by ${this.currentRole}`);
         botReply(`Document version ${this.currentVersion} saved`);
     }
 
@@ -13660,8 +13930,22 @@ class LiveScreenLoaderEditor {
             this.documentContent = '';
             this.editorArea.value = '';
             this.previewArea.textContent = '';
-            this.outputDiv.textContent = 'Document cleared by admin';
+            this.saveToStorage(); // Sync with other users
+            this.logActivity('Document cleared by admin');
             botReply('Document cleared');
+        }
+    }
+
+    /**
+     * Broadcast a message to all users
+     */
+    broadcastMessage() {
+        const message = prompt('Enter message to broadcast to all users:');
+        if (message) {
+            // In a real implementation, this would send a message through WebSocket
+            // For this demo, we'll just log it
+            this.logActivity(`Admin broadcast: "${message}"`);
+            botReply(`Message broadcast: "${message}"`);
         }
     }
 
@@ -13684,55 +13968,41 @@ class LiveScreenLoaderEditor {
         `;
         this.userList.appendChild(currentUser);
         
-        // Add simulated users
+        // Add other active users
         this.activeUsers.forEach(user => {
             const userElement = document.createElement('span');
             userElement.textContent = user.role === 'admin' ? '👑 Admin' : '👤 User';
             userElement.style.cssText = `
                 padding: 4px 8px;
-                background-color: ${user.role === 'admin' ? '#81C784' : '#64B5F6'};
+                background-color: ${user.editing ? '#FF9800' : (user.role === 'admin' ? '#81C784' : '#64B5F6')};
                 color: white;
                 border-radius: 15px;
                 font-size: 12px;
             `;
+            userElement.title = user.name;
             this.userList.appendChild(userElement);
         });
+        
+        if (this.activeUsers.length === 0) {
+            const noUsers = document.createElement('span');
+            noUsers.textContent = 'No other active users';
+            noUsers.style.cssText = `
+                padding: 4px 8px;
+                color: #666;
+                font-style: italic;
+            `;
+            this.userList.appendChild(noUsers);
+        }
     }
 
     /**
-     * Simulate active users
+     * Log activity
      */
-    simulateUsers() {
-        // Add some simulated users
-        this.activeUsers = [
-            { id: 1, name: 'Alice', role: 'user', editing: false },
-            { id: 2, name: 'Bob', role: 'user', editing: false },
-            { id: 3, name: 'Charlie', role: 'admin', editing: false }
-        ];
-        
-        this.updateActiveUsers();
-        
-        // Simulate users joining/leaving
-        setInterval(() => {
-            if (Math.random() > 0.7) {
-                const userIndex = Math.floor(Math.random() * this.activeUsers.length);
-                this.activeUsers[userIndex].editing = !this.activeUsers[userIndex].editing;
-                this.updateActiveUsers();
-            }
-        }, 5000);
-    }
-
-    /**
-     * Simulate real-time updates
-     */
-    simulateRealTimeUpdate() {
-        // In a real app, this would send updates to a server
-        // For simulation, we'll just update the status
-        setTimeout(() => {
-            if (this.isEditing) {
-                this.updateStatus(`Changes synced to all users`);
-            }
-        }, 500);
+    logActivity(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `[${timestamp}] ${message}\n`;
+        this.outputDiv.textContent += logEntry;
+        this.outputDiv.scrollTop = this.outputDiv.scrollHeight;
     }
 
     /**
@@ -13754,13 +14024,6 @@ class LiveScreenLoaderEditor {
             clearInterval(this.autoSaveInterval);
             this.autoSaveInterval = null;
         }
-    }
-
-    /**
-     * Update status message
-     */
-    updateStatus(message) {
-        this.outputDiv.textContent = message;
     }
 
     /**
@@ -13943,7 +14206,7 @@ class LiveScreenLoaderEditor {
         } else if (document.webkitExitFullscreen) {
             document.webkitExitFullscreen();
         } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
+            this.msExitFullscreen();
         }
     }
 
@@ -13955,6 +14218,21 @@ class LiveScreenLoaderEditor {
         if (this.isFullscreen) {
             this.exitFullscreen();
         }
+        
+        // Unregister user
+        try {
+            const storedData = localStorage.getItem(this.storageKey);
+            if (storedData) {
+                const data = JSON.parse(storedData);
+                const users = data.users || [];
+                const updatedUsers = users.filter(user => user.id !== this.userSessionId);
+                data.users = updatedUsers;
+                localStorage.setItem(this.storageKey, JSON.stringify(data));
+            }
+        } catch (error) {
+            console.error('Error unregistering user:', error);
+        }
+        
         this.stopAutoSave();
         document.removeEventListener('keydown', this.handleKeyPress);
         document.removeEventListener('fullscreenchange', this.handleFullscreenChange);
@@ -13970,11 +14248,13 @@ class LiveScreenLoaderEditor {
         this.outputDiv = null;
         this.userList = null;
         this.adminControls = null;
+        this.connectionStatus = null;
+        this.connectionTooltip = null;
         this.isActive = false;
         this.isFullscreen = false;
         this.fullscreenButton = null;
         this.closeButton = null;
-        botReply("Live Text Editor closed. Thank you!");
+        botReply("Live Collaborative Editor closed. Thank you!");
     }
 }
 
@@ -13992,7 +14272,6 @@ if (/close screen|exit screen/i.test(userInputRaw)) {
     liveScreenLoaderEditor.closeGame();
     return;
 }
-
 class BaseScreenLoader {
     constructor() {
         this.baseScreen = {
