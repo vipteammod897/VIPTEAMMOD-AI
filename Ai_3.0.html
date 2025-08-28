@@ -16854,6 +16854,3331 @@ if (/close screen|exit screen/i.test(userInputRaw)) {
     liveScreenLoaderEditor.closeGame();
     return;
 }
+
+
+
+class ChatLiveScreenLoader {
+    constructor() {
+        this.baseScreen = {
+            name: 'LIVE CHAT APP',
+            instructions: 'Real-time chat application with online status and instant messaging.'
+        };
+        this.gameContainer = null;
+        this.isActive = false;
+        this.isFullscreen = false;
+        this.fullscreenButton = null;
+        this.closeButton = null;
+        this.messagesContainer = null;
+        this.messageInput = null;
+        this.sendButton = null;
+        this.userList = null;
+        this.statusDiv = null;
+        this.currentUsername = '';
+        this.userSessionId = this.generateSessionId();
+        this.firebaseConfig = {
+            apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+            projectId: "vipteammod-movies",
+            appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+            databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+        };
+        this.db = null;
+        this.messagesRef = null;
+        this.usersRef = null;
+        this.presenceRef = null;
+        this.connectedRef = null;
+        this.typingRef = null;
+        this.isFirebaseInitialized = false;
+        this.activeUsers = [];
+        this.blockedUsers = new Set();
+        this.isAdmin = false;
+        this.currentChatPartner = null;
+        this.isPrivateChat = false;
+        this.displayedMessages = new Set();
+        this.messageListeners = {};
+        this.typingUsers = new Set();
+        this.lastMessageId = null; // Track last message to avoid duplicates
+    }
+
+    /**
+     * Generate a unique session ID for this user
+     */
+    generateSessionId() {
+        return 'user_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    /**
+     * Load the Chat App
+     */
+    loadBaseScreen() {
+        if (this.isActive) {
+            botReply(`The ${this.baseScreen.name} is already running! Type 'close screen' to exit first.`);
+            return;
+        }
+        this.createGameContainer();
+        this.createLoginScreen();
+        this.setupActionButtons();
+        this.displayGame();
+        this.isActive = true;
+        this.initializeFirebase();
+        botReply(`${this.baseScreen.name} loaded! ${this.baseScreen.instructions}`);
+    }
+
+    /**
+     * Initialize Firebase
+     */
+    initializeFirebase() {
+        if (typeof firebase === 'undefined') {
+            this.logActivity('Loading Firebase libraries...');
+            this.loadScript('https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js', () => {
+                this.loadScript('https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js', () => {
+                    this.setupFirebase();
+                });
+            });
+        } else {
+            this.setupFirebase();
+        }
+    }
+
+    /**
+     * Setup Firebase
+     */
+    setupFirebase() {
+        try {
+            if (firebase.apps.length === 0) {
+                firebase.initializeApp(this.firebaseConfig);
+                this.logActivity('Firebase initialized successfully');
+            } else {
+                this.logActivity('Using existing Firebase app');
+            }
+            
+            this.db = firebase.database();
+            
+            // References
+            this.messagesRef = this.db.ref('chat/messages');
+            this.usersRef = this.db.ref('chat/users');
+            this.presenceRef = this.db.ref('chat/presence');
+            this.connectedRef = this.db.ref('.info/connected');
+            this.typingRef = this.db.ref('chat/typing');
+            
+            // Setup connection monitoring
+            this.connectedRef.on('value', (snap) => {
+                if (snap.val() === true) {
+                    this.updateConnectionStatus(true);
+                    this.setupFirebaseListeners();
+                } else {
+                    this.updateConnectionStatus(false);
+                }
+            });
+            
+            this.isFirebaseInitialized = true;
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            this.logActivity('Firebase connection failed: ' + error.message);
+            this.updateConnectionStatus(false);
+        }
+    }
+
+    /**
+     * Setup Firebase listeners (optimized)
+     */
+    setupFirebaseListeners() {
+        // Remove existing listeners
+        this.removeFirebaseListeners();
+        
+        // Single listener for messages with limit
+        this.messageListeners.messages = this.messagesRef
+            .orderByKey()
+            .limitToLast(50)
+            .on('child_added', (snapshot) => {
+                const message = snapshot.val();
+                if (message && snapshot.key !== this.lastMessageId) {
+                    this.lastMessageId = snapshot.key;
+                    
+                    // Check if sender is blocked
+                    if (!this.blockedUsers.has(message.senderId)) {
+                        // Only display if it's a group message or private message to/from current user
+                        if (message.type === 'group' || 
+                            (message.receiverId === this.userSessionId) || 
+                            (message.senderId === this.userSessionId)) {
+                            this.displayMessage(message);
+                        }
+                    }
+                }
+            });
+        
+        // User list listener with throttling
+        this.messageListeners.users = this.usersRef.on('value', (snapshot) => {
+            const users = snapshot.val();
+            if (users) {
+                this.activeUsers = Object.values(users).filter(user => user.id !== this.userSessionId);
+                this.updateUserList();
+            }
+        });
+        
+        // Typing indicator with debouncing
+        this.messageListeners.typing = this.typingRef.on('value', (snapshot) => {
+            const typingData = snapshot.val();
+            if (typingData) {
+                this.updateTypingIndicators(typingData);
+            }
+        });
+        
+        // Setup presence
+        this.presenceRef.child(this.userSessionId).onDisconnect().remove();
+        this.presenceRef.child(this.userSessionId).set(true);
+    }
+
+    /**
+     * Remove Firebase listeners
+     */
+    removeFirebaseListeners() {
+        if (this.messageListeners.messages) {
+            this.messagesRef.off('child_added', this.messageListeners.messages);
+        }
+        if (this.messageListeners.users) {
+            this.usersRef.off('value', this.messageListeners.users);
+        }
+        if (this.messageListeners.typing) {
+            this.typingRef.off('value', this.messageListeners.typing);
+        }
+        this.messageListeners = {};
+    }
+
+    /**
+     * Create the game container
+     */
+    createGameContainer() {
+        const existingContainer = document.getElementById('screen-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+        this.gameContainer = document.createElement('div');
+        this.gameContainer.id = 'screen-container';
+        this.gameContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        `;
+    }
+
+    /**
+     * Create Login Screen
+     */
+    createLoginScreen() {
+        const loginContainer = document.createElement('div');
+        loginContainer.style.cssText = `
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            width: 400px;
+            max-width: 90vw;
+            text-align: center;
+        `;
+
+        const title = document.createElement('h2');
+        title.textContent = 'Live Chat App';
+        title.style.cssText = `
+            margin: 0 0 20px 0;
+            color: #128C7E;
+            font-size: 28px;
+        `;
+        loginContainer.appendChild(title);
+
+        const subtitle = document.createElement('p');
+        subtitle.textContent = 'Enter your username to start chatting';
+        subtitle.style.cssText = `
+            margin: 0 0 30px 0;
+            color: #666;
+            font-size: 16px;
+        `;
+        loginContainer.appendChild(subtitle);
+
+        const inputContainer = document.createElement('div');
+        inputContainer.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Enter your username';
+        input.style.cssText = `
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+        `;
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.handleLogin(input.value);
+            }
+        });
+        inputContainer.appendChild(input);
+        loginContainer.appendChild(inputContainer);
+
+        // Admin checkbox
+        const adminContainer = document.createElement('div');
+        adminContainer.style.cssText = `
+            margin-bottom: 20px;
+            text-align: left;
+        `;
+        
+        const adminLabel = document.createElement('label');
+        adminLabel.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        `;
+        
+        const adminCheckbox = document.createElement('input');
+        adminCheckbox.type = 'checkbox';
+        adminCheckbox.style.cssText = `
+            width: 18px;
+            height: 18px;
+        `;
+        
+        const adminText = document.createElement('span');
+        adminText.textContent = 'Login as Admin';
+        
+        adminLabel.appendChild(adminCheckbox);
+        adminLabel.appendChild(adminText);
+        adminContainer.appendChild(adminLabel);
+        loginContainer.appendChild(adminContainer);
+
+        const loginButton = this.createButton('Join Chat', '#128C7E', () => {
+            this.isAdmin = adminCheckbox.checked;
+            this.handleLogin(input.value);
+        });
+        loginButton.style.cssText = `
+            width: 100%;
+            padding: 15px;
+            border-radius: 25px;
+            font-size: 16px;
+        `;
+        loginContainer.appendChild(loginButton);
+
+        // Connection status
+        const connectionStatus = document.createElement('div');
+        connectionStatus.style.cssText = `
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        `;
+        connectionStatus.innerHTML = `
+            <span id="connection-indicator" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #f44336; margin-right: 5px;"></span>
+            <span id="connection-text">Connecting to Firebase...</span>
+        `;
+        loginContainer.appendChild(connectionStatus);
+
+        this.gameContainer.appendChild(loginContainer);
+    }
+
+    /**
+     * Update connection status
+     */
+    updateConnectionStatus(isConnected) {
+        const indicator = document.getElementById('connection-indicator');
+        const text = document.getElementById('connection-text');
+        
+        if (indicator && text) {
+            indicator.style.backgroundColor = isConnected ? '#25D366' : '#f44336';
+            text.textContent = isConnected ? 'Connected to Firebase' : 'Connecting to Firebase...';
+        }
+    }
+
+    /**
+     * Log activity
+     */
+    logActivity(message) {
+        console.log(`[Chat App] ${message}`);
+    }
+
+    /**
+     * Handle Login
+     */
+    handleLogin(username) {
+        if (!username.trim()) {
+            this.showNotification('Please enter a username');
+            return;
+        }
+
+        this.currentUsername = username.trim();
+        this.registerUser();
+        this.gameContainer.innerHTML = '';
+        this.createChatScreen();
+    }
+
+    /**
+     * Register user
+     */
+    registerUser() {
+        if (!this.isFirebaseInitialized) {
+            setTimeout(() => this.registerUser(), 1000);
+            return;
+        }
+        
+        const userData = {
+            id: this.userSessionId,
+            name: this.currentUsername,
+            role: this.isAdmin ? 'admin' : 'user',
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            online: true
+        };
+        
+        this.usersRef.child(this.userSessionId).set(userData).then(() => {
+            this.logActivity(`User registered: ${this.currentUsername}`);
+        }).catch(error => {
+            console.error('Error registering user:', error);
+        });
+    }
+
+    /**
+     * Create Chat Screen (optimized sizes)
+     */
+    createChatScreen() {
+        const chatContainer = document.createElement('div');
+        chatContainer.style.cssText = `
+            background-color: #f0f2f5;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            width: 95vw;
+            height: 90vh;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        `;
+
+        // Header
+        const header = document.createElement('div');
+        header.style.cssText = `
+            background-color: #128C7E;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        `;
+        
+        const headerLeft = document.createElement('div');
+        headerLeft.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        `;
+        
+        const appTitle = document.createElement('h2');
+        appTitle.textContent = 'Live Chat';
+        appTitle.style.cssText = `
+            margin: 0;
+            font-size: 24px;
+        `;
+        headerLeft.appendChild(appTitle);
+        
+        const connectionStatus = document.createElement('div');
+        connectionStatus.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        `;
+        
+        this.statusIndicator = document.createElement('div');
+        this.statusIndicator.style.cssText = `
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #f44336;
+        `;
+        connectionStatus.appendChild(this.statusIndicator);
+        
+        const statusText = document.createElement('span');
+        statusText.textContent = 'Connecting...';
+        statusText.id = 'connectionStatus';
+        connectionStatus.appendChild(statusText);
+        
+        headerLeft.appendChild(connectionStatus);
+        header.appendChild(headerLeft);
+        
+        const userInfo = document.createElement('div');
+        userInfo.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        `;
+        
+        const userAvatar = document.createElement('div');
+        userAvatar.style.cssText = `
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: ${this.isAdmin ? '#f44336' : '#25D366'};
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        `;
+        userAvatar.textContent = this.currentUsername.charAt(0).toUpperCase();
+        userInfo.appendChild(userAvatar);
+        
+        const userName = document.createElement('span');
+        userName.textContent = this.currentUsername;
+        userName.style.cssText = `
+            font-weight: bold;
+            font-size: 16px;
+        `;
+        userInfo.appendChild(userName);
+        
+        const roleBadge = document.createElement('span');
+        roleBadge.textContent = this.isAdmin ? 'Admin' : 'User';
+        roleBadge.style.cssText = `
+            background-color: ${this.isAdmin ? '#f44336' : '#25D366'};
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+        `;
+        userInfo.appendChild(roleBadge);
+        
+        header.appendChild(userInfo);
+        chatContainer.appendChild(header);
+
+        // Main Content
+        const mainContent = document.createElement('div');
+        mainContent.style.cssText = `
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        `;
+        
+        // Sidebar (reduced size)
+        const sidebar = document.createElement('div');
+        sidebar.style.cssText = `
+            width: 200px;
+            background-color: #fff;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        `;
+        
+        // Users list
+        const usersSection = document.createElement('div');
+        usersSection.style.cssText = `
+            flex: 1;
+            overflow-y: auto;
+        `;
+        
+        const usersTitle = document.createElement('div');
+        usersTitle.textContent = 'Online Users';
+        usersTitle.style.cssText = `
+            padding: 10px 15px;
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+            background-color: #f0f2f5;
+        `;
+        usersSection.appendChild(usersTitle);
+        
+        this.userList = document.createElement('div');
+        this.userList.id = 'userList';
+        this.userList.style.cssText = `
+            overflow-y: auto;
+        `;
+        usersSection.appendChild(this.userList);
+        
+        sidebar.appendChild(usersSection);
+        mainContent.appendChild(sidebar);
+        
+        // Chat Area
+        const chatArea = document.createElement('div');
+        chatArea.style.cssText = `
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #efeae2;
+        `;
+        
+        // Messages Container (larger)
+        this.messagesContainer = document.createElement('div');
+        this.messagesContainer.style.cssText = `
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        `;
+        
+        // Welcome message
+        const welcomeMessage = document.createElement('div');
+        welcomeMessage.style.cssText = `
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        `;
+        welcomeMessage.textContent = 'Welcome to Live Chat! Start a conversation...';
+        this.messagesContainer.appendChild(welcomeMessage);
+        
+        chatArea.appendChild(this.messagesContainer);
+        
+        // Typing Indicator
+        this.typingIndicator = document.createElement('div');
+        this.typingIndicator.style.cssText = `
+            padding: 10px 20px;
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+            min-height: 20px;
+        `;
+        chatArea.appendChild(this.typingIndicator);
+        
+        // Input Area (larger)
+        const inputArea = document.createElement('div');
+        inputArea.style.cssText = `
+            padding: 15px;
+            background-color: #f0f2f5;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        `;
+        
+        this.messageInput = document.createElement('input');
+        this.messageInput.type = 'text';
+        this.messageInput.placeholder = 'Type a message...';
+        this.messageInput.style.cssText = `
+            flex: 1;
+            padding: 15px 25px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+        `;
+        this.messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendMessage();
+            }
+        });
+        this.messageInput.addEventListener('input', () => {
+            this.handleTyping();
+        });
+        inputArea.appendChild(this.messageInput);
+        
+        this.sendButton = this.createButton('Send', '#128C7E', () => {
+            this.sendMessage();
+        });
+        this.sendButton.style.cssText = `
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+        `;
+        inputArea.appendChild(this.sendButton);
+        
+        chatArea.appendChild(inputArea);
+        mainContent.appendChild(chatArea);
+        chatContainer.appendChild(mainContent);
+        
+        this.gameContainer.appendChild(chatContainer);
+        
+        // Focus on input
+        setTimeout(() => {
+            this.messageInput.focus();
+        }, 100);
+        
+        this.updateConnectionStatus(this.isFirebaseInitialized);
+    }
+
+    /**
+     * Update user list (optimized)
+     */
+    updateUserList() {
+        if (!this.userList) return;
+        
+        // Use document fragment for better performance
+        const fragment = document.createDocumentFragment();
+        
+        if (this.activeUsers.length === 0) {
+            const noUsers = document.createElement('div');
+            noUsers.textContent = 'No other users online';
+            noUsers.style.cssText = `
+                padding: 15px;
+                color: #666;
+                text-align: center;
+                font-style: italic;
+            `;
+            fragment.appendChild(noUsers);
+        } else {
+            this.activeUsers.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 12px;
+                    cursor: pointer;
+                    transition: background-color 0.2s;
+                `;
+                
+                userItem.addEventListener('mouseenter', () => {
+                    userItem.style.backgroundColor = '#f0f2f5';
+                });
+                
+                userItem.addEventListener('mouseleave', () => {
+                    userItem.style.backgroundColor = 'transparent';
+                });
+                
+                userItem.addEventListener('click', () => {
+                    this.startPrivateChat(user);
+                });
+                
+                // User avatar (smaller)
+                const avatar = document.createElement('div');
+                avatar.style.cssText = `
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background-color: ${user.role === 'admin' ? '#f44336' : '#128C7E'};
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    font-size: 14px;
+                `;
+                avatar.textContent = user.name.charAt(0).toUpperCase();
+                userItem.appendChild(avatar);
+                
+                // User name
+                const userName = document.createElement('div');
+                userName.textContent = user.name;
+                userName.style.cssText = `
+                    font-weight: bold;
+                    color: #333;
+                    font-size: 14px;
+                `;
+                userItem.appendChild(userName);
+                
+                // Online indicator
+                const onlineIndicator = document.createElement('div');
+                onlineIndicator.style.cssText = `
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background-color: #25D366;
+                    border: 2px solid white;
+                `;
+                userItem.appendChild(onlineIndicator);
+                
+                // Action buttons
+                const actionButtons = document.createElement('div');
+                actionButtons.style.cssText = `
+                    display: flex;
+                    gap: 3px;
+                    margin-left: auto;
+                `;
+                
+                // Block button
+                const blockButton = this.createButton('🚫', '#f44336', () => {
+                    this.toggleBlockUser(user);
+                });
+                blockButton.style.cssText = `
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    padding: 0;
+                    font-size: 12px;
+                `;
+                blockButton.title = this.blockedUsers.has(user.id) ? 'Unblock User' : 'Block User';
+                actionButtons.appendChild(blockButton);
+                
+                // Delete button (admin only)
+                if (this.isAdmin) {
+                    const deleteButton = this.createButton('❌', '#f44336', () => {
+                        this.deleteUser(user);
+                    });
+                    deleteButton.style.cssText = `
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        padding: 0;
+                        font-size: 12px;
+                    `;
+                    deleteButton.title = 'Delete User';
+                    actionButtons.appendChild(deleteButton);
+                }
+                
+                userItem.appendChild(actionButtons);
+                fragment.appendChild(userItem);
+            });
+        }
+        
+        // Update the list in one operation
+        this.userList.innerHTML = '';
+        this.userList.appendChild(fragment);
+    }
+
+    /**
+     * Toggle block user
+     */
+    toggleBlockUser(user) {
+        if (this.blockedUsers.has(user.id)) {
+            this.blockedUsers.delete(user.id);
+            this.showNotification(`${user.name} unblocked`);
+        } else {
+            this.blockedUsers.add(user.id);
+            this.showNotification(`${user.name} blocked`);
+        }
+        this.updateUserList();
+    }
+
+    /**
+     * Delete user (admin only)
+     */
+    deleteUser(user) {
+        if (!this.isAdmin) {
+            this.showNotification('Only admins can delete users');
+            return;
+        }
+        
+        if (confirm(`Are you sure you want to delete ${user.name}?`)) {
+            this.usersRef.child(user.id).remove().then(() => {
+                this.presenceRef.child(user.id).remove();
+                this.showNotification(`${user.name} has been deleted`);
+            }).catch(error => {
+                console.error('Error deleting user:', error);
+                this.showNotification('Error deleting user');
+            });
+        }
+    }
+
+    /**
+     * Start private chat
+     */
+    startPrivateChat(user) {
+        if (this.blockedUsers.has(user.id)) {
+            this.showNotification('You have blocked this user');
+            return;
+        }
+        
+        this.currentChatPartner = user;
+        this.isPrivateChat = true;
+        
+        const chatHeader = document.querySelector('header h2');
+        if (chatHeader) {
+            chatHeader.textContent = `Chat with ${user.name}`;
+        }
+        
+        this.messagesContainer.innerHTML = '';
+        this.showNotification(`Now chatting privately with ${user.name}`);
+    }
+
+    /**
+     * Handle typing indicator (optimized)
+     */
+    handleTyping() {
+        if (!this.isFirebaseInitialized) return;
+        
+        const isTyping = this.messageInput.value.length > 0;
+        
+        if (isTyping) {
+            this.typingRef.child(this.userSessionId).set({
+                username: this.currentUsername,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+            
+            clearTimeout(this.typingTimeout);
+            this.typingTimeout = setTimeout(() => {
+                this.typingRef.child(this.userSessionId).remove();
+            }, 3000);
+        } else {
+            this.typingRef.child(this.userSessionId).remove();
+        }
+    }
+
+    /**
+     * Update typing indicators
+     */
+    updateTypingIndicators(typingData) {
+        const typingUsers = [];
+        const now = Date.now();
+        
+        Object.keys(typingData).forEach(userId => {
+            if (userId !== this.userSessionId) {
+                const user = typingData[userId];
+                if (now - user.timestamp < 3000) {
+                    typingUsers.push(user.username);
+                }
+            }
+        });
+        
+        this.typingIndicator.textContent = typingUsers.length > 0 ? 
+            `${typingUsers.join(', ')} is typing...` : '';
+    }
+
+    /**
+     * Send message (optimized)
+     */
+    sendMessage() {
+        const messageText = this.messageInput.value.trim();
+        if (!messageText) return;
+        
+        const message = {
+            senderId: this.userSessionId,
+            senderName: this.currentUsername,
+            text: messageText,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            type: this.isPrivateChat ? 'private' : 'group'
+        };
+        
+        if (this.isPrivateChat && this.currentChatPartner) {
+            message.receiverId = this.currentChatPartner.id;
+        }
+        
+        // Use push with key tracking
+        const newMessageRef = this.messagesRef.push();
+        this.lastMessageId = newMessageRef.key;
+        newMessageRef.set(message);
+        
+        // Clear input
+        this.messageInput.value = '';
+        this.typingRef.child(this.userSessionId).remove();
+        
+        // Display immediately for better UX
+        this.displayMessage(message);
+    }
+
+    /**
+     * Display message (optimized)
+     */
+    displayMessage(message) {
+        const isOwnMessage = message.senderId === this.userSessionId;
+        
+        const messageContainer = document.createElement('div');
+        messageContainer.style.cssText = `
+            display: flex;
+            ${isOwnMessage ? 'justify-content: flex-end' : 'justify-content: flex-start'}
+            margin-bottom: 8px;
+        `;
+        
+        const messageBubble = document.createElement('div');
+        messageBubble.style.cssText = `
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            background-color: ${isOwnMessage ? '#dcf8c6' : '#fff'};
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        `;
+        
+        // Sender name
+        if (!isOwnMessage && (message.type === 'group' || this.isPrivateChat)) {
+            const senderName = document.createElement('div');
+            senderName.textContent = message.senderName;
+            senderName.style.cssText = `
+                font-weight: bold;
+                font-size: 12px;
+                color: #128C7E;
+                margin-bottom: 4px;
+            `;
+            messageBubble.appendChild(senderName);
+        }
+        
+        // Message text
+        const messageText = document.createElement('div');
+        messageText.textContent = message.text;
+        messageText.style.cssText = `
+            word-wrap: break-word;
+            font-size: 15px;
+        `;
+        messageBubble.appendChild(messageText);
+        
+        // Timestamp
+        const timestamp = document.createElement('div');
+        timestamp.textContent = this.formatTimestamp(message.timestamp);
+        timestamp.style.cssText = `
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+            text-align: ${isOwnMessage ? 'right' : 'left'};
+        `;
+        messageBubble.appendChild(timestamp);
+        
+        messageContainer.appendChild(messageBubble);
+        
+        // Remove welcome message if exists
+        if (this.messagesContainer.firstChild && this.messagesContainer.firstChild.textContent.includes('Welcome')) {
+            this.messagesContainer.innerHTML = '';
+        }
+        
+        this.messagesContainer.appendChild(messageContainer);
+        
+        // Auto-scroll to bottom
+        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+    }
+
+    /**
+     * Format timestamp
+     */
+    formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+
+    /**
+     * Show notification
+     */
+    showNotification(message) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            z-index: 10000;
+            animation: slideDown 0.3s ease;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    /**
+     * Create a styled button
+     */
+    createButton(text, color, clickHandler) {
+        const button = document.createElement('button');
+        button.textContent = text;
+        button.style.cssText = `
+            padding: 12px 20px;
+            background-color: ${color};
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+        `;
+        button.addEventListener('mouseenter', () => {
+            button.style.transform = 'translateY(-2px)';
+            button.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
+        });
+        button.addEventListener('mouseleave', () => {
+            button.style.transform = '';
+            button.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+        });
+        button.addEventListener('click', clickHandler);
+        return button;
+    }
+
+    /**
+     * Set up action buttons
+     */
+    setupActionButtons() {
+        const existingButtons = document.querySelector('.floating-buttons');
+        if (existingButtons) {
+            existingButtons.remove();
+        }
+        
+        const floatingButtons = document.createElement('div');
+        floatingButtons.className = 'floating-buttons';
+        floatingButtons.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10001;
+        `;
+
+        // Fullscreen button
+        this.fullscreenButton = document.createElement('button');
+        this.fullscreenButton.innerHTML = '⛶';
+        this.fullscreenButton.style.cssText = `
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #0084ff, #0084ff);
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        `;
+        this.fullscreenButton.onmouseover = () => {
+            this.fullscreenButton.style.backgroundColor = 'rgba(33, 150, 243, 1)';
+            this.fullscreenButton.style.transform = 'scale(1.1)';
+        };
+        this.fullscreenButton.onmouseout = () => {
+            this.fullscreenButton.style.backgroundColor = 'rgba(33, 150, 243, 0.8)';
+            this.fullscreenButton.style.transform = 'scale(1)';
+        };
+        this.fullscreenButton.onclick = (e) => {
+            e.stopPropagation();
+            if (this.isFullscreen) {
+                this.exitFullscreen();
+            } else {
+                this.enterFullscreen();
+            }
+        };
+        floatingButtons.appendChild(this.fullscreenButton);
+
+        // Close button
+        this.closeButton = document.createElement('button');
+        this.closeButton.innerHTML = '❌';
+        this.closeButton.style.cssText = `
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #fff, #fff);
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        `;
+        this.closeButton.onmouseover = () => {
+            this.closeButton.style.backgroundColor = 'rgba(244, 67, 54, 1)';
+            this.closeButton.style.transform = 'scale(1.1)';
+        };
+        this.closeButton.onmouseout = () => {
+            this.closeButton.style.backgroundColor = 'rgba(244, 67, 54, 0.8)';
+            this.closeButton.style.transform = 'scale(1)';
+        };
+        this.closeButton.onclick = (e) => {
+            e.stopPropagation();
+            this.closeGame();
+        };
+        floatingButtons.appendChild(this.closeButton);
+        
+        if (this.gameContainer) {
+            this.gameContainer.appendChild(floatingButtons);
+        } else {
+            document.body.appendChild(floatingButtons);
+        }
+    }
+
+    /**
+     * Display the game
+     */
+    displayGame() {
+        document.body.appendChild(this.gameContainer);
+        document.addEventListener('keydown', this.handleKeyPress);
+        document.addEventListener('fullscreenchange', this.handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', this.handleFullscreenChange);
+        document.addEventListener('msfullscreenchange', this.handleFullscreenChange);
+    }
+
+    /**
+     * Handle keyboard events
+     */
+    handleKeyPress = (event) => {
+        if (event.key === 'Escape') {
+            if (this.isFullscreen) {
+                this.exitFullscreen();
+            } else {
+                this.closeGame();
+            }
+        }
+    }
+
+    /**
+     * Handle fullscreen change events
+     */
+    handleFullscreenChange = () => {
+        this.isFullscreen = !!(document.fullscreenElement ||
+                              document.webkitFullscreenElement ||
+                              document.msFullscreenElement);
+        if (this.fullscreenButton) {
+            this.fullscreenButton.innerHTML = this.isFullscreen ? '⛶' : '⛶';
+        }
+    }
+
+    /**
+     * Enter fullscreen mode
+     */
+    enterFullscreen() {
+        if (!this.gameContainer) return;
+        if (this.gameContainer.requestFullscreen) {
+            this.gameContainer.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+        } else if (this.gameContainer.webkitRequestFullscreen) {
+            this.gameContainer.webkitRequestFullscreen();
+        } else if (this.gameContainer.msRequestFullscreen) {
+            this.gameContainer.msRequestFullscreen();
+        }
+    }
+
+    /**
+     * Exit fullscreen mode
+     */
+    exitFullscreen() {
+        if (!this.isFullscreen) return;
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            this.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            this.msExitFullscreen();
+        }
+    }
+
+    /**
+     * Close the game
+     */
+    closeGame() {
+        if (!this.isActive) return;
+        if (this.isFullscreen) {
+            this.exitFullscreen();
+        }
+        
+        if (this.isFirebaseInitialized) {
+            this.usersRef.child(this.userSessionId).remove();
+            this.presenceRef.child(this.userSessionId).remove();
+            this.typingRef.child(this.userSessionId).remove();
+        }
+        
+        this.removeFirebaseListeners();
+        
+        document.removeEventListener('keydown', this.handleKeyPress);
+        document.removeEventListener('fullscreenchange', this.handleFullscreenChange);
+        document.removeEventListener('webkitfullscreenchange', this.handleFullscreenChange);
+        document.removeEventListener('msfullscreenchange', this.handleFullscreenChange);
+        if (this.gameContainer && this.gameContainer.parentNode) {
+            this.gameContainer.parentNode.removeChild(this.gameContainer);
+        }
+        
+        const floatingButtons = document.querySelector('.floating-buttons');
+        if (floatingButtons) {
+            floatingButtons.remove();
+        }
+        
+        this.gameContainer = null;
+        this.messagesContainer = null;
+        this.messageInput = null;
+        this.sendButton = null;
+        this.userList = null;
+        this.statusDiv = null;
+        this.isActive = false;
+        this.isFullscreen = false;
+        this.fullscreenButton = null;
+        this.closeButton = null;
+        botReply("Live Chat App closed. Thank you!");
+    }
+
+    /**
+     * Load external script
+     */
+    loadScript(src, callback) {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = callback;
+        document.head.appendChild(script);
+    }
+}
+
+// Create a singleton instance
+const chatLiveScreenLoader = new ChatLiveScreenLoader();
+
+// Add this to your AI's command handling
+if (/chat app|live chat|whatsapp|messenger|chat room/i.test(userInputRaw)) {
+    chatLiveScreenLoader.loadBaseScreen();
+    return;
+}
+
+// Add command to close the screen
+if (/close screen|exit screen/i.test(userInputRaw)) {
+    chatLiveScreenLoader.closeGame();
+    return;
+}
+
+class TicTacToeGame {
+    constructor() {
+        this.baseScreen = {
+            name: 'TIC TAC TOE',
+            instructions: 'Real-time two-player game. Play with anyone online!'
+        };
+        this.gameContainer = null;
+        this.isActive = false;
+        this.isFullscreen = false;
+        this.fullscreenButton = null;
+        this.closeButton = null;
+        this.currentUsername = '';
+        this.userSessionId = this.generateSessionId();
+        this.firebaseConfig = {
+            apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+            projectId: "vipteammod-movies",
+            appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c",
+            databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com"
+        };
+        this.db = null;
+        this.gameRef = null;
+        this.playersRef = null;
+        this.connectedRef = null;
+        this.messagesRef = null;
+        this.isFirebaseInitialized = false;
+        this.currentGame = null;
+        this.gameListener = null;
+        this.playersListener = null;
+        this.messagesListener = null;
+        this.board = Array(9).fill('');
+        this.currentPlayer = 'X';
+        this.gameActive = false;
+        this.playerSymbol = null;
+        this.opponentSymbol = null;
+        this.playerNumber = null;
+        this.availableGames = [];
+        this.gameScreenCreated = false;
+        this.player1Online = true;
+        this.player2Online = true;
+        this.emojis = ['😀', '😂', '😍', '🤔', '😎', '👍', '👎', '🔥', '💯', '🎉'];
+        this.messageInput = null;
+        this.emojiPanel = null;
+        this.messagesContainer = null;
+        this.connectionChecked = false;
+        this.messageConnectionChecked = false;
+        this.emojiConnectionChecked = false;
+        
+        // Neon color scheme
+        this.colors = {
+            primary: '#00f2fe',      // Cyan - for primary elements
+            secondary: '#ff00cc',    // Pink - for secondary elements
+            accent: '#fffc00',       // Yellow - for accents
+            dark: '#0a0a27',         // Dark blue - for backgrounds
+            light: '#ffffff',        // White - for text
+            playerX: '#00f2fe',      // Cyan for X
+            playerO: '#ff00cc',      // Pink for O
+            success: '#4ade80',      // Green for success
+            warning: '#fbbf24',      // Yellow for warnings
+            error: '#9ca3af'        // Gray for errors
+        };
+    }
+    /**
+     * Generate a unique session ID for this user
+     */
+    generateSessionId() {
+        return 'player_' + Math.random().toString(36).substr(2, 9);
+    }
+    /**
+     * Load the Tic Tac Toe Game
+     */
+    loadBaseScreen() {
+        if (this.isActive) {
+            botReply(`The ${this.baseScreen.name} is already running! Type 'close screen' to exit first.`);
+            return;
+        }
+        this.createGameContainer();
+        this.createLoginScreen();
+        this.setupActionButtons();
+        this.displayGame();
+        this.isActive = true;
+        this.initializeFirebase();
+        botReply(`${this.baseScreen.name} loaded! ${this.baseScreen.instructions}`);
+    }
+    /**
+     * Initialize Firebase
+     */
+    initializeFirebase() {
+        if (typeof firebase === 'undefined') {
+            this.loadScript('https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js', () => {
+                this.loadScript('https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js', () => {
+                    this.setupFirebase();
+                });
+            });
+        } else {
+            this.setupFirebase();
+        }
+    }
+    /**
+     * Setup Firebase
+     */
+    setupFirebase() {
+        try {
+            if (firebase.apps.length === 0) {
+                firebase.initializeApp(this.firebaseConfig);
+            }
+            
+            this.db = firebase.database();
+            
+            // References
+            this.gameRef = this.db.ref('tictactoe/games');
+            this.playersRef = this.db.ref('tictactoe/players');
+            this.messagesRef = this.db.ref('tictactoe/messages');
+            this.connectedRef = this.db.ref('.info/connected');
+            
+            // Setup connection monitoring
+            this.connectedRef.on('value', (snap) => {
+                if (snap.val() === true) {
+                    this.setupFirebaseListeners();
+                    this.loadAvailableGames();
+                }
+            });
+            
+            this.isFirebaseInitialized = true;
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+        }
+    }
+    /**
+     * Setup Firebase listeners
+     */
+    setupFirebaseListeners() {
+        // Listen for available games
+        this.playersRef = this.db.ref('tictactoe/players');
+        this.playersListener = this.playersRef.on('value', (snapshot) => {
+            const players = snapshot.val();
+            if (players) {
+                this.updateAvailableGames(players);
+                this.checkPlayerOnlineStatus(players);
+                
+                // One-time connection check for all players
+                if (!this.connectionChecked && this.currentGame) {
+                    this.checkAllConnections(players);
+                    this.connectionChecked = true;
+                }
+            }
+        });
+    }
+    
+    /**
+     * Check all connections in the game
+     */
+    checkAllConnections(players) {
+        if (!this.currentGame) return;
+        
+        // Check if both players are connected
+        const player1Connected = !!players[this.currentGame.player1];
+        const player2Connected = !!players[this.currentGame.player2];
+        
+        if (player1Connected && player2Connected) {
+            this.showNotification('Both players are connected! Game ready to play.');
+        } else if (!player1Connected && this.currentGame.player1) {
+            this.showNotification('Player 1 has disconnected.');
+        } else if (!player2Connected && this.currentGame.player2) {
+            this.showNotification('Player 2 has disconnected.');
+        }
+        
+        // Check message connection
+        if (!this.messageConnectionChecked) {
+            this.checkMessageConnection();
+            this.messageConnectionChecked = true;
+        }
+        
+        // Check emoji connection
+        if (!this.emojiConnectionChecked) {
+            this.checkEmojiConnection();
+            this.emojiConnectionChecked = true;
+        }
+    }
+    
+    /**
+     * Check message connection
+     */
+    checkMessageConnection() {
+        if (!this.currentGame) return;
+        
+        // Create a test message
+        const testMessage = {
+            senderId: this.userSessionId,
+            senderName: this.currentUsername,
+            content: "Connection test",
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            isTest: true
+        };
+        
+        this.messagesRef.child(this.currentGame.id).push(testMessage)
+            .then(() => {
+                this.showNotification('Message connection established successfully!');
+                // Remove the test message
+                this.messagesRef.child(this.currentGame.id).once('value', (snapshot) => {
+                    snapshot.forEach((childSnapshot) => {
+                        const message = childSnapshot.val();
+                        if (message.isTest) {
+                            this.messagesRef.child(this.currentGame.id).child(childSnapshot.key).remove();
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Message connection error:', error);
+                this.showNotification('Message connection failed. Please try again.');
+            });
+    }
+    
+    /**
+     * Check emoji connection
+     */
+    checkEmojiConnection() {
+        if (!this.currentGame) return;
+        
+        // Create a test emoji
+        const testEmoji = {
+            senderId: this.userSessionId,
+            senderName: this.currentUsername,
+            content: "🔗",
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            isTest: true
+        };
+        
+        this.messagesRef.child(this.currentGame.id).push(testEmoji)
+            .then(() => {
+                this.showNotification('Emoji connection established successfully!');
+                // Remove the test emoji
+                this.messagesRef.child(this.currentGame.id).once('value', (snapshot) => {
+                    snapshot.forEach((childSnapshot) => {
+                        const message = childSnapshot.val();
+                        if (message.isTest) {
+                            this.messagesRef.child(this.currentGame.id).child(childSnapshot.key).remove();
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Emoji connection error:', error);
+                this.showNotification('Emoji connection failed. Please try again.');
+            });
+    }
+    
+    /**
+     * Check player online status
+     */
+    checkPlayerOnlineStatus(players) {
+        if (!this.currentGame || !this.gameScreenCreated) return;
+        
+        // Check if player 1 is online
+        this.player1Online = !!(players[this.currentGame.player1]);
+        
+        // Check if player 2 is online
+        this.player2Online = !!(players[this.currentGame.player2]);
+        
+        // Update the game screen with online status
+        this.updatePlayerOnlineStatus();
+    }
+    
+    /**
+     * Update player online status in UI
+     */
+    updatePlayerOnlineStatus() {
+        if (!this.gameContainer || !this.currentGame) return;
+        
+        const player1Info = this.gameContainer.querySelector('.player1-info');
+        const player2Info = this.gameContainer.querySelector('.player2-info');
+        
+        if (player1Info) {
+            const statusIndicator = player1Info.querySelector('.status-indicator') || 
+                                   document.createElement('span');
+            statusIndicator.className = 'status-indicator';
+            statusIndicator.style.cssText = `
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                margin-left: 5px;
+                background-color: ${this.player1Online ? this.colors.success : this.colors.error};
+                box-shadow: 0 0 8px ${this.player1Online ? this.colors.success : this.colors.error};
+            `;
+            
+            if (!player1Info.contains(statusIndicator)) {
+                player1Info.appendChild(statusIndicator);
+            }
+        }
+        
+        if (player2Info) {
+            const statusIndicator = player2Info.querySelector('.status-indicator') || 
+                                   document.createElement('span');
+            statusIndicator.className = 'status-indicator';
+            statusIndicator.style.cssText = `
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                margin-left: 5px;
+                background-color: ${this.player2Online ? this.colors.success : this.colors.error};
+                box-shadow: 0 0 8px ${this.player2Online ? this.colors.success : this.colors.error};
+            `;
+            
+            if (!player2Info.contains(statusIndicator)) {
+                player2Info.appendChild(statusIndicator);
+            }
+        }
+        
+        // Show notification if opponent is offline
+        if ((this.playerNumber === 1 && !this.player2Online) || 
+            (this.playerNumber === 2 && !this.player1Online)) {
+            this.showNotification('Your opponent is offline');
+        }
+    }
+    /**
+     * Create the game container
+     */
+    createGameContainer() {
+        const existingContainer = document.getElementById('screen-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+        this.gameContainer = document.createElement('div');
+        this.gameContainer.id = 'screen-container';
+        this.gameContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, ${this.colors.dark}, #1a1a3e, ${this.colors.dark});
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        `;
+        
+        // Add CSS animation for background gradient
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes gradientBG {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            
+            .neon-glow {
+                box-shadow: 0 0 10px ${this.colors.primary}, 0 0 20px ${this.colors.primary}, 0 0 30px ${this.colors.primary};
+                transition: all 0.3s ease;
+            }
+            
+            .neon-glow:hover {
+                box-shadow: 0 0 15px ${this.colors.primary}, 0 0 25px ${this.colors.primary}, 0 0 35px ${this.colors.primary};
+            }
+            
+            .neon-glow-pink {
+                box-shadow: 0 0 10px ${this.colors.secondary}, 0 0 20px ${this.colors.secondary}, 0 0 30px ${this.colors.secondary};
+                transition: all 0.3s ease;
+            }
+            
+            .neon-glow-pink:hover {
+                box-shadow: 0 0 15px ${this.colors.secondary}, 0 0 25px ${this.colors.secondary}, 0 0 35px ${this.colors.secondary};
+            }
+            
+            .neon-glow-yellow {
+                box-shadow: 0 0 10px ${this.colors.accent}, 0 0 20px ${this.colors.accent}, 0 0 30px ${this.colors.accent};
+                transition: all 0.3s ease;
+            }
+            
+            .neon-glow-yellow:hover {
+                box-shadow: 0 0 15px ${this.colors.accent}, 0 0 25px ${this.colors.accent}, 0 0 35px ${this.colors.accent};
+            }
+            
+            .game-cell {
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(5px);
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 48px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .game-cell::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            
+            .game-cell:hover::before {
+                opacity: 1;
+            }
+            
+            .game-cell:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: scale(1.05);
+            }
+            
+            .game-cell.x-player {
+                color: ${this.colors.playerX};
+                text-shadow: 0 0 10px ${this.colors.playerX}, 0 0 20px ${this.colors.playerX};
+            }
+            
+            .game-cell.o-player {
+                color: ${this.colors.playerO};
+                text-shadow: 0 0 10px ${this.colors.playerO}, 0 0 20px ${this.colors.playerO};
+            }
+            
+            .message-bubble {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                padding: 10px 15px;
+                margin: 5px 0;
+                max-width: 80%;
+                word-wrap: break-word;
+                animation: fadeIn 0.3s ease;
+                position: relative;
+            }
+            
+            .message-bubble.player-message {
+                background: rgba(0, 242, 254, 0.2);
+                border: 1px solid rgba(0, 242, 254, 0.5);
+                align-self: flex-end;
+                border-bottom-right-radius: 5px;
+            }
+            
+            .message-bubble.opponent-message {
+                background: rgba(255, 0, 204, 0.2);
+                border: 1px solid rgba(255, 0, 204, 0.5);
+                align-self: flex-start;
+                border-bottom-left-radius: 5px;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            .emoji-btn {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 5px;
+                border-radius: 50%;
+                transition: all 0.2s ease;
+            }
+            
+            .emoji-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.2);
+            }
+            
+            .neon-text {
+                color: ${this.colors.light};
+                text-shadow: 0 0 5px ${this.colors.primary}, 0 0 10px ${this.colors.primary};
+            }
+            
+            .neon-text-pink {
+                color: ${this.colors.light};
+                text-shadow: 0 0 5px ${this.colors.secondary}, 0 0 10px ${this.colors.secondary};
+            }
+            
+            .neon-text-yellow {
+                color: ${this.colors.light};
+                text-shadow: 0 0 5px ${this.colors.accent}, 0 0 10px ${this.colors.accent};
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    /**
+     * Create Login Screen
+     */
+    createLoginScreen() {
+        const loginContainer = document.createElement('div');
+        loginContainer.style.cssText = `
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 400px;
+            max-width: 90vw;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        `;
+        
+        // Add neon border effect
+        const neonBorder = document.createElement('div');
+        neonBorder.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: linear-gradient(${this.colors.dark}, ${this.colors.dark}) padding-box, 
+                        linear-gradient(45deg, ${this.colors.primary}, ${this.colors.secondary}) border-box;
+            z-index: -1;
+        `;
+        loginContainer.appendChild(neonBorder);
+        
+        const title = document.createElement('h2');
+        title.textContent = 'Tic Tac Toe';
+        title.className = 'neon-text';
+        title.style.cssText = `
+            margin: 0 0 20px 0;
+            font-size: 36px;
+            letter-spacing: 2px;
+        `;
+        loginContainer.appendChild(title);
+        const subtitle = document.createElement('p');
+        subtitle.textContent = 'Enter your name to play';
+        subtitle.style.cssText = `
+            margin: 0 0 30px 0;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+        `;
+        loginContainer.appendChild(subtitle);
+        const inputContainer = document.createElement('div');
+        inputContainer.style.cssText = `
+            margin-bottom: 25px;
+        `;
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Enter your name';
+        input.style.cssText = `
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: ${this.colors.light};
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        
+        // Add placeholder styling
+        input.addEventListener('focus', () => {
+            input.style.boxShadow = `0 0 15px ${this.colors.primary}`;
+            input.style.borderColor = this.colors.primary;
+        });
+        
+        input.addEventListener('blur', () => {
+            input.style.boxShadow = 'none';
+            input.style.borderColor = 'transparent';
+        });
+        
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.handleLogin(input.value);
+            }
+        });
+        inputContainer.appendChild(input);
+        loginContainer.appendChild(inputContainer);
+        const loginButton = this.createButton('Play Game', this.colors.primary, () => {
+            this.handleLogin(input.value);
+        });
+        loginButton.style.cssText = `
+            width: 100%;
+            padding: 15px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, ${this.colors.primary}, ${this.colors.secondary});
+        `;
+        loginContainer.appendChild(loginButton);
+        this.gameContainer.appendChild(loginContainer);
+    }
+    /**
+     * Handle Login
+     */
+    handleLogin(username) {
+        if (!username.trim()) {
+            this.showNotification('Please enter your name');
+            return;
+        }
+        this.currentUsername = username.trim();
+        this.gameContainer.innerHTML = '';
+        this.createGameLobby();
+    }
+    /**
+     * Create Game Lobby
+     */
+    createGameLobby() {
+        const lobbyContainer = document.createElement('div');
+        lobbyContainer.style.cssText = `
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            width: 600px;
+            max-width: 90vw;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        `;
+        
+        // Add neon border effect
+        const neonBorder = document.createElement('div');
+        neonBorder.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: linear-gradient(${this.colors.dark}, ${this.colors.dark}) padding-box, 
+                        linear-gradient(45deg, ${this.colors.primary}, ${this.colors.secondary}) border-box;
+            z-index: -1;
+        `;
+        lobbyContainer.appendChild(neonBorder);
+        
+        const title = document.createElement('h2');
+        title.textContent = 'Game Lobby';
+        title.className = 'neon-text';
+        title.style.cssText = `
+            margin: 0 0 20px 0;
+            font-size: 32px;
+            letter-spacing: 2px;
+        `;
+        lobbyContainer.appendChild(title);
+        const userInfo = document.createElement('div');
+        userInfo.style.cssText = `
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: ${this.colors.light};
+            font-size: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        userInfo.textContent = `Welcome, ${this.currentUsername}!`;
+        lobbyContainer.appendChild(userInfo);
+        // Game options
+        const optionsContainer = document.createElement('div');
+        optionsContainer.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        `;
+        const newGameButton = this.createButton('Create New Game', this.colors.primary, () => {
+            this.createNewGame();
+        });
+        newGameButton.style.cssText = `
+            width: 100%;
+            padding: 15px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(45deg, ${this.colors.primary}, ${this.colors.secondary});
+        `;
+        optionsContainer.appendChild(newGameButton);
+        const joinGameButton = this.createButton('Join Random Game', this.colors.secondary, () => {
+            this.joinRandomGame();
+        });
+        joinGameButton.style.cssText = `
+            width: 100%;
+            padding: 15px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(45deg, ${this.colors.secondary}, ${this.colors.primary});
+        `;
+        optionsContainer.appendChild(joinGameButton);
+        lobbyContainer.appendChild(optionsContainer);
+        // Available games list
+        const gamesSection = document.createElement('div');
+        gamesSection.style.cssText = `
+            margin-top: 20px;
+        `;
+        
+        const gamesTitle = document.createElement('h3');
+        gamesTitle.textContent = 'Available Games';
+        gamesTitle.className = 'neon-text';
+        gamesTitle.style.cssText = `
+            margin: 0 0 15px 0;
+            font-size: 22px;
+            letter-spacing: 1px;
+        `;
+        gamesSection.appendChild(gamesTitle);
+        this.gamesList = document.createElement('div');
+        this.gamesList.style.cssText = `
+            max-height: 250px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        this.gamesList.textContent = 'Loading available games...';
+        gamesSection.appendChild(this.gamesList);
+        lobbyContainer.appendChild(gamesSection);
+        this.gameContainer.appendChild(lobbyContainer);
+    }
+    /**
+     * Load available games
+     */
+    loadAvailableGames() {
+        // First get all games from the games reference
+        this.gameRef.once('value').then((snapshot) => {
+            const games = snapshot.val();
+            if (games) {
+                // Then get all players to check who is online
+                this.playersRef.once('value').then((playersSnapshot) => {
+                    const players = playersSnapshot.val();
+                    this.updateAvailableGamesWithGames(games, players);
+                });
+            } else {
+                this.gamesList.innerHTML = '<div style="color: rgba(255,255,255,0.7); text-align: center; padding: 15px;">No available games. Create a new game!</div>';
+            }
+        });
+    }
+    
+    /**
+     * Update available games list with games data
+     */
+    updateAvailableGamesWithGames(games, players) {
+        if (!this.gamesList) return;
+        
+        this.gamesList.innerHTML = '';
+        
+        // Convert games object to array
+        const gamesArray = Object.entries(games).map(([gameId, game]) => ({
+            id: gameId,
+            ...game
+        }));
+        
+        if (gamesArray.length === 0) {
+            this.gamesList.innerHTML = '<div style="color: rgba(255,255,255,0.7); text-align: center; padding: 15px;">No available games. Create a new game!</div>';
+            return;
+        }
+        
+        gamesArray.forEach(game => {
+            const gameItem = document.createElement('div');
+            gameItem.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px;
+                margin-bottom: 8px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            `;
+            
+            gameItem.addEventListener('mouseenter', () => {
+                gameItem.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                gameItem.style.boxShadow = `0 0 10px ${this.colors.primary}`;
+            });
+            
+            gameItem.addEventListener('mouseleave', () => {
+                gameItem.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                gameItem.style.boxShadow = 'none';
+            });
+            
+            // Get player info
+            const player1Name = game.player1Name || 'Player 1';
+            const player2Name = game.player2Name || (game.status === 'waiting' ? 'Waiting for opponent' : 'Player 2');
+            
+            const gameInfo = document.createElement('div');
+            gameInfo.innerHTML = `
+                <div style="font-weight: bold; color: ${this.colors.light}; font-size: 16px;">
+                    ${player1Name} ${player.player2Name ? 'vs' : 'vs'} ${player2Name}
+                </div>
+                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">
+                    ${game.status === 'waiting' ? 'Waiting for opponent' : 'Game in progress'}
+                </div>
+            `;
+            gameItem.appendChild(gameInfo);
+            
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.gap = '8px';
+            
+            // Show Join button only for waiting games
+            if (game.status === 'waiting') {
+                const joinButton = this.createButton('Join', this.colors.success, () => {
+                    this.joinGame(game.id);
+                });
+                joinButton.style.cssText = `
+                    padding: 6px 12px;
+                    font-size: 14px;
+                    border-radius: 20px;
+                `;
+                buttonContainer.appendChild(joinButton);
+            }
+            
+            // Add delete button for all games
+            const deleteButton = this.createButton('Delete', this.colors.error, () => {
+                this.deleteGame(game.id);
+            });
+            deleteButton.style.cssText = `
+                padding: 6px 12px;
+                font-size: 14px;
+                border-radius: 20px;
+            `;
+            buttonContainer.appendChild(deleteButton);
+            
+            gameItem.appendChild(buttonContainer);
+            this.gamesList.appendChild(gameItem);
+        });
+    }
+    
+    /**
+     * Update available games list (fallback method for players data)
+     */
+    updateAvailableGames(players) {
+        if (!this.gamesList) return;
+        const waitingPlayers = Object.values(players).filter(p => p.status === 'waiting');
+        
+        if (waitingPlayers.length === 0) {
+            this.gamesList.innerHTML = '<div style="color: rgba(255,255,255,0.7); text-align: center; padding: 15px;">No available games. Create a new game!</div>';
+            return;
+        }
+        this.gamesList.innerHTML = '';
+        
+        waitingPlayers.forEach(player => {
+            const gameItem = document.createElement('div');
+            gameItem.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px;
+                margin-bottom: 8px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            `;
+            
+            gameItem.addEventListener('mouseenter', () => {
+                gameItem.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                gameItem.style.boxShadow = `0 0 10px ${this.colors.primary}`;
+            });
+            
+            gameItem.addEventListener('mouseleave', () => {
+                gameItem.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                gameItem.style.boxShadow = 'none';
+            });
+            
+            const playerInfo = document.createElement('div');
+            playerInfo.innerHTML = `
+                <div style="font-weight: bold; color: ${this.colors.light}; font-size: 16px;">${player.name}</div>
+                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Waiting for opponent</div>
+            `;
+            gameItem.appendChild(playerInfo);
+            
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.gap = '8px';
+            
+            const joinButton = this.createButton('Join', this.colors.success, () => {
+                this.joinGame(player.gameId);
+            });
+            joinButton.style.cssText = `
+                padding: 6px 12px;
+                font-size: 14px;
+                border-radius: 20px;
+            `;
+            buttonContainer.appendChild(joinButton);
+            
+            // Add delete button for all games
+            const deleteButton = this.createButton('Delete', this.colors.error, () => {
+                this.deleteGame(player.gameId);
+            });
+            deleteButton.style.cssText = `
+                padding: 6px 12px;
+                font-size: 14px;
+                border-radius: 20px;
+            `;
+            buttonContainer.appendChild(deleteButton);
+            
+            gameItem.appendChild(buttonContainer);
+            this.gamesList.appendChild(gameItem);
+        });
+    }
+    
+    /**
+     * Delete a game
+     */
+    deleteGame(gameId) {
+        if (confirm('Are you sure you want to delete this game? This action cannot be undone.')) {
+            // Remove game from Firebase
+            this.gameRef.child(gameId).remove()
+                .then(() => {
+                    // Remove all players associated with this game
+                    this.playersRef.once('value').then((snapshot) => {
+                        const players = snapshot.val();
+                        if (players) {
+                            Object.entries(players).forEach(([playerId, player]) => {
+                                if (player.gameId === gameId) {
+                                    this.playersRef.child(playerId).remove();
+                                }
+                            });
+                        }
+                    })
+                    .then(() => {
+                        this.showNotification('Game deleted successfully');
+                        // Refresh the games list
+                        this.loadAvailableGames();
+                    })
+                    .catch(error => {
+                        console.error('Error removing players:', error);
+                        this.showNotification('Error deleting game');
+                    });
+                })
+                .catch(error => {
+                    console.error('Error deleting game:', error);
+                    this.showNotification('Error deleting game');
+                });
+        }
+    }
+    /**
+     * Create new game
+     */
+    createNewGame() {
+        const gameId = 'game_' + Date.now();
+        
+        // Create player entry
+        const playerData = {
+            id: this.userSessionId,
+            name: this.currentUsername,
+            gameId: gameId,
+            status: 'waiting',
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+        
+        this.playersRef.child(this.userSessionId).set(playerData).then(() => {
+            this.currentGame = {
+                id: gameId,
+                board: Array(9).fill(''),
+                currentPlayer: 'X',
+                status: 'waiting',
+                player1: this.userSessionId,
+                player1Name: this.currentUsername,
+                player2: null,
+                player2Name: null,
+                winner: null,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            this.gameRef.child(gameId).set(this.currentGame).then(() => {
+                this.setupGameListener(gameId);
+                this.showNotification('Game created! Waiting for opponent...');
+            });
+        });
+    }
+    /**
+     * Join random game
+     */
+    joinRandomGame() {
+        this.playersRef.once('value').then((snapshot) => {
+            const players = snapshot.val();
+            if (players) {
+                const waitingPlayers = Object.values(players).filter(p => p.status === 'waiting');
+                if (waitingPlayers.length > 0) {
+                    const randomPlayer = waitingPlayers[Math.floor(Math.random() * waitingPlayers.length)];
+                    this.joinGame(randomPlayer.gameId);
+                } else {
+                    this.showNotification('No available games. Create a new game!');
+                }
+            }
+        });
+    }
+    /**
+     * Join specific game
+     */
+    joinGame(gameId) {
+        // Get game data
+        this.gameRef.child(gameId).once('value').then((snapshot) => {
+            const game = snapshot.val();
+            if (game && game.status === 'waiting') {
+                // Update game with player 2
+                const updates = {
+                    status: 'playing',
+                    player2: this.userSessionId,
+                    player2Name: this.currentUsername
+                };
+                
+                this.gameRef.child(gameId).update(updates).then(() => {
+                    // Update player status
+                    this.playersRef.child(this.userSessionId).set({
+                        id: this.userSessionId,
+                        name: this.currentUsername,
+                        gameId: gameId,
+                        status: 'playing',
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    
+                    // Set up game listener
+                    this.setupGameListener(gameId);
+                    
+                    // Set local game state
+                    this.currentGame = { ...game, ...updates };
+                    this.playerSymbol = 'O';
+                    this.opponentSymbol = 'X';
+                    this.playerNumber = 2;
+                    this.gameActive = true;
+                    this.gameScreenCreated = false;
+                    
+                    // Create game screen
+                    this.createGameScreen();
+                });
+            } else {
+                this.showNotification('Game is no longer available');
+            }
+        });
+    }
+    /**
+     * Setup game listener
+     */
+    setupGameListener(gameId) {
+        // Remove existing listener if any
+        if (this.gameListener) {
+            this.gameRef.child(gameId).off('value', this.gameListener);
+        }
+        
+        this.gameListener = this.gameRef.child(gameId).on('value', (snapshot) => {
+            const game = snapshot.val();
+            if (game) {
+                this.currentGame = game;
+                
+                // Check if game is ready to play (both players connected)
+                if (game.status === 'playing' && game.player1 && game.player2) {
+                    this.gameActive = true;
+                    
+                    // Set player symbols if not already set
+                    if (!this.playerSymbol) {
+                        if (game.player1 === this.userSessionId) {
+                            this.playerSymbol = 'X';
+                            this.opponentSymbol = 'O';
+                            this.playerNumber = 1;
+                        } else if (game.player2 === this.userSessionId) {
+                            this.playerSymbol = 'O';
+                            this.opponentSymbol = 'X';
+                            this.playerNumber = 2;
+                        }
+                    }
+                    
+                    // Create game screen if not already created
+                    if (!this.gameScreenCreated) {
+                        this.gameScreenCreated = true;
+                        this.createGameScreen();
+                    } else {
+                        // Always update the game screen when data changes
+                        this.updateGameScreen();
+                    }
+                }
+                
+                // Check for draw condition and update both players
+                if (game.status === 'finished' && game.winner === 'draw') {
+                    this.updateGameScreen();
+                }
+            }
+        });
+        
+        // Setup messages listener
+        this.setupMessagesListener(gameId);
+    }
+    
+    /**
+     * Setup messages listener
+     */
+    setupMessagesListener(gameId) {
+        // Remove existing listener if any
+        if (this.messagesListener) {
+            this.messagesRef.child(gameId).off('child_added', this.messagesListener);
+        }
+        
+        this.messagesListener = this.messagesRef.child(gameId).limitToLast(20).on('child_added', (snapshot) => {
+            const message = snapshot.val();
+            if (this.messagesContainer) {
+                this.displayMessage(message);
+            }
+        });
+    }
+    
+    /**
+     * Display a message in the messages container
+     */
+    displayMessage(message) {
+        if (!this.messagesContainer) return;
+        
+        // Skip test messages
+        if (message.isTest) return;
+        
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message-bubble';
+        
+        // Style based on who sent the message
+        if (message.senderId === this.userSessionId) {
+            messageElement.classList.add('player-message');
+        } else {
+            messageElement.classList.add('opponent-message');
+        }
+        
+        // Add sender name for opponent messages
+        if (message.senderId !== this.userSessionId) {
+            const senderName = document.createElement('div');
+            senderName.textContent = message.senderName;
+            senderName.style.cssText = `
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: ${this.colors.light};
+                font-size: 14px;
+            `;
+            messageElement.appendChild(senderName);
+        }
+        
+        // Add message content
+        const content = document.createElement('div');
+        content.textContent = message.content;
+        content.style.cssText = `
+            color: ${this.colors.light};
+            font-size: 16px;
+        `;
+        messageElement.appendChild(content);
+        
+        // Add timestamp
+        const timestamp = document.createElement('div');
+        timestamp.textContent = new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        timestamp.style.cssText = `
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+            text-align: right;
+        `;
+        messageElement.appendChild(timestamp);
+        
+        this.messagesContainer.appendChild(messageElement);
+        
+        // Scroll to bottom
+        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+        
+        // Add animation effect
+        messageElement.style.animation = 'fadeIn 0.3s ease';
+        
+        // Add glow effect for emojis
+        if (this.emojis.includes(message.content)) {
+            content.style.fontSize = '24px';
+            content.style.textAlign = 'center';
+            
+            if (message.senderId === this.userSessionId) {
+                content.style.textShadow = `0 0 10px ${this.colors.primary}, 0 0 20px ${this.colors.primary}`;
+            } else {
+                content.style.textShadow = `0 0 10px ${this.colors.secondary}, 0 0 20px ${this.colors.secondary}`;
+            }
+        }
+    }
+    
+    /**
+     * Send a message
+     */
+    sendMessage() {
+        if (!this.messageInput || !this.currentGame) return;
+        
+        const content = this.messageInput.value.trim();
+        if (!content) return;
+        
+        const message = {
+            senderId: this.userSessionId,
+            senderName: this.currentUsername,
+            content: content,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+        
+        this.messagesRef.child(this.currentGame.id).push(message)
+            .then(() => {
+                this.messageInput.value = '';
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                this.showNotification('Error sending message');
+            });
+    }
+    
+    /**
+     * Send an emoji
+     */
+    sendEmoji(emoji) {
+        if (!this.currentGame) return;
+        
+        const message = {
+            senderId: this.userSessionId,
+            senderName: this.currentUsername,
+            content: emoji,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+        
+        this.messagesRef.child(this.currentGame.id).push(message)
+            .catch(error => {
+                console.error('Error sending emoji:', error);
+                this.showNotification('Error sending emoji');
+            });
+    }
+    
+    /**
+     * Create emoji panel
+     */
+    createEmojiPanel() {
+        this.emojiPanel = document.createElement('div');
+        this.emojiPanel.style.cssText = `
+            position: absolute;
+            bottom: 60px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        `;
+        
+        this.emojis.forEach(emoji => {
+            const emojiButton = document.createElement('button');
+            emojiButton.className = 'emoji-btn';
+            emojiButton.textContent = emoji;
+            emojiButton.addEventListener('click', () => {
+                this.sendEmoji(emoji);
+                this.toggleEmojiPanel();
+            });
+            this.emojiPanel.appendChild(emojiButton);
+        });
+        
+        // Initially hide the panel
+        this.emojiPanel.style.display = 'none';
+        
+        return this.emojiPanel;
+    }
+    
+    /**
+     * Toggle emoji panel visibility
+     */
+    toggleEmojiPanel() {
+        if (!this.emojiPanel) return;
+        
+        if (this.emojiPanel.style.display === 'none') {
+            this.emojiPanel.style.display = 'grid';
+        } else {
+            this.emojiPanel.style.display = 'none';
+        }
+    }
+    /**
+     * Create Game Screen
+     */
+    createGameScreen() {
+        if (!this.currentGame) return;
+        
+        // Clear the game container
+        this.gameContainer.innerHTML = '';
+        
+        const gameContainer = document.createElement('div');
+        gameContainer.className = 'game-board';
+        gameContainer.style.cssText = `
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            width: 550px;
+            max-width: 90vw;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        `;
+        
+        // Add neon border effect
+        const neonBorder = document.createElement('div');
+        neonBorder.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: linear-gradient(${this.colors.dark}, ${this.colors.dark}) padding-box, 
+                        linear-gradient(45deg, ${this.colors.primary}, ${this.colors.secondary}) border-box;
+            z-index: -1;
+        `;
+        gameContainer.appendChild(neonBorder);
+        
+        const title = document.createElement('h2');
+        title.textContent = 'Tic Tac Toe';
+        title.className = 'neon-text';
+        title.style.cssText = `
+            margin: 0 0 20px 0;
+            font-size: 36px;
+            letter-spacing: 2px;
+        `;
+        gameContainer.appendChild(title);
+        // Game info
+        const gameInfo = document.createElement('div');
+        gameInfo.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        
+        const player1Info = document.createElement('div');
+        player1Info.className = 'player1-info';
+        player1Info.innerHTML = `
+            <div style="font-weight: bold; color: ${this.colors.playerX}; font-size: 18px;">Player 1 (X)</div>
+            <div style="color: ${this.colors.light}; font-size: 16px;">${this.currentGame.player1Name || 'Player 1'}</div>
+        `;
+        gameInfo.appendChild(player1Info);
+        
+        const vsText = document.createElement('div');
+        vsText.textContent = 'VS';
+        vsText.className = 'neon-text-yellow';
+        vsText.style.cssText = `
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+        `;
+        gameInfo.appendChild(vsText);
+        
+        const player2Info = document.createElement('div');
+        player2Info.className = 'player2-info';
+        player2Info.innerHTML = `
+            <div style="font-weight: bold; color: ${this.colors.playerO}; font-size: 18px;">Player 2 (O)</div>
+            <div style="color: ${this.colors.light}; font-size: 16px;">${this.currentGame.player2Name || 'Waiting...'}</div>
+        `;
+        gameInfo.appendChild(player2Info);
+        
+        gameContainer.appendChild(gameInfo);
+        
+        // Game board
+        this.boardContainer = document.createElement('div');
+        this.boardContainer.style.cssText = `
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 20px auto;
+            width: 300px;
+            height: 300px;
+        `;
+        
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'game-cell';
+            cell.dataset.index = i;
+            
+            // Set initial cell content if needed
+            if (this.currentGame.board[i]) {
+                cell.textContent = this.currentGame.board[i];
+                if (this.currentGame.board[i] === 'X') {
+                    cell.classList.add('x-player');
+                } else {
+                    cell.classList.add('o-player');
+                }
+            }
+            
+            cell.addEventListener('click', () => {
+                this.makeMove(i);
+            });
+            
+            this.boardContainer.appendChild(cell);
+        }
+        
+        gameContainer.appendChild(this.boardContainer);
+        
+        // Game status
+        this.gameStatus = document.createElement('div');
+        this.gameStatus.className = 'neon-text-yellow';
+        this.gameStatus.style.cssText = `
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            min-height: 30px;
+        `;
+        gameContainer.appendChild(this.gameStatus);
+        
+        // Messages container
+        const messagesSection = document.createElement('div');
+        messagesSection.style.cssText = `
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        `;
+        
+        const messagesTitle = document.createElement('h3');
+        messagesTitle.textContent = 'Chat';
+        messagesTitle.className = 'neon-text';
+        messagesTitle.style.cssText = `
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            text-align: left;
+        `;
+        messagesSection.appendChild(messagesTitle);
+        
+        this.messagesContainer = document.createElement('div');
+        this.messagesContainer.style.cssText = `
+            height: 120px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        messagesSection.appendChild(this.messagesContainer);
+        
+        // Message input container
+        const messageInputContainer = document.createElement('div');
+        messageInputContainer.style.cssText = `
+            position: relative;
+            display: flex;
+            align-items: center;
+        `;
+        
+        this.messageInput = document.createElement('input');
+        this.messageInput.type = 'text';
+        this.messageInput.placeholder = 'Type a message...';
+        this.messageInput.style.cssText = `
+            flex: 1;
+            padding: 10px 40px 10px 15px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: ${this.colors.light};
+            font-size: 14px;
+            outline: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        
+        this.messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendMessage();
+            }
+        });
+        
+        messageInputContainer.appendChild(this.messageInput);
+        
+        // Emoji button
+        const emojiButton = document.createElement('button');
+        emojiButton.innerHTML = '😊';
+        emojiButton.className = 'emoji-btn';
+        emojiButton.style.cssText = `
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        `;
+        emojiButton.addEventListener('click', () => {
+            this.toggleEmojiPanel();
+        });
+        messageInputContainer.appendChild(emojiButton);
+        
+        messagesSection.appendChild(messageInputContainer);
+        gameContainer.appendChild(messagesSection);
+        
+        // Control buttons
+        const controlsContainer = document.createElement('div');
+        controlsContainer.style.cssText = `
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        `;
+        
+        const newGameButton = this.createButton('New Game', this.colors.success, () => {
+            this.newGame();
+        });
+        newGameButton.style.cssText = `
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+        `;
+        controlsContainer.appendChild(newGameButton);
+        
+        const lobbyButton = this.createButton('Back to Lobby', this.colors.primary, () => {
+            this.backToLobby();
+        });
+        lobbyButton.style.cssText = `
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+        `;
+        controlsContainer.appendChild(lobbyButton);
+        
+        gameContainer.appendChild(controlsContainer);
+        
+        this.gameContainer.appendChild(gameContainer);
+        
+        // Add emoji panel
+        this.gameContainer.appendChild(this.createEmojiPanel());
+        
+        // Update the game screen with current data
+        this.updateGameScreen();
+        
+        // Set up a presence listener for the opponent
+        this.setupOpponentPresenceListener();
+    }
+    
+    /**
+     * Setup opponent presence listener
+     */
+    setupOpponentPresenceListener() {
+        if (!this.currentGame) return;
+        
+        // Get opponent ID
+        const opponentId = this.playerNumber === 1 ? 
+                          this.currentGame.player2 : 
+                          this.currentGame.player1;
+        
+        if (opponentId) {
+            // Listen for opponent's presence
+            this.playersRef.child(opponentId).on('value', (snapshot) => {
+                const isOnline = !!snapshot.val();
+                
+                if (this.playerNumber === 1) {
+                    this.player2Online = isOnline;
+                } else {
+                    this.player1Online = isOnline;
+                }
+                
+                this.updatePlayerOnlineStatus();
+            });
+        }
+    }
+    /**
+     * Update game screen
+     */
+    updateGameScreen() {
+        if (!this.currentGame || !this.boardContainer || !this.gameStatus) return;
+        
+        // Update board
+        const cells = this.boardContainer.children;
+        
+        for (let i = 0; i < 9; i++) {
+            if (cells[i]) {
+                // Update cell content
+                cells[i].textContent = this.currentGame.board[i] || '';
+                
+                // Update cell color based on content
+                if (this.currentGame.board[i]) {
+                    if (this.currentGame.board[i] === 'X') {
+                        cells[i].classList.add('x-player');
+                        cells[i].classList.remove('o-player');
+                    } else {
+                        cells[i].classList.add('o-player');
+                        cells[i].classList.remove('x-player');
+                    }
+                    cells[i].style.cursor = 'default';
+                } else {
+                    cells[i].classList.remove('x-player', 'o-player');
+                    cells[i].style.cursor = 'pointer';
+                }
+            }
+        }
+        
+        // Update status
+        if (this.currentGame.winner) {
+            if (this.currentGame.winner === 'draw') {
+                this.gameStatus.textContent = "It's a draw!";
+                this.gameStatus.style.color = this.colors.warning;
+                this.gameStatus.style.textShadow = `0 0 10px ${this.colors.warning}`;
+            } else {
+                const winnerName = this.currentGame.winner === 'X' ? 
+                    this.currentGame.player1Name : this.currentGame.player2Name;
+                this.gameStatus.textContent = `${winnerName} wins!`;
+                this.gameStatus.style.color = this.colors.success;
+                this.gameStatus.style.textShadow = `0 0 10px ${this.colors.success}`;
+            }
+            this.gameActive = false;
+        } else if (this.currentGame.status === 'playing') {
+            if (this.currentGame.currentPlayer === this.playerSymbol) {
+                this.gameStatus.textContent = 'Your turn';
+                this.gameStatus.style.color = this.colors.success;
+                this.gameStatus.style.textShadow = `0 0 10px ${this.colors.success}`;
+            } else {
+                this.gameStatus.textContent = 'Opponent\'s turn';
+                this.gameStatus.style.color = this.colors.warning;
+                this.gameStatus.style.textShadow = `0 0 10px ${this.colors.warning}`;
+            }
+        } else {
+            this.gameStatus.textContent = 'Waiting for opponent...';
+            this.gameStatus.style.color = this.colors.warning;
+            this.gameStatus.style.textShadow = `0 0 10px ${this.colors.warning}`;
+        }
+        
+        // Update player online status
+        this.updatePlayerOnlineStatus();
+    }
+    /**
+     * Make a move
+     */
+    makeMove(index) {
+        // Check if it's the player's turn
+        if (!this.currentGame || 
+            !this.gameActive || 
+            this.currentGame.board[index] !== '' || 
+            this.currentGame.currentPlayer !== this.playerSymbol ||
+            this.currentGame.status !== 'playing') {
+            return;
+        }
+        
+        // Create a copy of the board
+        const updatedBoard = [...this.currentGame.board];
+        updatedBoard[index] = this.playerSymbol;
+        
+        // Check for winner
+        const winner = this.checkWinner(updatedBoard);
+        const nextPlayer = this.playerSymbol === 'X' ? 'O' : 'X';
+        
+        // Prepare updates
+        const updates = {
+            board: updatedBoard,
+            currentPlayer: nextPlayer
+        };
+        
+        if (winner) {
+            updates.winner = winner;
+            updates.status = 'finished';
+        }
+        
+        // Update Firebase
+        this.gameRef.child(this.currentGame.id).update(updates)
+            .then(() => {
+                // Move successfully made
+                console.log('Move made successfully');
+            })
+            .catch(error => {
+                console.error('Error making move:', error);
+                this.showNotification('Error making move. Please try again.');
+            });
+    }
+    /**
+     * Check for winner
+     */
+    checkWinner(board) {
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+        
+        for (const pattern of winPatterns) {
+            const [a, b, c] = pattern;
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                return board[a];
+            }
+        }
+        
+        // Check for draw - if all cells are filled and no winner
+        if (board.every(cell => cell !== '')) {
+            return 'draw';
+        }
+        
+        return null;
+    }
+    /**
+     * Start new game
+     */
+    newGame() {
+        if (this.currentGame) {
+            const newBoard = Array(9).fill('');
+            const updates = {
+                board: newBoard,
+                currentPlayer: 'X',
+                winner: null,
+                status: 'playing'
+            };
+            
+            this.gameRef.child(this.currentGame.id).update(updates);
+            this.gameActive = true;
+        }
+    }
+    /**
+     * Back to lobby
+     */
+    backToLobby() {
+        // Remove from current game
+        if (this.currentGame) {
+            this.playersRef.child(this.userSessionId).remove();
+            
+            if (this.gameListener) {
+                this.gameRef.child(this.currentGame.id).off('value', this.gameListener);
+            }
+            
+            if (this.messagesListener) {
+                this.messagesRef.child(this.currentGame.id).off('child_added', this.messagesListener);
+            }
+            
+            // If game is waiting for player, delete it
+            if (this.currentGame.status === 'waiting') {
+                this.gameRef.child(this.currentGame.id).remove();
+            }
+        }
+        
+        this.currentGame = null;
+        this.gameActive = false;
+        this.gameScreenCreated = false;
+        this.playerSymbol = null;
+        this.opponentSymbol = null;
+        this.playerNumber = null;
+        this.connectionChecked = false;
+        this.messageConnectionChecked = false;
+        this.emojiConnectionChecked = false;
+        this.gameContainer.innerHTML = '';
+        this.createGameLobby();
+    }
+    /**
+     * Show notification
+     */
+    showNotification(message) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            color: ${this.colors.light};
+            padding: 15px 25px;
+            border-radius: 30px;
+            z-index: 10000;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+    /**
+     * Create a styled button
+     */
+    createButton(text, color, clickHandler) {
+        const button = document.createElement('button');
+        button.textContent = text;
+        button.style.cssText = `
+            padding: 12px 20px;
+            background: linear-gradient(135deg, ${color}, ${color}dd);
+            color: ${this.colors.light};
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            letter-spacing: 1px;
+        `;
+        button.addEventListener('mouseenter', () => {
+            button.style.transform = 'translateY(-3px)';
+            button.style.boxShadow = '0 7px 20px rgba(0, 0, 0, 0.3)';
+        });
+        button.addEventListener('mouseleave', () => {
+            button.style.transform = '';
+            button.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+        });
+        button.addEventListener('click', clickHandler);
+        return button;
+    }
+    /**
+     * Set up action buttons (fullscreen and close)
+     */
+    setupActionButtons() {
+        const floatingButtons = document.createElement('div');
+        floatingButtons.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10001;
+        `;
+        // Fullscreen button
+        this.fullscreenButton = document.createElement('button');
+        this.fullscreenButton.innerHTML = '⛶';
+        this.fullscreenButton.style.cssText = `
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, ${this.colors.primary}, ${this.colors.primary}cc);
+            color: ${this.colors.light};
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        `;
+        this.fullscreenButton.onmouseover = () => {
+            this.fullscreenButton.style.backgroundColor = this.colors.primary;
+            this.fullscreenButton.style.transform = 'scale(1.1)';
+        };
+        this.fullscreenButton.onmouseout = () => {
+            this.fullscreenButton.style.backgroundColor = `${this.colors.primary}cc`;
+            this.fullscreenButton.style.transform = 'scale(1)';
+        };
+        this.fullscreenButton.onclick = (e) => {
+            e.stopPropagation();
+            if (this.isFullscreen) {
+                this.exitFullscreen();
+            } else {
+                this.enterFullscreen();
+            }
+        };
+        floatingButtons.appendChild(this.fullscreenButton);
+        // Close button
+        this.closeButton = document.createElement('button');
+        this.closeButton.innerHTML = '❌';
+        this.closeButton.style.cssText = `
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, ${this.colors.error}, ${this.colors.error}cc);
+            color: ${this.colors.light};
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        `;
+        this.closeButton.onmouseover = () => {
+            this.closeButton.style.backgroundColor = this.colors.error;
+            this.closeButton.style.transform = 'scale(1.1)';
+        };
+        this.closeButton.onmouseout = () => {
+            this.closeButton.style.backgroundColor = `${this.colors.error}cc`;
+            this.closeButton.style.transform = 'scale(1)';
+        };
+        this.closeButton.onclick = (e) => {
+            e.stopPropagation();
+            this.closeGame();
+        };
+        floatingButtons.appendChild(this.closeButton);
+        
+        if (this.gameContainer) {
+            this.gameContainer.appendChild(floatingButtons);
+        }
+    }
+    /**
+     * Display the game
+     */
+    displayGame() {
+        document.body.appendChild(this.gameContainer);
+        document.addEventListener('keydown', this.handleKeyPress);
+        document.addEventListener('fullscreenchange', this.handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', this.handleFullscreenChange);
+        document.addEventListener('msfullscreenchange', this.handleFullscreenChange);
+    }
+    /**
+     * Handle keyboard events
+     */
+    handleKeyPress = (event) => {
+        if (event.key === 'Escape') {
+            if (this.isFullscreen) {
+                this.exitFullscreen();
+            } else {
+                this.closeGame();
+            }
+        }
+    }
+    /**
+     * Handle fullscreen change events
+     */
+    handleFullscreenChange = () => {
+        this.isFullscreen = !!(document.fullscreenElement ||
+                              document.webkitFullscreenElement ||
+                              document.msFullscreenElement);
+        if (this.fullscreenButton) {
+            this.fullscreenButton.innerHTML = this.isFullscreen ? '⛶' : '⛶';
+        }
+    }
+    /**
+     * Enter fullscreen mode
+     */
+    enterFullscreen() {
+        if (!this.gameContainer) return;
+        if (this.gameContainer.requestFullscreen) {
+            this.gameContainer.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+        } else if (this.gameContainer.webkitRequestFullscreen) {
+            this.gameContainer.webkitRequestFullscreen();
+        } else if (this.gameContainer.msRequestFullscreen) {
+            this.gameContainer.msRequestFullscreen();
+        }
+    }
+    /**
+     * Exit fullscreen mode
+     */
+    exitFullscreen() {
+        if (!this.isFullscreen) return;
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            this.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            this.msExitFullscreen();
+        }
+    }
+    /**
+     * Close the game
+     */
+    closeGame() {
+        if (!this.isActive) return;
+        if (this.isFullscreen) {
+            this.exitFullscreen();
+        }
+        
+        // Clean up Firebase
+        if (this.isFirebaseInitialized) {
+            if (this.currentGame) {
+                this.playersRef.child(this.userSessionId).remove();
+                
+                if (this.gameListener) {
+                    this.gameRef.child(this.currentGame.id).off('value', this.gameListener);
+                }
+                
+                if (this.messagesListener) {
+                    this.messagesRef.child(this.currentGame.id).off('child_added', this.messagesListener);
+                }
+                
+                // If game is waiting for player, delete it
+                if (this.currentGame.status === 'waiting') {
+                    this.gameRef.child(this.currentGame.id).remove();
+                }
+            }
+            
+            if (this.playersListener) {
+                this.playersRef.off('value', this.playersListener);
+            }
+        }
+        
+        document.removeEventListener('keydown', this.handleKeyPress);
+        document.removeEventListener('fullscreenchange', this.handleFullscreenChange);
+        document.removeEventListener('webkitfullscreenchange', this.handleFullscreenChange);
+        document.removeEventListener('msfullscreenchange', this.handleFullscreenChange);
+        if (this.gameContainer && this.gameContainer.parentNode) {
+            this.gameContainer.parentNode.removeChild(this.gameContainer);
+        }
+        
+        const floatingButtons = document.querySelector('.floating-buttons');
+        if (floatingButtons) {
+            floatingButtons.remove();
+        }
+        
+        this.gameContainer = null;
+        this.isActive = false;
+        this.isFullscreen = false;
+        this.fullscreenButton = null;
+        this.closeButton = null;
+        botReply("Tic Tac Toe closed. Thank you for playing!");
+    }
+    /**
+     * Load external script
+     */
+    loadScript(src, callback) {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = callback;
+        document.head.appendChild(script);
+    }
+}
+// Create a singleton instance
+const ticTacToeGame = new TicTacToeGame();
+// Add this to your AI's command handling
+if (/tic tac toe|tictactoe|game|two player game/i.test(userInputRaw)) {
+    ticTacToeGame.loadBaseScreen();
+    return;
+}
+// Add command to close the screen
+if (/close screen|exit screen/i.test(userInputRaw)) {
+    ticTacToeGame.closeGame();
+    return;
+}
 class BaseScreenLoader {
     constructor() {
         this.baseScreen = {
@@ -18248,6 +21573,72 @@ document.querySelector(".chat-container").appendChild(downloadBtn);
 
 
   </script>
+  <script>
+    // Disable right-click
+document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+});
+
+// Disable keyboard shortcuts for DevTools
+document.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && (e.key === "u" || e.key === "U" || e.key === "s" || e.key === "S" || e.key === "i" || e.key === "I" || e.key === "j" || e.key === "J" || e.key === "c" || e.key === "C")) {
+        e.preventDefault();
+    }
+});
+
+// Disable F12, Ctrl+Shift+I, Ctrl+Shift+J
+document.onkeydown = function (e) {
+    if (e.keyCode == 123) { return false; } // F12
+    if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) { return false; } // Ctrl+Shift+I/J
+};
+  
+  </script>
+<script>
+    const blockScreen = document.getElementById('blockScreen');
+
+    function detectDevTools() {
+      const widthDiff = window.outerWidth - window.innerWidth;
+      const heightDiff = window.outerHeight - window.innerHeight;
+      const threshold = 120;
+
+      // True if dimensions indicate DevTools or if debugger gets trapped
+      let devtoolsOpen = widthDiff > threshold || heightDiff > threshold;
+
+      // Mobile-specific trap
+      const trap = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (trap) {
+        const start = new Date();
+        debugger;
+        const end = new Date();
+        if (end - start > 100) devtoolsOpen = true;
+      }
+
+      if (devtoolsOpen) {
+       window.location.href = "https://c.tenor.com/x4V9PRp9R-0AAAAC/tenor.gif"; // Replace with your redirect URL
+
+      } else {
+        blockScreen.style.display = 'none';
+        document.body.style.pointerEvents = 'auto';
+      }
+    }
+
+    setInterval(detectDevTools, 600);
+
+    // Block right-click
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Block common dev hotkeys
+    document.addEventListener('keydown', function (event) {
+      if (
+        event.key === 'F12' ||
+        (event.ctrlKey && event.shiftKey && ['I', 'J', 'C'].includes(event.key.toUpperCase())) ||
+        (event.ctrlKey && event.key.toLowerCase() === 'u')
+      ) {
+        event.preventDefault();
+      }
+    });
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.min.js"></script>
