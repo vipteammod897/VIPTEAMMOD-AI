@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Death Certificate Application - MARI E-SEVAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+        
+        * {
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .header-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        }
+        
+        .form-section {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .document-upload {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        
+        .document-upload:hover {
+            border-color: #3b82f6;
+            background-color: #f0f9ff;
+        }
+        
+        .step-indicator {
+            transition: all 0.3s ease;
+        }
+        
+        .step-indicator.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .step-indicator.completed {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .success-message {
+            display: none;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="header-gradient text-white shadow-lg sticky-header">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-3">
+                        <span class="text-blue-800 font-bold text-xl">ME</span>
+                    </div>
+                    <h1 class="text-2xl font-bold">MARI E-SEVAI</h1>
+                    <span class="ml-3 bg-yellow-400 text-blue-900 px-3 py-1 rounded-full text-sm font-semibold">Citizen Services Portal</span>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-2">
+                        <i class="fas fa-phone"></i>
+                        <span>1800-425-1234</span>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-2">
+                        <i class="fas fa-envelope"></i>
+                        <span>help@marisevai.gov.in</span>
+                    </div>
+                    <a href="login.html" class="bg-white text-blue-800 px-4 py-2 rounded-md font-semibold hover:bg-blue-100 transition">
+                        <i class="fas fa-user mr-2"></i>Login / Register
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="bg-blue-900 bg-opacity-50">
+            <div class="container mx-auto px-4">
+                <ul class="flex flex-wrap justify-center md:justify-start space-x-1 py-2">
+                    <li><a href="index.html" class="px-4 py-2 hover:bg-blue-800 rounded transition">Home</a></li>
+                    <li><a href="#" class="px-4 py-2 hover:bg-blue-800 rounded transition">Services</a></li>
+                    <li><a href="#" class="px-4 py-2 hover:bg-blue-800 rounded transition">Certificates</a></li>
+                    <li><a href="#" class="px-4 py-2 hover:bg-blue-800 rounded transition">Departments</a></li>
+                    <li><a href="#" class="px-4 py-2 hover:bg-blue-800 rounded transition">Payments</a></li>
+                    <li><a href="#" class="px-4 py-2 hover:bg-blue-800 rounded transition">Grievance</a></li>
+                    <li><a href="#" class="px-4 py-2 hover:bg-blue-800 rounded transition">Tenders</a></li>
+                    <li><a href="#" class="px-4 py-2 hover:bg-blue-800 rounded transition">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="successText">Application submitted successfully!</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="min-h-screen py-12">
+        <div class="container mx-auto px-4">
+            <!-- Page Title -->
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Death Certificate Application</h2>
+                <p class="text-xl text-gray-600">Apply for death certificate online in just a few steps</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <!-- Step Indicator -->
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center">
+                            <div class="step-indicator active w-10 h-10 rounded-full flex items-center justify-center font-semibold">1</div>
+                            <span class="ml-2 font-medium">Deceased Details</span>
+                        </div>
+                        <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
+                        <div class="flex items-center">
+                            <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-semibold">2</div>
+                            <span class="ml-2 font-medium">Informant Details</span>
+                        </div>
+                        <div class="flex-1 h-1 bg-gray-300 mx-4"></div>
+                        <div class="flex items-center">
+                            <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-semibold">3</div>
+                            <span class="ml-2 font-medium">Documents</span>
+                        </div>
+                    </div>
+
+                    <form onsubmit="handleDeathCertificateSubmit(event)">
+                        <!-- Deceased Details -->
+                        <div class="mb-8">
+                            <h4 class="text-lg font-semibold mb-4">Deceased Details</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Deceased's Full Name</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="Enter deceased's full name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Date of Death</label>
+                                    <input type="date" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Place of Death</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="Hospital name and address">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                                    <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition">
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Age at Death</label>
+                                    <input type="number" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="Age in years">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Cause of Death</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="Cause of death">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Details -->
+                        <div class="mb-8">
+                            <h4 class="text-lg font-semibold mb-4">Address Details</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">House No./Street Name</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="House number and street name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Area/Locality</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="Area or locality">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Village/Town/City</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="Village, town or city">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">District</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="District name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="State name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">PIN Code</label>
+                                    <input type="text" pattern="[0-9]{6}" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="600001">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informant Details -->
+                        <div class="mb-8">
+                            <h4 class="text-lg font-semibold mb-4">Informant Details</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Informant's Name</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="Informant's full name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Relation with Deceased</label>
+                                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="Relation with deceased">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Mobile Number</label>
+                                    <input type="tel" required pattern="[0-9]{10}" class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="9876543210">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                    <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus outline-none transition" placeholder="your@email.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documents Upload -->
+                        <div class="mb-8">
+                            <h4 class="text-lg font-semibold mb-4">Upload Documents</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Death Proof</label>
+                                    <div class="document-upload p-6 rounded-lg text-center cursor-pointer">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                                        <p class="text-sm text-gray-600">Click to upload or drag and drop</p>
+                                        <p class="text-xs text-gray-500 mt-1">PDF, JPG up to 5MB</p>
+                                        <input type="file" class="hidden" accept="application/pdf,image/jpeg">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Address Proof</label>
+                                    <div class="document-upload p-6 rounded-lg text-center cursor-pointer">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                                        <p class="text-sm text-gray-600">Click to upload or drag and drop</p>
+                                        <p class="text-xs text-gray-500 mt-1">PDF, JPG up to 5MB</p>
+                                        <input type="file" class="hidden" accept="application/pdf,image/jpeg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Declaration -->
+                        <div class="mb-6">
+                            <label class="flex items-start">
+                                <input type="checkbox" required class="w-4 h-4 mt-1 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-600">
+                                    I hereby declare that the information provided by me is true and correct to the best of my knowledge and belief. I understand that any false information may lead to cancellation of my application and legal action.
+                                </span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
+                            <i class="fas fa-paper-plane mr-2"></i>Submit Application
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-lg">ME</span>
+                        </div>
+                        <h3 class="text-xl font-bold">MARI E-SEVAI</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Your trusted portal for government services and certificates.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                        <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Services</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQs</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Popular Services</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="birth-certificate.html" class="hover:text-white transition">Birth Certificate</a></li>
+                        <li><a href="death-certificate.html" class="hover:text-white transition">Death Certificate</a></li>
+                        <li><a href="income-certificate.html" class="hover:text-white transition">Income Certificate</a></li>
+                        <li><a href="community-certificate.html" class="hover:text-white transition">Community Certificate</a></li>
+                        <li><a href="driving-license.html" class="hover:text-white transition">Driving License</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3"></i>
+                            <span>E-Sevai Center, Government Complex, Chennai - 600001</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3"></i>
+                            <span>1800-425-1234</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3"></i>
+                            <span>help@marisevai.gov.in</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock mr-3"></i>
+                            <span>Mon-Fri: 9:00 AM - 6:00 PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-10 pt-6 text-center text-gray-400">
+                <p>&copy; 2024 MARI E-SEVAI. All rights reserved. | Designed and Developed by Government of Tamil Nadu</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Handle Death Certificate form submission
+        function handleDeathCertificateSubmit(event) {
+            event.preventDefault();
+            showSuccessMessage('Death Certificate application submitted successfully! Your application ID is DC2024052001.');
+            event.target.reset();
+        }
+
+        // Show success message
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            
+            successText.textContent = message;
+            successDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Add input formatting for mobile number
+        document.querySelector('input[type="tel"]').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+        });
+
+        // Add input formatting for PIN code
+        document.querySelector('input[pattern="[0-9]{6}"]').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+        });
+
+        // Add file upload functionality
+        document.querySelectorAll('.document-upload').forEach(uploadDiv => {
+            uploadDiv.addEventListener('click', function() {
+                const input = this.querySelector('input[type="file"]');
+                input.click();
+            });
+            
+            uploadDiv.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#3b82f6';
+                this.style.backgroundColor = '#f0f9ff';
+            });
+            
+            uploadDiv.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#cbd5e1';
+                this.style.backgroundColor = 'transparent';
+            });
+            
+            uploadDiv.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#cbd5e1';
+                this.style.backgroundColor = 'transparent';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const input = this.querySelector('input[type="file"]');
+                    input.files = files;
+                    this.querySelector('p').textContent = `File selected: ${files[0].name}`;
+                }
+            });
+        });
+
+        // Handle file input change
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const uploadDiv = this.closest('.document-upload');
+                    uploadDiv.querySelector('p').textContent = `File selected: ${this.files[0].name}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
