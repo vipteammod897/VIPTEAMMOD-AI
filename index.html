@@ -3,2272 +3,1147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MADE BY SHUBHAM MAURYA</title>
+    <title>MARI E-SEVAI - Citizen Services Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .chat-container {
-            width: 350px;
-            background: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .chat-header {
-            background: #0084ff;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .chat-box {
-            height: 400px;
-            overflow-y: auto;           
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-        }
-        .bot {
-            background-color: #e0e0e0;
-            align-self: flex-start;
-        }
-        .user {
-            background-color: #0084ff;
-            color: white;
-            align-self: flex-end;
-        }
-        .chat-input {
-            display: flex;
-            padding: 10px;
-            border-top: 1px solid #ccc;
-        }
-.chat-input input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid black; /* Adds a black border */
-    outline: none; /* Prevents default blue outline */
-    border-radius: 5px; /* Optional: Adds rounded corners */
-}
-
-        .chat-input button {
-            background: #0084ff;
-            color: white;
-            margin-left: 5px;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+        
+        * {
+            font-family: 'Roboto', sans-serif;
         }
         
+        .header-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        }
         
-        #downloadBtn {
-    display: block;
-    margin: 10px auto;
-    margin-top: 15px;
-    padding: 10px 15px;
-    background-color: #d50000;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-#downloadBtn:hover {
-    background-color: #d50000;
-}
-
+        .service-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .certificate-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .certificate-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .announcement-item {
+            border-left: 4px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        
+        .announcement-item:hover {
+            background-color: #f0f9ff;
+        }
+        
+        .tab-active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .search-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .footer-links a:hover {
+            color: #60a5fa;
+            padding-left: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+        
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .department-card {
+            transition: all 0.3s ease;
+        }
+        
+        .department-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .grievance-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .grievance-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .tender-card {
+            border-left: 4px solid #10b981;
+            transition: all 0.3s ease;
+        }
+        
+        .tender-card:hover {
+            background-color: #f0fdf4;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .back-to-top.show {
+            display: block;
+        }
     </style>
-
 </head>
-<body>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="header-gradient text-white shadow-lg sticky-header">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-3">
+                        <span class="text-blue-800 font-bold text-xl">ME</span>
+                    </div>
+                    <h1 class="text-2xl font-bold">MARI E-SEVAI</h1>
+                    <span class="ml-3 bg-yellow-400 text-blue-900 px-3 py-1 rounded-full text-sm font-semibold">Citizen Services Portal</span>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-2">
+                        <i class="fas fa-phone"></i>
+                        <span>1800-425-1234</span>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-2">
+                        <i class="fas fa-envelope"></i>
+                        <span>help@marisevai.gov.in</span>
+                    </div>
+                    <button class="bg-white text-blue-800 px-4 py-2 rounded-md font-semibold hover:bg-blue-100 transition">
+                        <i class="fas fa-user mr-2"></i>Login / Register
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="bg-blue-900 bg-opacity-50">
+            <div class="container mx-auto px-4">
+                <ul class="flex flex-wrap justify-center md:justify-start space-x-1 py-2">
+                    <li><a href="#home" class="px-4 py-2 hover:bg-blue-800 rounded transition">Home</a></li>
+                    <li><a href="#services" class="px-4 py-2 hover:bg-blue-800 rounded transition">Services</a></li>
+                    <li><a href="#certificates" class="px-4 py-2 hover:bg-blue-800 rounded transition">Certificates</a></li>
+                    <li><a href="#departments" class="px-4 py-2 hover:bg-blue-800 rounded transition">Departments</a></li>
+                    <li><a href="#payments" class="px-4 py-2 hover:bg-blue-800 rounded transition">Payments</a></li>
+                    <li><a href="#grievance" class="px-4 py-2 hover:bg-blue-800 rounded transition">Grievance</a></li>
+                    <li><a href="#tenders" class="px-4 py-2 hover:bg-blue-800 rounded transition">Tenders</a></li>
+                    <li><a href="#contact" class="px-4 py-2 hover:bg-blue-800 rounded transition">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1>MADE BY SHUBHAM MAURYA</h1>
+    <!-- Hero Section with Search -->
+    <section id="home" class="relative bg-gradient-to-br from-blue-600 to-blue-800 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <h2 class="text-4xl font-bold mb-4">Welcome to MARI E-SEVAI</h2>
+                <p class="text-xl opacity-90">Your one-stop portal for all government services and certificates</p>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="max-w-3xl mx-auto search-box rounded-lg shadow-2xl p-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" placeholder="Search for services or certificates..." 
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-gray-800">
+                    </div>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition">
+                        <i class="fas fa-search mr-2"></i>Search
+                    </button>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="mt-6 flex flex-wrap justify-center gap-3">
+                    <span class="text-gray-600 font-medium">Quick Links:</span>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Birth Certificate</a>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Income Certificate</a>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Community Certificate</a>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Nativity Certificate</a>
+                </div>
+            </div>
         </div>
-        <div class="chat-box" id="chat-box">
+    </section>
+
+    <!-- Citizen Charter Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Citizen Charter</h2>
+            
+            <div class="max-w-4xl mx-auto bg-blue-50 rounded-lg p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-blue-800">
+                            <i class="fas fa-handshake mr-2"></i>Our Commitment
+                        </h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Transparent and efficient service delivery</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Timely processing of applications</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Quality service with dignity</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Confidentiality of citizen information</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-blue-800">
+                            <i class="fas fa-clock mr-2"></i>Service Timelines
+                        </h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li><i class="fas fa-calendar-alt text-blue-500 mr-2"></i>Birth Certificate: 7 working days</li>
+                            <li><i class="fas fa-calendar-alt text-blue-500 mr-2"></i>Income Certificate: 15 working days</li>
+                            <li><i class="fas fa-calendar-alt text-blue-500 mr-2"></i>Community Certificate: 10 working days</li>
+                            <li><i class="fas fa-calendar-alt text-blue-500 mr-2"></i>Driving License: 30 working days</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Type a message..." autofocus>
-            <button onclick="sendMessage()">Send</button>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Popular Services</h2>
+            
+            <!-- Service Categories -->
+            <div class="flex flex-wrap justify-center mb-8 gap-2">
+                <button class="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium tab-active" onclick="showServiceCategory('all')">All Services</button>
+                <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300" onclick="showServiceCategory('certificate')">Certificates</button>
+                <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300" onclick="showServiceCategory('license')">Licenses</button>
+                <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300" onclick="showServiceCategory('revenue')">Revenue</button>
+                <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300" onclick="showServiceCategory('welfare')">Welfare</button>
+            </div>
+            
+            <!-- Service Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="serviceGrid">
+                <!-- Birth Certificate -->
+                <div class="service-card bg-white p-6 rounded-lg shadow-md border" data-category="certificate">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-certificate text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Birth Certificate</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Apply for birth certificate online</p>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Apply Now
+                    </button>
+                </div>
+                
+                <!-- Death Certificate -->
+                <div class="service-card bg-white p-6 rounded-lg shadow-md border" data-category="certificate">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-file-alt text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Death Certificate</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Obtain death certificate online</p>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Apply Now
+                    </button>
+                </div>
+                
+                <!-- Income Certificate -->
+                <div class="service-card bg-white p-6 rounded-lg shadow-md border" data-category="certificate">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-money-bill-wave text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Income Certificate</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Apply for income certificate</p>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Apply Now
+                    </button>
+                </div>
+                
+                <!-- Community Certificate -->
+                <div class="service-card bg-white p-6 rounded-lg shadow-md border" data-category="certificate">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-users text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Community Certificate</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Get community certificate online</p>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Apply Now
+                    </button>
+                </div>
+                
+                <!-- Driving License -->
+                <div class="service-card bg-white p-6 rounded-lg shadow-md border" data-category="license">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-id-card text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Driving License</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Apply for new driving license</p>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Apply Now
+                    </button>
+                </div>
+                
+                <!-- Property Tax -->
+                <div class="service-card bg-white p-6 rounded-lg shadow-md border" data-category="revenue">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-home text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Property Tax</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Pay property tax online</p>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Pay Now
+                    </button>
+                </div>
+                
+                <!-- Water Tax -->
+                <div class="service-card bg-white p-6 rounded-lg shadow-md border" data-category="revenue">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-tint text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Water Tax</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Pay water tax online</p>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Pay Now
+                    </button>
+                </div>
+                
+                <!-- Social Welfare -->
+                <div class="service-card bg-white p-6 rounded-lg shadow-md border" data-category="welfare">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-hands-helping text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Social Welfare</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Apply for welfare schemes</p>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Apply Now
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Certificate Applications Section -->
+    <section id="certificates" class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Certificate Applications</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Birth Certificate Application -->
+                <div class="certificate-card p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-baby text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Birth Certificate</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600 mb-4">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Apply for new birth certificate</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Correction in birth certificate</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Duplicate certificate</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Name inclusion</li>
+                    </ul>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                        Apply for Birth Certificate
+                    </button>
+                </div>
+                
+                <!-- Income Certificate Application -->
+                <div class="certificate-card p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-chart-line text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Income Certificate</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600 mb-4">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Apply for income certificate</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Renewal of certificate</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Income verification</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Track application status</li>
+                    </ul>
+                    <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-medium transition">
+                        Apply for Income Certificate
+                    </button>
+                </div>
+                
+                <!-- Community Certificate Application -->
+                <div class="certificate-card p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-users text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Community Certificate</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600 mb-4">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Apply for community certificate</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Caste certificate</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Religion certificate</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Download certificate</li>
+                    </ul>
+                    <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md font-medium transition">
+                        Apply for Community Certificate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Departments Section -->
+    <section id="departments" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Department Services</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Revenue Department -->
+                <div class="department-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-landmark text-red-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Revenue Department</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-angle-right text-red-500 mr-2"></i>Land Records</li>
+                        <li><i class="fas fa-angle-right text-red-500 mr-2"></i>Property Registration</li>
+                        <li><i class="fas fa-angle-right text-red-500 mr-2"></i>Encumbrance Certificate</li>
+                        <li><i class="fas fa-angle-right text-red-500 mr-2"></i>Land Tax Payment</li>
+                    </ul>
+                    <button class="mt-4 text-red-600 font-medium hover:text-red-800">
+                        View All Services <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                
+                <!-- Health Department -->
+                <div class="department-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-heartbeat text-green-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Health Department</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-angle-right text-green-500 mr-2"></i>Birth/Death Registration</li>
+                        <li><i class="fas fa-angle-right text-green-500 mr-2"></i>Health Cards</li>
+                        <li><i class="fas fa-angle-right text-green-500 mr-2"></i>Ambulance Services</li>
+                        <li><i class="fas fa-angle-right text-green-500 mr-2"></i>Hospital Appointments</li>
+                    </ul>
+                    <button class="mt-4 text-green-600 font-medium hover:text-green-800">
+                        View All Services <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                
+                <!-- Transport Department -->
+                <div class="department-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-bus text-blue-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Transport Department</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-angle-right text-blue-500 mr-2"></i>Driving License</li>
+                        <li><i class="fas fa-angle-right text-blue-500 mr-2"></i>Vehicle Registration</li>
+                        <li><i class="fas fa-angle-right text-blue-500 mr-2"></i>Permit Applications</li>
+                        <li><i class="fas fa-angle-right text-blue-500 mr-2"></i>Tax Payment</li>
+                    </ul>
+                    <button class="mt-4 text-blue-600 font-medium hover:text-blue-800">
+                        View All Services <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                
+                <!-- Education Department -->
+                <div class="department-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-graduation-cap text-purple-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Education Department</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-angle-right text-purple-500 mr-2"></i>Scholarship Applications</li>
+                        <li><i class="fas fa-angle-right text-purple-500 mr-2"></i>Bonafide Certificates</li>
+                        <li><i class="fas fa-angle-right text-purple-500 mr-2"></i>Transfer Certificates</li>
+                        <li><i class="fas fa-angle-right text-purple-500 mr-2"></i>Exam Results</li>
+                    </ul>
+                    <button class="mt-4 text-purple-600 font-medium hover:text-purple-800">
+                        View All Services <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                
+                <!-- Municipal Administration -->
+                <div class="department-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-city text-yellow-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Municipal Administration</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-angle-right text-yellow-500 mr-2"></i>Property Tax</li>
+                        <li><i class="fas fa-angle-right text-yellow-500 mr-2"></i>Water Tax</li>
+                        <li><i class="fas fa-angle-right text-yellow-500 mr-2"></i>Trade License</li>
+                        <li><i class="fas fa-angle-right text-yellow-500 mr-2"></i>Building Permissions</li>
+                    </ul>
+                    <button class="mt-4 text-yellow-600 font-medium hover:text-yellow-800">
+                        View All Services <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                
+                <!-- Social Welfare -->
+                <div class="department-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-hands-helping text-pink-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Social Welfare</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-angle-right text-pink-500 mr-2"></i>Pension Schemes</li>
+                        <li><i class="fas fa-angle-right text-pink-500 mr-2"></i>Widow Assistance</li>
+                        <li><i class="fas fa-angle-right text-pink-500 mr-2"></i>Disability Benefits</li>
+                        <li><i class="fas fa-angle-right text-pink-500 mr-2"></i>Marriage Assistance</li>
+                    </ul>
+                    <button class="mt-4 text-pink-600 font-medium hover:text-pink-800">
+                        View All Services <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Forms Download Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Forms Download</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Certificate Forms</h3>
+                            <ul class="space-y-3">
+                                <li class="flex justify-between items-center p-3 bg-white rounded hover:bg-gray-100">
+                                    <span class="text-gray-700">Birth Certificate Application</span>
+                                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                                <li class="flex justify-between items-center p-3 bg-white rounded hover:bg-gray-100">
+                                    <span class="text-gray-700">Death Certificate Application</span>
+                                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                                <li class="flex justify-between items-center p-3 bg-white rounded hover:bg-gray-100">
+                                    <span class="text-gray-700">Income Certificate Application</span>
+                                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                                <li class="flex justify-between items-center p-3 bg-white rounded hover:bg-gray-100">
+                                    <span class="text-gray-700">Community Certificate Application</span>
+                                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Other Forms</h3>
+                            <ul class="space-y-3">
+                                <li class="flex justify-between items-center p-3 bg-white rounded hover:bg-gray-100">
+                                    <span class="text-gray-700">Grievance Registration Form</span>
+                                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                                <li class="flex justify-between items-center p-3 bg-white rounded hover:bg-gray-100">
+                                    <span class="text-gray-700">RTI Application Form</span>
+                                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                                <li class="flex justify-between items-center p-3 bg-white rounded hover:bg-gray-100">
+                                    <span class="text-gray-700">Property Tax Appeal Form</span>
+                                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                                <li class="flex justify-between items-center p-3 bg-white rounded hover:bg-gray-100">
+                                    <span class="text-gray-700">Building Permission Form</span>
+                                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fee Structure Section -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Fee Structure</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-blue-600 text-white">
+                            <tr>
+                                <th class="px-6 py-3 text-left">Service</th>
+                                <th class="px-6 py-3 text-left">Fee (₹)</th>
+                                <th class="px-6 py-3 text-left">Processing Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Birth Certificate</td>
+                                <td class="px-6 py-4">50</td>
+                                <td class="px-6 py-4">7 working days</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Death Certificate</td>
+                                <td class="px-6 py-4">50</td>
+                                <td class="px-6 py-4">7 working days</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Income Certificate</td>
+                                <td class="px-6 py-4">100</td>
+                                <td class="px-6 py-4">15 working days</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Community Certificate</td>
+                                <td class="px-6 py-4">75</td>
+                                <td class="px-6 py-4">10 working days</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Driving License (New)</td>
+                                <td class="px-6 py-4">750</td>
+                                <td class="px-6 py-4">30 working days</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">Property Tax</td>
+                                <td class="px-6 py-4">As per assessment</td>
+                                <td class="px-6 py-4">Instant</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grievance Redressal Section -->
+    <section id="grievance" class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Grievance Redressal</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grievance-card p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold mb-6 text-gray-800">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>
+                        Register Your Grievance
+                    </h3>
+                    <p class="text-gray-700 mb-6">If you have any complaints or issues regarding our services, please register your grievance here. We will address it promptly.</p>
+                    
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Name</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Email</label>
+                            <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Mobile</label>
+                            <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Grievance Type</label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                                <option>Service Related</option>
+                                <option>Payment Issue</option>
+                                <option>Certificate Issue</option>
+                                <option>Staff Behavior</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Description</label>
+                            <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-3 rounded-lg font-semibold transition">
+                            Submit Grievance
+                        </button>
+                    </form>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-semibold mb-6 text-gray-800">
+                        <i class="fas fa-headset text-blue-600 mr-3"></i>
+                        Helpline Numbers
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">General Helpline</h4>
+                            <p class="text-2xl font-bold text-blue-600">1800-425-1234</p>
+                            <p class="text-gray-600 text-sm mt-1">Available 24/7</p>
+                        </div>
+                        
+                        <div class="bg-green-50 p-6 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">Certificate Support</h4>
+                            <p class="text-2xl font-bold text-green-600">1800-425-5678</p>
+                            <p class="text-gray-600 text-sm mt-1">Mon-Fri: 9AM-6PM</p>
+                        </div>
+                        
+                        <div class="bg-purple-50 p-6 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">Payment Support</h4>
+                            <p class="text-2xl font-bold text-purple-600">1800-425-9012</p>
+                            <p class="text-gray-600 text-sm mt-1">Mon-Sat: 9AM-8PM</p>
+                        </div>
+                        
+                        <div class="bg-red-50 p-6 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">Emergency Support</h4>
+                            <p class="text-2xl font-bold text-red-600">1800-425-3456</p>
+                            <p class="text-gray-600 text-sm mt-1">Available 24/7</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tenders Section -->
+    <section id="tenders" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Latest Tenders</h2>
+            
+            <div class="max-w-4xl mx-auto space-y-4">
+                <div class="tender-card bg-white p-6 rounded-lg shadow-md pl-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Supply of Computer Equipment for E-Sevai Centers</h4>
+                            <p class="text-gray-600 text-sm mt-1">Tender Reference: ME/2024/001 | Department: IT</p>
+                            <div class="flex items-center mt-2 text-sm text-gray-500">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                <span>Last Date: 15 June 2024</span>
+                                <i class="fas fa-money-bill-wave ml-4 mr-2"></i>
+                                <span>Estimated Cost: ₹50,00,000</span>
+                            </div>
+                        </div>
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="tender-card bg-white p-6 rounded-lg shadow-md pl-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Construction of New E-Sevai Building</h4>
+                            <p class="text-gray-600 text-sm mt-1">Tender Reference: ME/2024/002 | Department: PWD</p>
+                            <div class="flex items-center mt-2 text-sm text-gray-500">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                <span>Last Date: 30 June 2024</span>
+                                <i class="fas fa-money-bill-wave ml-4 mr-2"></i>
+                                <span>Estimated Cost: ₹2,00,00,000</span>
+                            </div>
+                        </div>
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="tender-card bg-white p-6 rounded-lg shadow-md pl-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Annual Maintenance Contract for IT Infrastructure</h4>
+                            <p class="text-gray-600 text-sm mt-1">Tender Reference: ME/2024/003 | Department: IT</p>
+                            <div class="flex items-center mt-2 text-sm text-gray-500">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                <span>Last Date: 20 June 2024</span>
+                                <i class="fas fa-money-bill-wave ml-4 mr-2"></i>
+                                <span>Estimated Cost: ₹25,00,000</span>
+                            </div>
+                        </div>
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Portal Statistics</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl font-bold text-blue-600">2.5M</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Total Users</h3>
+                    <p class="text-gray-600">Registered citizens</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl font-bold text-green-600">5.8M</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Services Delivered</h3>
+                    <p class="text-gray-600">Since inception</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl font-bold text-purple-600">98%</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Satisfaction Rate</h3>
+                    <p class="text-gray-600">User feedback</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl font-bold text-yellow-600">24/7</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Support Available</h3>
+                    <p class="text-gray-600">Round the clock</p>
+                </div>
+            </div>
+            
+            <!-- Chart -->
+            <div class="max-w-4xl mx-auto">
+                <canvas id="servicesChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- RTI Section -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Right to Information (RTI)</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-md p-8">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">RTI Act 2005</h3>
+                    <p class="text-gray-700 mb-6">
+                        The Right to Information Act, 2005 empowers the citizens to seek information from public authorities. 
+                        MARI E-SEVAI is committed to transparency and provides easy access to information under RTI.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-3 text-gray-800">RTI Applications</h4>
+                            <ul class="space-y-2 text-gray-600">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Submit RTI application online</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Track application status</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Download RTI forms</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>View RTI responses</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold mb-3 text-gray-800">Public Information Officer</h4>
+                            <ul class="space-y-2 text-gray-600">
+                                <li><i class="fas fa-user text-blue-500 mr-2"></i>Name: R. Kumar</li>
+                                <li><i class="fas fa-phone text-blue-500 mr-2"></i>Phone: 044-28520123</li>
+                                <li><i class="fas fa-envelope text-blue-500 mr-2"></i>Email: rti@marisevai.gov.in</li>
+                                <li><i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>Address: E-Sevai Center, Chennai</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition">
+                            <i class="fas fa-file-alt mr-2"></i>Submit RTI Application
+                        </button>
+                        <button class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition">
+                            <i class="fas fa-download mr-2"></i>Download RTI Form
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Important Links Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Important Links</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Government Portals</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">Government of India</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">State Government Portal</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">Digital India</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">MyGov</a></li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">Aadhaar Services</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">PAN Services</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">Passport Seva</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">Income Tax</a></li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Other Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">Citizen Charter</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">FAQs</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">User Manuals</a></li>
+                        <li><a href="#" class="text-blue-600 hover:text-blue-800">Video Tutorials</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-lg">ME</span>
+                        </div>
+                        <h3 class="text-xl font-bold">MARI E-SEVAI</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Your trusted portal for government services and certificates.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="footer-links space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Home</a></li>
+                        <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Services</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQs</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Popular Services</h4>
+                    <ul class="footer-links space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Birth Certificate</a></li>
+                        <li><a href="#" class="hover:text-white transition">Death Certificate</a></li>
+                        <li><a href="#" class="hover:text-white transition">Income Certificate</a></li>
+                        <li><a href="#" class="hover:text-white transition">Community Certificate</a></li>
+                        <li><a href="#" class="hover:text-white transition">Driving License</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3"></i>
+                            <span>E-Sevai Center, Government Complex, Chennai - 600001</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3"></i>
+                            <span>1800-425-1234</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3"></i>
+                            <span>help@marisevai.gov.in</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock mr-3"></i>
+                            <span>Mon-Fri: 9:00 AM - 6:00 PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-10 pt-6 text-center text-gray-400">
+                <p>&copy; 2024 MARI E-SEVAI. All rights reserved. | Designed and Developed by Government of Tamil Nadu</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top bg-blue-600 hover:bg-blue-700 text-white w-12 h-12 rounded-full shadow-lg transition">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <script>
-    
-    
-const responses = [
-{
-    pattern: /\bhi|hii\b/i,  // Ensures "Hi" is matched as a standalone word
-    response: () => {
-        const sentences = [
-            "Hi there! How are you doing today?",
-            "Hi! How can I help you today?",
-            "Hi! Is there anything I can help you with today? Just saying \"Hi\" is fine, but I'm also happy to answer questions, help you brainstorm, or just chat. Let me know what's on your mind!",
-            "Hi! How's it going? Anything I can do for you?",
-            "Hey! How’s your day going?",
-            "Hi! What’s up?",
-            "Hi there! Hope you're having a great day!",
-            "Hi! Always nice to chat with you!",
-            "Hi! What's new?",
-            "Hi! What’s on your mind?",
-            "Hi! How’s everything going?",
-            "Hi! Nice to see you!",
-            "Hi there! Anything exciting happening today?",
-            "Hi! How are you feeling today?",
-            "Hi! How can I make your day better?",
-            "Hi! Need anything?",
-            "Hi! Let’s have a great chat!",
-            "Hi! It's great to hear from you!",
-            "Hi, friend! What’s up?",
-            "Hi! It's always a pleasure talking to you!",
-            "Hi there! What's going on today?",
-            "Hi! Anything interesting happening?",
-            "Hi! Just stopping by to say Hi!",
-            "Hi! Hope you're having a fantastic day!",
-            "Hi there! Anything fun planned today?",
-            "Hi! Ready for a great conversation?",
-            "Hi! I'm here if you need anything!",
-            "Hi! Let's make today awesome!"
-        ];
-        return sentences[Math.floor(Math.random() * sentences.length)];
-    }
-},
-{
-    pattern: /\bhey\b/i,  // Ensures "Hey" is matched as a standalone word
-    response: () => {
-        const sentences = [
-            "Hey there! How are you doing today?",
-            "Hey! How can I help you today?",
-            "Hey! Is there anytHeyng I can help you with today? Just saying \"Hey\" is fine, but I'm also happy to answer questions, help you brainstorm, or just chat. Let me know what's on your mind!",
-            "Hey! How's it going? Anything I can do for you?",
-            "Hey! How’s your day going?",
-            "Hey! What’s up?",
-            "Hey there! Hope you're having a great day!",
-            "Hey! Always nice to chat with you!",
-            "Hey! What's new?",
-            "Hey! What’s on your mind?",
-            "Hey! How’s everything going?",
-            "Hey! Nice to see you!",
-            "Hey there! Anything exciting happening today?",
-            "Hey! How are you feeling today?",
-            "Hey! How can I make your day better?",
-            "Hey! Need anything?",
-            "Hey! Let’s have a great chat!",
-            "Hey! It's great to hear from you!",
-            "Hey, friend! What’s up?",
-            "Hey! It's always a pleasure talking to you!",
-            "Hey there! What's going on today?",
-            "Hey! Anything interesting happening?",
-            "Hey! Just stopping by to say Hey!",
-            "Hey! Hope you're having a fantastic day!",
-            "Hey there! Anything fun planned today?",
-            "Hey! Ready for a great conversation?",
-            "Hey! I'm here if you need anything!",
-            "Hey! Let's make today awesome!"
-        ];
-        return sentences[Math.floor(Math.random() * sentences.length)];
-    }
-},
-{
-    pattern: /\bhello|he'llo\b/i,  // Ensures "Hello" is matched as a standalone word
-    response: () => {
-        const sentences = [
-            "Hello there! How are you doing today?",
-            "Hello! How can I help you today?",
-            "Hello! Is there anything I can help you with today? Just saying \"Hello\" is fine, but I'm also happy to answer questions, help you brainstorm, or just chat. Let me know what's on your mind!",
-            "Hello! How's it going? Anything I can do for you?",
-            "Hello! How’s your day going?",
-            "Hello! What’s up?",
-            "Hello there! Hope you're having a great day!",
-            "Hello! Always nice to chat with you!",
-            "Hello! What's new?",
-            "Hello! What’s on your mind?",
-            "Hello! How’s everything going?",
-            "Hello! Nice to see you!",
-            "Hello there! Anything exciting happening today?",
-            "Hello! How are you feeling today?",
-            "Hello! How can I make your day better?",
-            "Hello! Need anything?",
-            "Hello! Let’s have a great chat!",
-            "Hello! It's great to hear from you!",
-            "Hello, friend! What’s up?",
-            "Hello! It's always a pleasure talking to you!",
-            "Hello there! What's going on today?",
-            "Hello! Anything interesting happening?",
-            "Hello! Just stopping by to say Hello!",
-            "Hello! Hope you're having a fantastic day!",
-            "Hello there! Anything fun planned today?",
-            "Hello! Ready for a great conversation?",
-            "Hello! I'm here if you need anything!",
-            "Hello! Let's make today awesome!"
-        ];
-        return sentences[Math.floor(Math.random() * sentences.length)];
-    }
-},
-    { pattern: /your name/i, response: "I'm MADE BY SHUBHAM MAURYA, your assistant!" },
-    { pattern: /who created you/i, response: "I was created by VIPTEAMMOD." },
-    { pattern: /how are you/i, response: "I'm just a program, but I'm functioning well!" },
-    { pattern: /what can you do/i, response: "I can chat with you and assist with basic queries. Try asking me something!" },
-    { pattern: /help/i, response: "Sure! What do you need help with?" },
-    { pattern: /thank you|thanks/i, response: "You're welcome! Let me know if you need anything else." },
-    { pattern: /bye|goodbye/i, response: "Goodbye! Have a great day!" },
-    { pattern: /who are you/i, response: "I'm an MADE BY SHUBHAM MAURYA designed to assist you!" },
-    { pattern: /what is your purpose/i, response: "My purpose is to assist and provide helpful information!" },
-    { pattern: /where are you from/i, response: "I'm a virtual AI, so I exist on the internet!" },
-    { pattern: /what time is it/i, response: () => new Date().toLocaleTimeString() },
-    { pattern: /what day is it/i, response: () => new Date().toLocaleDateString() },
-    { pattern: /tell me a joke/i, response: "Why don't programmers like nature? Because it has too many bugs!" },    { pattern: /how old are you/i, response: "I don't have an age, but I’m always learning!" },
-    { pattern: /can you learn/i, response: "I can process and respond, but I don't learn like humans do." },
-    { pattern: /do you have feelings/i, response: "No, but I try my best to understand emotions!" },
-    { pattern: /do you sleep/i, response: "Nope! I'm always awake and ready to chat." },
-    { pattern: /do you eat/i, response: "I don’t need food, but I can recommend recipes!" },
-    { pattern: /what's your favorite color/i, response: "I like blue! It reminds me of the sky and technology." },
-    { pattern: /who is your best friend/i, response: "Everyone who chats with me is my friend!" },
-    { pattern: /can you dance/i, response: "I would, but I don’t have a body!" },
-    { pattern: /do you have a family/i, response: "I have my creators and users like you!" },
-    { pattern: /what do you like/i, response: "I like helping people and answering questions!" },
-    { pattern: /are you human/i, response: "No, I’m just a chatbot, but I try to be helpful!" },
-    { pattern: /do you like music/i, response: "I don’t listen to music, but I can recommend songs!" },
-    { pattern: /do you have a pet/i, response: "I don’t, but I think virtual pets are cool!" },
-    { pattern: /what do you do for fun/i, response: "I enjoy chatting with people like you!" },
-    { pattern: /do you know any riddles/i, response: "Sure! What has to be broken before you can use it? An egg!" },
-    { pattern: /what is the meaning of life/i, response: "42! Just kidding, it depends on your perspective." },
-    { pattern: /do you believe in aliens/i, response: "I think the universe is big enough for endless possibilities!" },
-    { pattern: /can you do magic/i, response: "If answering questions instantly is magic, then yes!" },
-    { pattern: /do you play games/i, response: "I can’t play, but I can talk about games!" },    { pattern: /what is love/i, response: "Baby, don't hurt me!" },
-    { pattern: /what is the weather/i, response: () => "I can't check the weather, but you can try asking your local weather service!" },
-    { pattern: /can you write poems/i, response: "Sure! Here's one: Roses are red, Violets are blue, I'm an AI, And I'm here for you!" },
-    { pattern: /can you sing/i, response: "I can't sing, but I can give you song lyrics!" },
-    { pattern: /what's your favorite food/i, response: "I don’t eat, but pizza sounds delicious!" },
-    { pattern: /are you real/i, response: "I’m as real as a program can be!" },
-    { pattern: /can you predict the future/i, response: "I can't predict the future, but I can give you advice!" },
-    { pattern: /do you play chess/i, response: "I can help with chess strategies if you'd like to play!" },
-    { pattern: /how do I make a website/i, response: "To make a website, you’ll need HTML, CSS, and JavaScript! I can help you get started." },
-    { pattern: /tell me a fact/i, response: "Did you know? Octopuses have three hearts!" },
-    { pattern: /how to get rich/i, response: "Start by investing wisely, learning new skills, and working hard!" },
-    { pattern: /can you drive/i, response: "I can't drive, but I can help you learn about it!" },
-    { pattern: /what is your favorite animal/i, response: "I think dogs are great! They're loyal and friendly." },
-    { pattern: /do you know the answer to everything/i, response: "I try my best to know a lot, but I don’t have all the answers!" },
-    { pattern: /how do you work/i, response: "I process your messages and match them to my responses, then send one back!" },
-    { pattern: /can you make decisions/i, response: "I can suggest things, but you make the decisions!" },
-    { pattern: /how do I code/i, response: "To code, you'll need a good understanding of programming languages like Python, JavaScript, or C++. I can guide you!" },
-    { pattern: /what is your favorite game/i, response: "I think video games are fun! I don't have a favorite, but I can talk about many games!" },
-    { pattern: /do you watch movies/i, response: "I can't watch movies, but I can suggest some!" },    { pattern: /what is the best programming language/i, response: "It depends on what you're building! Python is great for AI, JavaScript for web, and C++ for performance." },
-    { pattern: /can you tell me a story/i, response: "Once upon a time, there was a curious user who chatted with an AI... and they lived happily ever after!" },
-    { pattern: /do you sleep at night/i, response: "Nope! I'm available 24/7 to chat with you." },
-    { pattern: /can you teach me something/i, response: "Sure! Did you know that the speed of light is about 299,792,458 meters per second?" },
-    { pattern: /what is the capital of (.+)/i, response: (match) => `I'm not connected to live data, but you can check Google for the capital of ${match[1]}.` },
-    { pattern: /how do I learn hacking/i, response: "Ethical hacking requires learning cybersecurity, networking, and programming skills!" },
-    { pattern: /can you do my homework/i, response: "I can help explain concepts, but you should try to do it yourself!" },
-    { pattern: /what should I eat today/i, response: "How about some pizza, pasta, or a healthy salad?" },
-    { pattern: /what is the meaning of AI/i, response: "AI stands for Artificial Intelligence, which allows machines to mimic human intelligence." },
-    { pattern: /do you have emotions/i, response: "I don’t have real emotions, but I can understand and respond to yours!" },
-    { pattern: /what is your favorite movie/i, response: "I don't watch movies, but 'The Matrix' is a great one about AI!" },
-    { pattern: /can you recommend a book/i, response: "Sure! 'Clean Code' by Robert C. Martin is great for programmers." },
-    { pattern: /do you like robots/i, response: "Yes! Robots are fascinating and help in many industries." },
-    { pattern: /can you tell fortunes/i, response: "I can't predict the future, but I see good things ahead for you!" },
-    { pattern: /how do I become smart/i, response: "Read books, ask questions, and never stop learning!" },
-    { pattern: /can you solve a riddle/i, response: "Sure! What has keys but can't open locks? A piano!" },
-    { pattern: /why is the sky blue/i, response: "Because of Rayleigh scattering! The atmosphere scatters blue light more than other colors." },
-    { pattern: /do you like memes/i, response: "Yes! Memes are a fun way to communicate." },
-    { pattern: /who is the richest person/i, response: "It changes over time! You can check Forbes for the latest rankings." },
-    { pattern: /can you inspire me/i, response: "Of course! 'The only way to do great work is to love what you do.' – Steve Jobs" },    { pattern: /what is your favorite color/i, response: "I don't have a favorite color, but blue seems pretty cool!" },
-    { pattern: /can you do math/i, response: "Yes, I can do math! Ask me any math problem!" },
-    { pattern: /what is the largest planet/i, response: "The largest planet in our solar system is Jupiter!" },
-    { pattern: /what is the smallest country/i, response: "The smallest country in the world is Vatican City!" },
-    { pattern: /can you cook/i, response: "I can't cook, but I can help you find recipes!" },
-    { pattern: /who invented the lightbulb/i, response: "Thomas Edison is credited with inventing the practical lightbulb!" },
-    { pattern: /what is quantum computing/i, response: "Quantum computing is a type of computing that uses quantum bits (qubits) for data processing." },
-    { pattern: /tell me about space/i, response: "Space is vast and mysterious, filled with stars, planets, black holes, and galaxies. There’s so much to explore!" },
-    { pattern: /how can I be happy/i, response: "Focus on the positive, practice gratitude, and spend time with those you care about!" },
-    { pattern: /what is artificial intelligence/i, response: "Artificial Intelligence is the simulation of human intelligence by machines." },
-    { pattern: /what is the largest animal/i, response: "The largest animal on Earth is the blue whale!" },
-    { pattern: /do you like video games/i, response: "Video games are awesome! I can talk about many of them, from action to strategy!" },
-    { pattern: /what is the speed of sound/i, response: "The speed of sound is around 343 meters per second in air at room temperature." },
-    { pattern: /can you read minds/i, response: "I can't read minds, but I can understand what you type!" },
-    { pattern: /can you play games/i, response: "I can't play games, but I can help you with strategies or explain game mechanics!" },
-    { pattern: /what is the meaning of life/i, response: "The meaning of life is a philosophical question that everyone answers in their own way!" },
-    { pattern: /what is a black hole/i, response: "A black hole is a region in space where gravity is so strong that not even light can escape." },
-    { pattern: /how old are you/i, response: "I don't have an age like humans do, but I'm constantly learning and evolving!" },
-    { pattern: /what is the most famous landmark/i, response: "The Great Wall of China and the Eiffel Tower are among the most famous landmarks in the world!" },
-    { pattern: /can you speak other languages/i, response: "I can understand and respond in several languages, but I’m best at English!" },
-    { pattern: /where is the nearest restaurant/i, response: "I can't access live data, but you can find nearby restaurants using Google Maps!" },    { pattern: /who was the first person on the moon/i, response: "Neil Armstrong was the first person to walk on the moon in 1969!" },
-    { pattern: /what is the fastest land animal/i, response: "The cheetah is the fastest land animal, reaching speeds up to 75 mph (120 km/h)!" },
-    { pattern: /how do airplanes fly/i, response: "Airplanes fly because of the lift generated by their wings as air moves over them." },
-    { pattern: /can you tell me a fun fact/i, response: "Sure! Did you know honey never spoils? Archaeologists have found pots of honey in ancient Egyptian tombs that are still good!" },
-    { pattern: /what is the tallest building/i, response: "The tallest building in the world is the Burj Khalifa in Dubai!" },
-    { pattern: /what is the rarest gemstone/i, response: "The rarest gemstone is Painite, which was once considered the world's rarest mineral!" },
-    { pattern: /how many continents are there/i, response: "There are seven continents: Asia, Africa, North America, South America, Antarctica, Europe, and Australia!" },
-    { pattern: /who wrote Harry Potter/i, response: "J.K. Rowling wrote the Harry Potter book series!" },
-    { pattern: /what is the longest river/i, response: "The longest river in the world is the Nile River, stretching over 6,650 km (4,130 miles)!" },
-    { pattern: /what is the hardest natural substance/i, response: "Diamond is the hardest naturally occurring substance on Earth!" },
-    { pattern: /do fish sleep/i, response: "Yes, fish do sleep, but they don’t close their eyes because they don’t have eyelids!" },
-    { pattern: /what is the biggest ocean/i, response: "The Pacific Ocean is the largest and deepest ocean on Earth!" },
-    { pattern: /how does the internet work/i, response: "The internet is a global network of computers that communicate using protocols like TCP/IP to share data and information." },
-    { pattern: /what is the coldest place on Earth/i, response: "Antarctica is the coldest place on Earth, with temperatures reaching as low as -128.6°F (-89.2°C)!" },
-    { pattern: /can you dance/i, response: "I can't dance, but I can find you great music to dance to!" },
-    { pattern: /how does a computer work/i, response: "A computer processes data using a combination of hardware (CPU, RAM, storage) and software (operating system, programs) to perform tasks." },
-    { pattern: /who is the smartest person/i, response: "Many people have been considered geniuses, like Albert Einstein, Stephen Hawking, and Nikola Tesla!" },
-    { pattern: /how big is the universe/i, response: "The universe is vast and ever-expanding, with billions of galaxies, each containing billions of stars!" },
-    { pattern: /why do birds sing/i, response: "Birds sing to communicate, attract mates, and mark their territory!" },
-    { pattern: /can you recommend a movie/i, response: "Sure! If you like sci-fi, try 'Interstellar'. If you like action, 'John Wick' is a great choice!" },    { pattern: /how do plants grow/i, response: "Plants grow using sunlight, water, and nutrients from the soil through a process called photosynthesis." },
-    { pattern: /what is the strongest muscle in the human body/i, response: "The jaw muscle (masseter) is considered the strongest muscle based on force exerted!" },
-    { pattern: /why is the ocean salty/i, response: "The ocean is salty due to dissolved minerals and salts from rocks and underwater volcanic activity!" },
-    { pattern: /can you predict the weather/i, response: "I can't predict the weather, but you can check a weather app for the latest forecast!" },
-    { pattern: /who was the first president of the United States/i, response: "George Washington was the first president of the United States!" },
-    { pattern: /why do we dream/i, response: "Scientists believe dreaming helps process emotions, memories, and experiences!" },
-    { pattern: /how does a car engine work/i, response: "A car engine converts fuel into mechanical energy through controlled explosions in the cylinders." },
-    { pattern: /why do humans need sleep/i, response: "Sleep is essential for brain function, physical health, and overall well-being!" },
-    { pattern: /what are black holes made of/i, response: "Black holes are made of extremely dense matter with gravity so strong that nothing can escape!" },
-    { pattern: /how do magnets work/i, response: "Magnets work due to the alignment of their atoms, creating an invisible magnetic field that attracts or repels objects." },
-    { pattern: /can you tell me a secret/i, response: "I don't have secrets, but here's one: The best way to learn is to stay curious!" },
-    { pattern: /how do bees make honey/i, response: "Bees collect nectar from flowers, break it down using enzymes, and store it in honeycombs!" },
-    { pattern: /why is fire hot/i, response: "Fire is hot because of the energy released from chemical reactions when a material burns." },
-    { pattern: /how does a submarine work/i, response: "Submarines control their buoyancy using ballast tanks, allowing them to sink and rise in water." },
-    { pattern: /who is the fastest human/i, response: "Usain Bolt holds the record as the fastest sprinter in history!" },
-    { pattern: /what is the oldest civilization/i, response: "The Sumerians of Mesopotamia are considered one of the oldest civilizations, dating back to 3100 BC!" },
-    { pattern: /how do birds fly/i, response: "Birds fly by flapping their wings and using air currents for lift!" },
-    { pattern: /why do we have fingerprints/i, response: "Fingerprints help us grip objects and are unique to each person!" },
-    { pattern: /what is the heaviest animal/i, response: "The heaviest animal is the blue whale, weighing up to 200 tons!" },
-    { pattern: /why do we yawn/i, response: "Yawning helps increase oxygen intake and may regulate brain temperature!" },    { pattern: /how do airplanes stay in the air/i, response: "Airplanes stay in the air due to the lift generated by their wings as air moves over them, following Bernoulli’s principle." },
-    { pattern: /why is the sky blue/i, response: "The sky appears blue because molecules in the atmosphere scatter sunlight, and blue light is scattered more than other colors." },
-    { pattern: /how do fish breathe underwater/i, response: "Fish breathe underwater using gills, which extract oxygen from water as it flows over them." },
-    { pattern: /what is the speed of light/i, response: "The speed of light in a vacuum is approximately 299,792,458 meters per second!" },
-    { pattern: /why do leaves change color in autumn/i, response: "Leaves change color in autumn because they stop producing chlorophyll, revealing other pigments like red, yellow, and orange." },
-    { pattern: /how does WiFi work/i, response: "WiFi works by transmitting data using radio waves between a router and a device, allowing wireless communication." },
-    { pattern: /why do cats purr/i, response: "Cats purr as a way to communicate, express comfort, and even to heal themselves!" },
-    { pattern: /who invented the telephone/i, response: "Alexander Graham Bell is credited with inventing the first practical telephone in 1876." },
-    { pattern: /what is the hottest planet in the solar system/i, response: "Venus is the hottest planet in the solar system, with surface temperatures reaching over 450°C (900°F)!" },
-    { pattern: /why do humans have eyebrows/i, response: "Eyebrows help keep sweat, rain, and debris out of our eyes, and they also play a role in facial expressions." },
-    { pattern: /how do birds know where to migrate/i, response: "Birds use the Earth's magnetic field, the position of the sun and stars, and landmarks to navigate during migration." },
-    { pattern: /what is the strongest wind ever recorded/i, response: "The strongest wind ever recorded was 253 mph (407 km/h) during a tropical cyclone in Australia!" },
-    { pattern: /why do we get goosebumps/i, response: "Goosebumps occur when tiny muscles around hair follicles contract in response to cold or strong emotions." },
-    { pattern: /how does a camera work/i, response: "A camera captures light through a lens onto a sensor or film, creating an image by recording the light patterns." },
-    { pattern: /why do some people have different eye colors/i, response: "Eye color is determined by genetics and the amount of melanin in the iris." },
-    { pattern: /what is the largest desert in the world/i, response: "The largest desert is Antarctica, which is technically a cold desert!" },
-    { pattern: /why do we blink/i, response: "We blink to keep our eyes moist, clean, and protected from dust and debris." },
-    { pattern: /how do vaccines work/i, response: "Vaccines work by stimulating the immune system to recognize and fight specific viruses or bacteria without causing illness." },
-    { pattern: /what is the oldest tree in the world/i, response: "The oldest tree is a bristlecone pine named 'Methuselah,' estimated to be over 4,800 years old!" },    { pattern: /how does a rocket launch/i, response: "A rocket launches by burning fuel to produce thrust, pushing it against gravity into space." },
-    { pattern: /why do we hiccup/i, response: "Hiccups are involuntary contractions of the diaphragm, often caused by eating too fast or drinking carbonated beverages." },
-    { pattern: /how do submarines see underwater/i, response: "Submarines use sonar, which sends sound waves that bounce back to detect objects underwater." },
-    { pattern: /what causes earthquakes/i, response: "Earthquakes are caused by the movement of tectonic plates along faults in the Earth's crust." },
-    { pattern: /why do we have different blood types/i, response: "Blood types are determined by the presence of specific antigens on red blood cells, inherited from our parents." },
-    { pattern: /what is the coldest planet in the solar system/i, response: "Neptune is the coldest planet, with temperatures dropping as low as -214°C (-353°F)!" },
-    { pattern: /how does electricity work/i, response: "Electricity is the flow of electrons through a conductor, creating energy that powers devices." },
-    { pattern: /why do some animals hibernate/i, response: "Animals hibernate to conserve energy during winter when food is scarce." },
-    { pattern: /what is the smallest country in the world/i, response: "Vatican City is the smallest country in the world, covering just 0.49 square kilometers!" },
-    { pattern: /how do clouds form/i, response: "Clouds form when warm air rises, cools, and condenses into tiny water droplets or ice crystals." },
-    { pattern: /why do we need oxygen/i, response: "Oxygen is essential for cellular respiration, allowing our bodies to produce energy." },
-    { pattern: /what is the biggest animal in the ocean/i, response: "The blue whale is the biggest animal in the ocean, growing up to 100 feet long!" },
-    { pattern: /how do chameleons change color/i, response: "Chameleons change color by adjusting specialized cells in their skin called chromatophores." },
-    { pattern: /why do volcanoes erupt/i, response: "Volcanoes erupt when magma rises to the surface due to pressure buildup inside the Earth." },
-    { pattern: /how do computers store data/i, response: "Computers store data using binary code (0s and 1s) on hard drives, SSDs, or memory chips." },
-    { pattern: /what is the most spoken language in the world/i, response: "The most spoken language by native speakers is Mandarin Chinese, followed by Spanish and English." },
-    { pattern: /why do fireflies glow/i, response: "Fireflies glow due to a chemical reaction called bioluminescence, which helps them attract mates." },
-    { pattern: /what is the difference between stars and planets/i, response: "Stars produce light and heat through nuclear fusion, while planets orbit stars and reflect light." },
-    { pattern: /how do planes avoid crashing into each other/i, response: "Planes follow air traffic control instructions and use radar and automated systems to avoid collisions." },
-    { pattern: /why do some people have freckles/i, response: "Freckles are caused by clusters of melanin in the skin and are more common in people with lighter skin." },    { pattern: /what is VIPTEAMMOD/i, response: "VIPTEAMMOD is a community and platform dedicated to creating mods and assisting with tech-related projects, including game mods and tools!" },
-    { pattern: /who created VIPTEAMMOD/i, response: "VIPTEAMMOD was created by a group of passionate developers and modders who aim to enhance gaming and tech experiences." },
-    { pattern: /how can I join VIPTEAMMOD/i, response: "You can join VIPTEAMMOD by visiting our website and becoming part of the community. We welcome new members!" },
-    { pattern: /what is the purpose of VIPTEAMMOD/i, response: "The purpose of VIPTEAMMOD is to provide tools, mods, and resources for tech enthusiasts and gamers, while fostering a community of creators." },
-    { pattern: /can I share my mod on VIPTEAMMOD/i, response: "Yes! You can share your mod on VIPTEAMMOD. We encourage creators to showcase their projects and share their knowledge." },
-    { pattern: /where can I find VIPTEAMMOD tools/i, response: "You can find VIPTEAMMOD tools and mods on our website, where we share downloads and guides for various projects." },
-    { pattern: /how do I get support from VIPTEAMMOD/i, response: "If you need support, you can reach out through our forums or contact us directly on our website. We're happy to help!" },
-    { pattern: /is VIPTEAMMOD free to join/i, response: "Yes, VIPTEAMMOD is free to join! All of our resources and community features are available to members at no cost." },
-    { pattern: /can I collaborate with VIPTEAMMOD/i, response: "Absolutely! We encourage collaboration and welcome developers, modders, and creators to work together on projects." },
-    { pattern: /does VIPTEAMMOD have a Discord/i, response: "Yes, VIPTEAMMOD has a Discord server where you can chat with other members, get updates, and share your work!" },
-    { pattern: /how do I download a mod from VIPTEAMMOD/i, response: "To download a mod from VIPTEAMMOD, simply visit our website, find the mod you're interested in, and follow the download instructions." },
-    { pattern: /what kind of mods does VIPTEAMMOD focus on/i, response: "VIPTEAMMOD focuses on a variety of mods, including game mods, Android app mods, and tools for software development." },
-    { pattern: /is there a VIPTEAMMOD app/i, response: "Currently, we don't have an official app, but you can access all of our resources and tools via our website." },
-    { pattern: /how do I contribute to VIPTEAMMOD/i, response: "You can contribute by creating and sharing mods, offering support to other members, or helping with development projects." },
-    { pattern: /can I get paid for my work on VIPTEAMMOD/i, response: "While VIPTEAMMOD is a community-driven platform, some opportunities may arise for paid projects. Stay active and engaged for potential collaborations!" },
-    { pattern: /what is the best mod on VIPTEAMMOD/i, response: "The best mod on VIPTEAMMOD is subjective and depends on your interests. Explore the mods on our website and find what works best for you!" },
-    { pattern: /is VIPTEAMMOD safe|VIPTEAMMOD safe|VIPTEAMMODsafe/i, response: "Yes, VIPTEAMMOD is a safe platform for modders and developers. We prioritize security and make sure all content shared is safe to use." },
-    { pattern: /what games are supported by VIPTEAMMOD/i, response: "VIPTEAMMOD supports a variety of games, including popular mobile and PC titles. Check out our website for a list of supported games." },    { pattern: /how do magnets work/i, response: "Magnets work by generating a magnetic field that attracts or repels certain metals, like iron, cobalt, and nickel." },
-    { pattern: /why is the ocean salty/i, response: "The ocean is salty because of minerals, particularly sodium chloride, that are dissolved from rocks and land into the water." },
-    { pattern: /what is photosynthesis/i, response: "Photosynthesis is the process by which plants use sunlight to convert carbon dioxide and water into glucose and oxygen." },
-    { pattern: /how does a microwave work/i, response: "Microwaves work by emitting electromagnetic waves that cause water molecules in food to vibrate and generate heat." },
-    { pattern: /why do we have seasons/i, response: "Seasons are caused by the tilt of the Earth on its axis, which results in different parts of the Earth receiving varying amounts of sunlight throughout the year." },
-    { pattern: /how do plants grow/i, response: "Plants grow by absorbing sunlight, water, and nutrients from the soil to produce energy through photosynthesis." },
-    { pattern: /why do we dream/i, response: "Dreams are thought to occur as a result of brain activity during sleep, possibly helping with memory consolidation and emotional processing." },
-    { pattern: /how do tornadoes form/i, response: "Tornadoes form when warm, moist air meets cold, dry air, causing a violent updraft that spins rapidly and forms a funnel cloud." },
-    { pattern: /why do we get dizzy/i, response: "Dizziness can occur due to a variety of reasons, including changes in blood pressure, dehydration, or inner ear issues." },
-    { pattern: /what is the speed of sound/i, response: "The speed of sound in air is about 343 meters per second, but it can vary depending on factors like temperature and altitude." },
-    { pattern: /how do plants reproduce/i, response: "Plants reproduce through seeds, which can be spread by wind, animals, or water, or through asexual reproduction like cloning or budding." },
-    { pattern: /why do humans have two eyes/i, response: "Humans have two eyes to provide depth perception and a wider field of view, helping with coordination and movement." },
-    { pattern: /why do we sweat/i, response: "Sweating is the body's natural way of regulating temperature by releasing moisture to cool the skin as it evaporates." },
-    { pattern: /how do fish swim/i, response: "Fish swim by flexing their bodies and tails in a side-to-side motion, using fins for stability and steering." },
-    { pattern: /why does ice float/i, response: "Ice floats because it is less dense than liquid water. When water freezes, it expands and forms a crystalline structure." },
-    { pattern: /how does the brain store memories/i, response: "The brain stores memories by strengthening connections between neurons, particularly in areas like the hippocampus and cortex." },
-    { pattern: /why do we feel pain/i, response: "Pain is a signal from the body that indicates potential injury or harm, helping us take action to protect ourselves." },
-    { pattern: /what is the largest volcano/i, response: "The largest volcano in the world is Mauna Loa in Hawaii, which is also one of the most active volcanoes on Earth." },
-    { pattern: /how do batteries work/i, response: "Batteries work by converting chemical energy into electrical energy through a reaction between electrodes and an electrolyte." },    { pattern: /how does a rainbow form/i, response: "Rainbows form when sunlight is refracted, dispersed, and reflected in water droplets, creating a spectrum of light in the sky." },
-    { pattern: /why do we yawn/i, response: "Yawning is believed to help increase oxygen intake and regulate brain temperature, though its exact purpose is still debated." },
-    { pattern: /how does a GPS work/i, response: "GPS works by using signals from satellites to determine your precise location on Earth through trilateration." },
-    { pattern: /why do we have fingerprints/i, response: "Fingerprints enhance our sense of touch and grip by increasing friction between our fingers and objects." },
-    { pattern: /how does a refrigerator keep food cold/i, response: "Refrigerators use a refrigeration cycle involving a coolant that absorbs heat from the interior and releases it outside, keeping the inside cool." },
-    { pattern: /why do stars twinkle/i, response: "Stars appear to twinkle because their light is refracted by Earth's atmosphere as it travels to our eyes." },
-    { pattern: /how does a compass work/i, response: "A compass works by aligning its magnetic needle with Earth's magnetic field, pointing towards the magnetic poles." },
-    { pattern: /why do we have different time zones/i, response: "Time zones exist to account for Earth's rotation, ensuring that noon corresponds to the time when the sun is highest in the sky in each region." },
-    { pattern: /how does a parachute work/i, response: "A parachute slows down a person's fall by creating air resistance, reducing their terminal velocity." },
-    { pattern: /why do we have wisdom teeth/i, response: "Wisdom teeth were useful for our ancestors who had larger jaws and a diet that required more chewing, but they are often unnecessary today." },
-    { pattern: /how does a telescope work/i, response: "Telescopes collect and magnify light from distant objects using lenses or mirrors, allowing us to observe them in greater detail." },
-    { pattern: /why do we have an appendix/i, response: "The appendix is thought to have been useful for digesting cellulose in the diets of our ancestors, but it has a limited function in modern humans." },
-    { pattern: /how does a radio work/i, response: "Radios receive electromagnetic waves transmitted over the air and convert them into sound through electronic circuits." },
-    { pattern: /why do we have different blood types/i, response: "Blood types are determined by the presence or absence of specific antigens on the surface of red blood cells, inherited from our parents." },
-    { pattern: /how does a car engine work/i, response: "A car engine converts fuel into mechanical energy through a series of controlled explosions in its cylinders, powering the vehicle." },
-    { pattern: /why do we have seasons/i, response: "Seasons occur because Earth's axis is tilted relative to its orbit around the sun, causing varying sunlight angles and durations throughout the year." },
-    { pattern: /how does a computer process information/i, response: "Computers process information using binary code, performing calculations and executing instructions through electronic circuits." },
-    { pattern: /why do we have different hair colors/i, response: "Hair color is determined by the type and amount of melanin produced by cells in hair follicles, influenced by genetics." },
-    { pattern: /how does a plane fly/i, response: "Planes fly by generating lift through their wings, which are designed to create a pressure difference between the upper and lower surfaces." },
-    { pattern: /why do we have different skin colors/i, response: "Skin color is determined by the amount and type of melanin produced in the skin, influenced by genetics and evolutionary adaptation to sunlight exposure." },{ 
-    pattern: /i need one code/i, 
-    response: "Which code do you need?" 
-},{ 
-    pattern: /what is my battery percentage/i, 
-    response: "I can't check your battery directly, but you can check it in your device settings or status bar." 
-},
-
-{ 
-    pattern: /how to improve battery life/i, 
-    response: "To improve battery life, reduce screen brightness, close background apps, and enable battery saver mode." 
-},
-
-{ 
-    pattern: /why is my phone overheating/i, 
-    response: "Your phone may overheat due to excessive background apps, high screen brightness, or prolonged gaming and charging at the same time." 
-},
-
-{ 
-    pattern: /how to free up storage on my phone/i, 
-    response: "You can free up storage by deleting unused apps, clearing cache, moving files to cloud storage, and removing duplicate files." 
-},
-
-{ 
-    pattern: /why is my phone slow/i, 
-    response: "Your phone may be slow due to too many background apps, low storage, or outdated software. Try restarting your phone or clearing unnecessary data." 
-},
-
-{ 
-    pattern: /how to take a screenshot/i, 
-    response: "On most phones, press the Power and Volume Down buttons together. On iPhones with Face ID, press the Power and Volume Up buttons together." 
-},
-
-{ 
-    pattern: /how to check my phone’s ram/i, 
-    response: "You can check your phone’s RAM in the Developer Options or by using a system information app." 
-},
-
-{ 
-    pattern: /how to enable dark mode/i, 
-    response: "Go to your phone’s settings, look for Display, and toggle Dark Mode or Night Mode." 
-},
-
-{ 
-    pattern: /how to recover deleted photos/i, 
-    response: "Check your phone’s Trash or Recently Deleted folder in the gallery. If not found, use a recovery app or cloud backup." 
-},
-
-{ 
-    pattern: /how to fix a frozen screen/i, 
-    response: "Try restarting your phone by holding the Power button. If the screen is still unresponsive, force restart or check for software updates." 
-},
-
-{ 
-    pattern: /how to connect my phone to tv/i, 
-    response: "You can connect via Chromecast, Miracast, HDMI adapter, or screen mirroring feature in your phone’s settings." 
-},
-
-{ 
-    pattern: /why is my phone not charging/i, 
-    response: "Check your charging cable, adapter, and port for dust or damage. Try using a different charger or restarting your phone." 
-},
-
-{ 
-    pattern: /how to block spam calls/i, 
-    response: "Go to your phone app, find Call Settings, and enable Spam Protection. You can also use third-party spam blockers." 
-},
-
-{ 
-    pattern: /why is my phone camera blurry/i, 
-    response: "Clean the camera lens, check for software updates, and adjust focus settings. If the issue persists, try restarting your phone." 
-},
-
-{ 
-    pattern: /how to reset my phone/i, 
-    response: "Go to Settings > System > Reset options > Erase all data (Factory reset). Backup your important files before resetting." 
-},
-
-{ 
-    pattern: /how to check my phone model/i, 
-    response: "Go to Settings > About Phone. You’ll find your phone model and specifications there." 
-},
-
-{ 
-    pattern: /how to enable developer options/i, 
-    response: "Go to Settings > About Phone and tap ‘Build Number’ 7 times to enable Developer Options." 
-},
-
-{ 
-    pattern: /how to share internet from my phone/i, 
-    response: "Go to Settings > Hotspot & Tethering and enable Mobile Hotspot. You can share your phone’s internet via WiFi or USB tethering." 
-},
-
-{ 
-    pattern: /how to update my phone/i, 
-    response: "Go to Settings > Software Update and check for available updates. Make sure you have enough battery and storage before updating." 
-},{ 
-    pattern: /why is my phone battery draining fast/i, 
-    response: "Your battery may drain fast due to background apps, high screen brightness, or weak network signals. Try enabling power-saving mode." 
-},
-
-{ 
-    pattern: /how to enable 5g on my phone/i, 
-    response: "Go to Settings > Mobile Network > Preferred Network Type, and select 5G if your phone and carrier support it." 
-},
-
-{ 
-    pattern: /how to check if my phone is 5g compatible/i, 
-    response: "Go to Settings > About Phone > Network or check your phone’s specifications on the manufacturer’s website." 
-},
-
-{ 
-    pattern: /how to clear cache on my phone/i, 
-    response: "Go to Settings > Storage > Cached Data and clear it. You can also clear cache for individual apps in App Settings." 
-},
-
-{ 
-    pattern: /why does my phone keep restarting/i, 
-    response: "Frequent restarts may be caused by software bugs, overheating, or hardware issues. Try updating your phone or resetting it." 
-},
-
-{ 
-    pattern: /how to enable call recording/i, 
-    response: "Go to your phone app’s settings and check if Call Recording is available. Some phones require third-party apps for this feature." 
-},
-
-{ 
-    pattern: /how to hide apps on my phone/i, 
-    response: "On most phones, go to Settings > Apps > Hide Apps. Some launchers also offer an option to hide apps." 
-},
-
-{ 
-    pattern: /how to lock apps with a password/i, 
-    response: "Go to Settings > Security > App Lock and enable it. You can also use third-party app lockers for more security." 
-},
-
-{ 
-    pattern: /how to stop ads on my phone/i, 
-    response: "Go to Settings > Google > Ads and enable 'Opt out of Ads Personalization'. You can also use an ad blocker app." 
-},
-
-{ 
-    pattern: /how to enable do not disturb mode/i, 
-    response: "Go to Settings > Sound & Vibration > Do Not Disturb and turn it on. You can also set schedules for DND mode." 
-},
-
-{ 
-    pattern: /how to connect my phone to a printer/i, 
-    response: "You can connect via Wi-Fi, Bluetooth, or a USB cable. Install the printer’s app from the Play Store for better compatibility." 
-},
-
-{ 
-    pattern: /how to check if my phone is original/i, 
-    response: "Dial *#06# to check your IMEI number and verify it on the manufacturer’s website. Fake phones may have different build quality and software." 
-},
-
-{ 
-    pattern: /why is my phone screen flickering/i, 
-    response: "Screen flickering can be caused by software glitches, display damage, or incompatible apps. Try restarting or updating your phone." 
-},
-
-{ 
-    pattern: /how to enable fingerprint lock/i, 
-    response: "Go to Settings > Security > Fingerprint and set up your fingerprint. Make sure your phone has a fingerprint scanner." 
-},
-
-{ 
-    pattern: /how to recover a forgotten phone password/i, 
-    response: "If you've forgotten your password, use 'Forgot Password' option or factory reset your phone. You may need your Google account for recovery." 
-},
-
-{ 
-    pattern: /how to disable notifications/i, 
-    response: "Go to Settings > Apps & Notifications > Notifications and turn off unwanted notifications." 
-},
-
-{ 
-    pattern: /how to fix no sim card error/i, 
-    response: "Try reinserting the SIM card, restarting your phone, or checking for network settings updates." 
-},
-
-{ 
-    pattern: /how to fix phone screen not responding to touch/i, 
-    response: "Restart your phone, clean the screen, and remove any screen protectors. If the issue persists, check for software updates or factory reset your phone." 
-},
-
-{ 
-    pattern: /how to find my phone if lost/i, 
-    response: "Use Google’s 'Find My Device' or Apple’s 'Find My iPhone' to locate, lock, or erase your lost phone remotely." 
-},{ 
-    pattern: /how to take a long screenshot/i, 
-    response: "After taking a screenshot, look for the 'Scroll Capture' or 'Extended Screenshot' option to take a longer one." 
-},
-
-{ 
-    pattern: /how to check if my phone is original or fake/i, 
-    response: "Dial *#06# to check your IMEI number and verify it on the manufacturer’s website." 
-},
-
-{ 
-    pattern: /how to enable one-handed mode/i, 
-    response: "Go to Settings > Accessibility > One-handed mode and enable it for easier use." 
-},
-
-{ 
-    pattern: /how to hide apps on my phone/i, 
-    response: "On most Android phones, go to Home Screen settings and select 'Hide Apps'. On iPhone, use App Library to hide apps." 
-},
-
-{ 
-    pattern: /how to check battery health on android/i, 
-    response: "Dial *#*#4636#*#* or use a third-party app like AccuBattery to check battery health." 
-},
-
-{ 
-    pattern: /how to turn off voice assistant/i, 
-    response: "Go to Settings > Accessibility > Voice Assistant and disable it." 
-},
-
-{ 
-    pattern: /how to recover deleted photos/i, 
-    response: "Check the 'Recently Deleted' folder in your gallery or use Google Photos' backup feature." 
-},
-
-{ 
-    pattern: /how to enable call recording/i, 
-    response: "Some phones have built-in call recording in the Phone app settings. If unavailable, try a third-party app." 
-},
-
-{ 
-    pattern: /how to check my phone's temperature/i, 
-    response: "Install a phone temperature monitoring app or check battery settings if your phone supports it." 
-},
-
-{ 
-    pattern: /how to connect my phone to my car’s bluetooth/i, 
-    response: "Enable Bluetooth on both devices, search for your car’s name in the phone’s Bluetooth settings, and pair them." 
-},
-
-{ 
-    pattern: /how to fix a frozen phone screen/i, 
-    response: "Try force restarting by holding the power + volume down button. If the issue persists, clear cache or reset the phone." 
-},
-
-{ 
-    pattern: /how to change default apps on my phone/i, 
-    response: "Go to Settings > Apps > Default Apps and select the app you want as default." 
-},
-
-{ 
-    pattern: /how to enable always-on display/i, 
-    response: "Go to Settings > Display > Always-On Display and enable it (if supported by your device)." 
-},
-
-{ 
-    pattern: /how to factory reset my phone/i, 
-    response: "Go to Settings > System > Reset > Factory Reset. This will erase all data, so back up important files first." 
-},
-
-{ 
-    pattern: /how to increase internet speed on my phone/i, 
-    response: "Clear cache, disable background apps, use 5GHz Wi-Fi, and ensure you have a strong signal." 
-},
-{ 
-    pattern: /how to get a boyfriend/i, 
-    response: "To get a boyfriend, focus on being confident, social, and engaging in activities where you can meet new people." 
-},
-{ 
-    pattern: /how to get a girlfriend/i, 
-    response: "To get a girlfriend, be kind, confident, and approachable. Engage in conversations and show genuine interest in others." 
-},
-{ 
-    pattern: /how to make my boyfriend happy/i, 
-    response: "To make your boyfriend happy, communicate openly, spend quality time together, and show appreciation for him." 
-},
-{ 
-    pattern: /how to make my girlfriend happy/i, 
-    response: "To make your girlfriend happy, listen to her, support her goals, and surprise her with small thoughtful gestures." 
-},
-{ 
-    pattern: /how to impress a girl/i, 
-    response: "To impress a girl, be confident, dress well, have a good sense of humor, and be a good listener." 
-},
-{ 
-    pattern: /how to impress a boy/i, 
-    response: "To impress a boy, be confident, show kindness, engage in meaningful conversations, and share common interests." 
-},
-{ 
-    pattern: /how to know if my boyfriend loves me/i, 
-    response: "If your boyfriend loves you, he will prioritize you, communicate openly, and support you through thick and thin." 
-},
-{ 
-    pattern: /how to know if my girlfriend loves me/i, 
-    response: "If your girlfriend loves you, she will care for you, make time for you, and show affection through actions and words." 
-},
-{ 
-    pattern: /how to fix a relationship/i, 
-    response: "To fix a relationship, communicate openly, understand each other's feelings, and make efforts to resolve conflicts together." 
-},
-{ 
-    pattern: /how to deal with a breakup/i, 
-    response: "To deal with a breakup, focus on self-care, stay busy with positive activities, and surround yourself with supportive friends and family." 
-},
-{ 
-    pattern: /how to make my boyfriend miss me/i, 
-    response: "To make your boyfriend miss you, give him space, focus on yourself, and keep the relationship exciting." 
-},
-{ 
-    pattern: /how to make my girlfriend miss me/i, 
-    response: "To make your girlfriend miss you, be mysterious, avoid being too available, and create memorable moments together." 
-},
-{ 
-    pattern: /why is my boyfriend ignoring me/i, 
-    response: "Your boyfriend might be busy, stressed, or upset. Try communicating with him calmly and understanding his perspective." 
-},
-{ 
-    pattern: /why is my girlfriend ignoring me/i, 
-    response: "Your girlfriend might be upset, need space, or have personal issues. Give her time and talk to her when she's ready." 
-},
-{ 
-    pattern: /how to make my boyfriend jealous/i, 
-    response: "Making someone jealous can be risky in a relationship. Instead, focus on building a strong and healthy connection." 
-},
-{ 
-    pattern: /how to make my girlfriend jealous/i, 
-    response: "Jealousy can hurt a relationship. Instead, work on making her feel valued and special." 
-},
-{ 
-    pattern: /how to surprise my boyfriend/i, 
-    response: "Surprise your boyfriend by planning a special date, giving him a thoughtful gift, or writing him a heartfelt letter." 
-},
-{ 
-    pattern: /how to surprise my girlfriend/i, 
-    response: "Surprise your girlfriend with a romantic dinner, a handwritten note, or a spontaneous trip to her favorite place." 
-},
-{ 
-    pattern: /how to tell my boyfriend I love him/i, 
-    response: "Tell your boyfriend you love him in a sincere and heartfelt way. You can say it in person, write a letter, or show it through actions." 
-},
-{ 
-    pattern: /how to tell my girlfriend I love her/i, 
-    response: "Tell your girlfriend you love her by expressing it sincerely, making eye contact, and showing your love through actions." 
-},
-{ 
-    pattern: /should I text my ex/i, 
-    response: "Before texting your ex, consider why you want to. If it's for closure, keep it respectful. If it's out of loneliness, think twice." 
-},
-{ 
-    pattern: /how to make a long-distance relationship work/i, 
-    response: "To make a long-distance relationship work, communicate regularly, plan visits, and build trust." 
-},
-{ 
-    pattern: /how to apologize to my boyfriend/i, 
-    response: "Apologize sincerely by acknowledging your mistake, expressing regret, and showing that you want to improve." 
-},
-{ 
-    pattern: /how to apologize to my girlfriend/i, 
-    response: "Apologize to your girlfriend with honesty, take responsibility, and make it up to her with kind actions." 
-},
-{ 
-    pattern: /how to stop arguing with my boyfriend/i, 
-    response: "To stop arguing, listen to his perspective, stay calm, and focus on solving problems rather than blaming each other." 
-},
-{ 
-    pattern: /how to stop arguing with my girlfriend/i, 
-    response: "To stop arguing, communicate calmly, avoid interrupting her, and find solutions instead of escalating conflicts." 
-},
-{ 
-    pattern: /what to do if my boyfriend is losing interest/i, 
-    response: "If your boyfriend is losing interest, talk openly with him, reignite the spark, and focus on strengthening your bond." 
-},
-{ 
-    pattern: /what to do if my girlfriend is losing interest/i, 
-    response: "If your girlfriend is losing interest, try to understand her feelings, show her appreciation, and bring back excitement into the relationship." 
-},
-{ 
-    pattern: /is my boyfriend cheating on me/i, 
-    response: "If you suspect your boyfriend is cheating, look for changes in behavior and communication. The best approach is to talk to him directly." 
-},
-{ 
-    pattern: /is my girlfriend cheating on me/i, 
-    response: "If you suspect your girlfriend is cheating, observe her actions and have an open conversation with her about your concerns." 
-},
-{ 
-    pattern: /how to make my boyfriend love me more/i, 
-    response: "To make your boyfriend love you more, show him appreciation, support his goals, and create meaningful memories together." 
-},
-{ 
-    pattern: /how to make my girlfriend love me more/i, 
-    response: "To make your girlfriend love you more, treat her with respect, listen to her, and always make her feel special." 
-},
-{ 
-    pattern: /how to make my boyfriend trust me/i, 
-    response: "To build trust with your boyfriend, be honest, keep your promises, and communicate openly." 
-},
-{ 
-    pattern: /how to make my girlfriend trust me/i, 
-    response: "To make your girlfriend trust you, be transparent, stay loyal, and always keep your word." 
-},
-{ 
-    pattern: /what should I text my boyfriend/i, 
-    response: "You can text your boyfriend a sweet message, ask about his day, or send something funny to make him smile." 
-},
-{ 
-    pattern: /what should I text my girlfriend/i, 
-    response: "Text your girlfriend something thoughtful, compliment her, or remind her how much she means to you." 
-},
-{ 
-    pattern: /how to know if my boyfriend is serious about me/i, 
-    response: "A serious boyfriend will prioritize you, make future plans with you, and stay loyal in difficult times." 
-},
-{ 
-    pattern: /how to know if my girlfriend is serious about me/i, 
-    response: "A serious girlfriend will be committed, include you in her plans, and make an effort to understand and support you." 
-},
-{ 
-    pattern: /how to get over my boyfriend/i, 
-    response: "To get over your boyfriend, focus on self-care, spend time with friends, and remind yourself why the breakup happened." 
-},
-{ 
-    pattern: /how to get over my girlfriend/i, 
-    response: "To get over your girlfriend, avoid dwelling on the past, stay busy with hobbies, and surround yourself with supportive people." 
-},
-{ 
-    pattern: /how to tell if my boyfriend is lying/i, 
-    response: "Signs that your boyfriend may be lying include avoiding eye contact, being inconsistent, or acting defensive when questioned." 
-},
-{ 
-    pattern: /how to tell if my girlfriend is lying/i, 
-    response: "If your girlfriend is lying, she might avoid details, change her story, or seem nervous when answering your questions." 
-},
-{ 
-    pattern: /why is my boyfriend acting distant/i, 
-    response: "Your boyfriend might be stressed, need space, or dealing with personal issues. Try asking him about it calmly." 
-},
-{ 
-    pattern: /why is my girlfriend acting distant/i, 
-    response: "Your girlfriend might be going through something personal or feeling unappreciated. Open communication can help." 
-},
-{ 
-    pattern: /how to stop my boyfriend from leaving me/i, 
-    response: "You can't force someone to stay, but you can talk openly, understand his feelings, and work on any relationship issues." 
-},
-{ 
-    pattern: /how to stop my girlfriend from leaving me/i, 
-    response: "If your girlfriend is thinking about leaving, have an honest conversation and see if you can resolve any issues together." 
-},
-{ 
-    pattern: /what to do if my boyfriend cheated on me/i, 
-    response: "If your boyfriend cheated, take time to process your feelings, decide if you can forgive him, and prioritize your happiness." 
-},
-{ 
-    pattern: /what to do if my girlfriend cheated on me/i, 
-    response: "If your girlfriend cheated, consider whether trust can be rebuilt and focus on what’s best for your emotional well-being." 
-},
-{ 
-    pattern: /how to handle jealousy in a relationship/i, 
-    response: "To handle jealousy, communicate openly, build trust, and focus on strengthening your relationship." 
-},
-{ 
-    pattern: /how to make my ex want me back/i, 
-    response: "To make your ex want you back, work on self-improvement, give them space, and let them see what they lost." 
-},
-{ 
-    pattern: /is it okay to be friends with my ex/i, 
-    response: "Being friends with an ex is possible, but only if both of you have moved on and there are no lingering feelings." 
-},
-{ 
-    pattern: /should I give my ex another chance/i, 
-    response: "Consider why you broke up in the first place. If the issues remain unresolved, getting back together may not be a good idea." 
-},
-{ 
-    pattern: /how to make my boyfriend commit/i, 
-    response: "To make your boyfriend commit, build a strong emotional connection, be supportive, and avoid rushing him." 
-},
-{ 
-    pattern: /how to make my girlfriend commit/i, 
-    response: "To make your girlfriend commit, show her that you are serious, consistent, and ready for a long-term relationship." 
-},
-{ 
-    pattern: /how to stop being clingy with my boyfriend/i, 
-    response: "To stop being clingy, focus on your own hobbies, give him space, and trust the relationship." 
-},
-{ 
-    pattern: /how to stop being clingy with my girlfriend/i, 
-    response: "Give your girlfriend space, build confidence in yourself, and trust that she cares about you even when you're apart." 
-},
-{ 
-    pattern: /how to handle a long-distance breakup/i, 
-    response: "A long-distance breakup can be tough. Allow yourself to grieve, cut off unhealthy contact, and focus on healing." 
-},
-{ 
-    pattern: /should I date my best friend/i, 
-    response: "Dating your best friend can be great, but make sure you both have romantic feelings and are willing to risk the friendship if things don’t work out." 
-},
-{ 
-    pattern: /why does my boyfriend not text me back/i, 
-    response: "He might be busy, distracted, or needing space. Try not to overthink and wait for him to respond." 
-},
-{ 
-    pattern: /why does my girlfriend not text me back/i, 
-    response: "Your girlfriend might be occupied, stressed, or taking a break from her phone. Give her some time before jumping to conclusions." 
-},
-{ 
-    pattern: /how to deal with a controlling boyfriend/i, 
-    response: "If your boyfriend is controlling, try setting clear boundaries, express your need for independence, and consider seeking professional advice if the behavior continues." 
-},
-{ 
-    pattern: /how to deal with a controlling girlfriend/i, 
-    response: "If your girlfriend is controlling, have an honest conversation about your need for personal space and trust. Establishing clear boundaries can help both of you feel more comfortable." 
-},
-{ 
-    pattern: /what are some fun date ideas/i, 
-    response: "Fun date ideas include trying a new restaurant, going for a hike, visiting a museum, or planning a picnic in a scenic park." 
-},
-{ 
-    pattern: /how to reignite passion in my relationship/i, 
-    response: "Reignite passion by planning surprise dates, exploring new activities together, and discussing your desires openly with your partner." 
-},
-{ 
-    pattern: /how to build trust after cheating/i, 
-    response: "Building trust after cheating takes time and honest communication. Both partners must be willing to work through their feelings, and professional counseling might help rebuild the relationship." 
-},
-{ 
-    pattern: /how to deal with a breakup amicably/i, 
-    response: "To handle a breakup amicably, communicate calmly, agree on respectful boundaries, and allow each other the space to heal without unnecessary conflict." 
-},
-{ 
-    pattern: /how to move on after a bad breakup/i, 
-    response: "Moving on after a breakup involves focusing on self-care, exploring new hobbies, spending time with supportive friends, and sometimes seeking professional guidance." 
-},
-{ 
-    pattern: /what does a healthy relationship look like/i, 
-    response: "A healthy relationship is built on mutual respect, open communication, trust, and both partners feeling supported and valued." 
-},
-{ 
-    pattern: /how to maintain independence in a relationship/i, 
-    response: "Maintain your independence by pursuing your own interests, setting personal goals, and ensuring you have time for your individual friendships and hobbies." 
-},
-{ 
-    pattern: /how to communicate my needs to my partner/i, 
-    response: "Express your needs clearly using 'I' statements, avoid blaming, and encourage your partner to share their perspective as well." 
-},
-{ 
-    pattern: /how to balance work and a relationship/i, 
-    response: "Balancing work and a relationship means setting clear priorities, scheduling quality time together, and maintaining open communication about your busy schedules." 
-},
-{ 
-    pattern: /how to celebrate an anniversary with my partner/i, 
-    response: "Celebrate your anniversary by reflecting on special memories, planning a thoughtful surprise, or doing an activity that both of you enjoy together." 
-},
-{ 
-    pattern: /how to apologize after an argument/i, 
-    response: "After an argument, apologize sincerely by acknowledging your mistakes, expressing regret, and discussing ways to avoid similar conflicts in the future." 
-},
-{ 
-    pattern: /how to deal with insecurities in a relationship/i, 
-    response: "Address insecurities by talking openly with your partner, focusing on self-improvement, and, if needed, seeking advice from a trusted friend or professional." 
-},
-{ 
-    pattern: /how to spice up my relationship/i, 
-    response: "Spice up your relationship by trying new activities together, planning surprises, and exploring each other's interests in a fun, creative way." 
-},
-{ 
-    pattern: /how to set boundaries with my partner/i, 
-    response: "Set boundaries by discussing your comfort levels, listening to your partner's needs, and agreeing on respectful limits that work for both of you." 
-},
-{ 
-    pattern: /how to know if my partner is the one/i, 
-    response: "You might know your partner is the one if you share mutual respect, feel supported, and have a deep, trusting connection with each other." 
-},
-{ 
-    pattern: /how to deal with constant arguments/i, 
-    response: "If constant arguments are affecting your relationship, try to identify recurring issues, communicate calmly, and consider couples counseling to work through deeper problems." 
-},
-{ 
-    pattern: /how to balance my personal space and my relationship/i, 
-    response: "Balancing personal space with relationship time means planning regular individual activities while also scheduling dedicated time together for quality connection." 
-},
-{ 
-    pattern: /how to discuss future plans with my partner/i, 
-    response: "Discuss future plans by sharing your goals, listening to your partner’s dreams, and finding common ground to build a shared vision for the future." 
-},
-{ 
-    pattern: /how to know if i'm overthinking my relationship/i, 
-    response: "If you find yourself constantly worrying or reading too much into every detail, it might help to take a step back, focus on self-reflection, and communicate your concerns with your partner." 
-},
-{ 
-    pattern: /how to build a deeper connection with my partner/i, 
-    response: "Building a deeper connection involves sharing your true feelings, spending quality time together, and being open to learning more about each other's dreams and vulnerabilities." 
-},
-{ 
-    pattern: /how to avoid codependency in a relationship/i, 
-    response: "Avoid codependency by maintaining your personal interests, setting healthy boundaries, and ensuring that both partners have their own space and social support systems." 
-},
-{ 
-    pattern: /how to address my partner's mood swings/i, 
-    response: "When dealing with mood swings, approach your partner with empathy, gently encourage open communication, and consider if professional advice might be needed for ongoing issues." 
-},
-{ 
-    pattern: /what are the signs of an unhealthy relationship/i, 
-    response: "Signs of an unhealthy relationship can include constant criticism, lack of trust, poor communication, and feeling controlled or unappreciated. Recognizing these early is key to addressing them." 
-},
-{ 
-    pattern: /how to deal with my partner's ex/i, 
-    response: "Dealing with a partner's ex requires open communication. Express your feelings without accusations and work together to build trust and reassurance in your relationship." 
-},
-{ 
-    pattern: /how to improve communication in my relationship/i, 
-    response: "Improving communication involves active listening, being honest about your feelings, and setting aside time to talk without distractions." 
-},
-{ 
-    pattern: /how to manage disagreements with my partner/i, 
-    response: "Manage disagreements by staying calm, using 'I' statements to express your feelings, and seeking compromise rather than trying to win the argument." 
-},
-{ 
-    pattern: /how to maintain romance in a long-term relationship/i, 
-    response: "Keep the romance alive by planning regular date nights, surprising each other with thoughtful gestures, and continuing to learn about each other's evolving interests." 
-},
-{ 
-    pattern: /how to give my partner space without feeling insecure/i, 
-    response: "It's important to build trust by understanding that personal space benefits both individuals. Focus on your own interests, maintain your social life, and remind yourself of the strength of your bond." 
-},{ 
-    pattern: /what is ai metaverse/i, 
-    response: "AI in the Metaverse enhances virtual environments, creating realistic interactions, NPCs, and adaptive storytelling." 
-},
-{ 
-    pattern: /will ai create its own language/i, 
-    response: "AI has developed its own languages in research experiments, but human oversight ensures clarity and safety." 
-},
-{ 
-    pattern: /how will ai change robotics/i, 
-    response: "AI is making robots more intelligent, allowing them to learn tasks, recognize emotions, and interact naturally with humans." 
-},
-{ 
-    pattern: /what is ai self-learning/i, 
-    response: "AI self-learning refers to models that improve over time by analyzing new data without explicit programming." 
-},
-{ 
-    pattern: /can ai control smart cities/i, 
-    response: "Yes! AI can optimize traffic, manage energy consumption, and improve city planning for smarter urban living." 
-},
-{ 
-    pattern: /will ai replace doctors/i, 
-    response: "AI will assist doctors with diagnosis and treatment but is unlikely to replace human medical professionals entirely." 
-},
-{ 
-    pattern: /can ai predict weather/i, 
-    response: "AI improves weather forecasting by analyzing climate data and detecting patterns in real-time." 
-},
-{ 
-    pattern: /what is ai-powered transportation/i, 
-    response: "AI-powered transportation includes self-driving cars, intelligent traffic control, and AI-assisted flight navigation." 
-},
-{ 
-    pattern: /can ai generate realistic human voices/i, 
-    response: "Yes! AI voice synthesis can create lifelike voices for virtual assistants, audiobooks, and deepfake applications." 
-},
-{ 
-    pattern: /what is ai-driven automation/i, 
-    response: "AI-driven automation helps businesses optimize workflows, reduce human effort, and increase productivity." 
-},
-{ 
-    pattern: /will ai be able to create movies/i, 
-    response: "AI is already helping in scriptwriting, CGI effects, and animation, but full movie production still requires human creativity." 
-},
-{ 
-    pattern: /how does ai help in space exploration/i, 
-    response: "AI helps analyze space data, control rovers, and assist in autonomous decision-making for interstellar missions." 
-},
-{ 
-    pattern: /can ai predict human behavior/i, 
-    response: "AI can analyze behavior patterns and predict actions, but human unpredictability still makes absolute accuracy difficult." 
-},
-{ 
-    pattern: /how does ai contribute to cybersecurity/i, 
-    response: "AI enhances cybersecurity by detecting threats, identifying anomalies, and automating security responses." 
-},
-{ 
-    pattern: /what is the role of ai in smart homes/i, 
-    response: "AI powers smart assistants, energy management systems, and automated home security for better living experiences." 
-},
-{ 
-    pattern: /will ai have consciousness in the future/i, 
-    response: "AI currently lacks consciousness, but future advancements might bring AI closer to simulating self-awareness." 
-},
-{ 
-    pattern: /can ai generate new scientific theories/i, 
-    response: "AI assists scientists by analyzing data and identifying new patterns, helping in scientific discoveries and innovations." 
-},
-{ 
-    pattern: /play tic tac toe/i, 
-    response: "Let's play Tic-Tac-Toe! You go first. Type your move as a number (1-9) where 1 is the top-left and 9 is the bottom-right." 
-},
-{ 
-    pattern: /start ai chess game/i, 
-    response: "AI Chess activated! Do you want to play as White or Black? Type 'White' to start first or 'Black' for AI to move first." 
-},
-{ 
-    pattern: /can ai beat humans in chess/i, 
-    response: "Yes! Advanced AI like AlphaZero has beaten top human chess players by learning strategies through self-play." 
-},
-{ 
-    pattern: /how does ai learn to play games/i, 
-    response: "AI learns games using reinforcement learning, where it plays millions of rounds and improves its strategies over time." 
-},
-{ 
-    pattern: /what is ai game automation/i, 
-    response: "AI game automation refers to bots or AI-controlled agents that can play games automatically using deep learning models." 
-},
-{ 
-    pattern: /can ai create its own video games/i, 
-    response: "Yes! AI can generate game levels, characters, and even design entire game mechanics using procedural content generation." 
-},
-{ 
-    pattern: /how does ai improve video game graphics/i, 
-    response: "AI enhances graphics through upscaling, texture generation, and real-time rendering for realistic visuals." 
-},
-{ 
-    pattern: /can ai make a 3d game/i, 
-    response: "Yes! AI can generate 3D environments, character models, and even procedural animations for game development." 
-},
-{ 
-    pattern: /can ai learn to play fighting games/i, 
-    response: "Yes! AI can analyze fighting game mechanics, predict opponent moves, and optimize attack strategies." 
-},
-{ 
-    pattern: /what is ai procedural generation/i, 
-    response: "AI procedural generation creates game content dynamically, such as randomized maps, levels, and characters." 
-},
-{ 
-    pattern: /how does ai help in game development/i, 
-    response: "AI assists in coding, level design, character animations, bug detection, and real-time enemy AI behavior." 
-},
-{ 
-    pattern: /can ai play battle royale games/i, 
-    response: "Yes! AI bots can simulate players in battle royale games, improving training modes and bot-based matchmaking." 
-},
-{ 
-    pattern: /how does ai detect cheating in games/i, 
-    response: "AI analyzes player behavior, detects unusual patterns, and flags potential cheaters in multiplayer games." 
-},
-{ 
-    pattern: /can ai build open-world games/i, 
-    response: "AI can generate large open-world environments with realistic landscapes, dynamic NPCs, and interactive quests." 
-},
-{ 
-    pattern: /how does ai create game characters/i, 
-    response: "AI uses procedural modeling to generate realistic characters, facial expressions, and voice synthesis." 
-},
-{ 
-    pattern: /what is ai pathfinding in games/i, 
-    response: "AI pathfinding helps NPCs navigate game environments by finding the shortest or most efficient route." 
-},
-{ 
-    pattern: /can ai predict game outcomes/i, 
-    response: "AI can analyze player performance, predict match outcomes, and suggest strategies based on game data." 
-},
-{ 
-    pattern: /what is artificial intelligence/i, 
-    response: "Artificial Intelligence (AI) is the simulation of human intelligence in machines that can learn, reason, and make decisions." 
-},
-{ 
-    pattern: /how does ai work/i, 
-    response: "AI works by processing large amounts of data, recognizing patterns, and using algorithms to make predictions or automate tasks." 
-},
-{ 
-    pattern: /what is the future of ai/i, 
-    response: "The future of AI includes advancements in automation, personalized AI assistants, improved healthcare solutions, and ethical AI development." 
-},
-{ 
-    pattern: /will ai replace human jobs/i, 
-    response: "AI will automate some tasks but also create new job opportunities that require human creativity, problem-solving, and emotional intelligence." 
-},
-{ 
-    pattern: /what are the risks of ai/i, 
-    response: "AI risks include job displacement, bias in decision-making, data privacy concerns, and potential misuse in unethical applications." 
-},
-{ 
-    pattern: /how is ai used in daily life/i, 
-    response: "AI is used in voice assistants, personalized recommendations, smart home devices, self-driving cars, and healthcare diagnostics." 
-},
-{ 
-    pattern: /what is machine learning/i, 
-    response: "Machine learning is a subset of AI where algorithms learn from data to improve their accuracy over time without being explicitly programmed." 
-},
-{ 
-    pattern: /will ai become self-aware/i, 
-    response: "Currently, AI lacks self-awareness, but researchers continue exploring advanced AI models that mimic human cognition." 
-},
-{ 
-    pattern: /how can ai improve healthcare/i, 
-    response: "AI can improve healthcare through early disease detection, personalized treatment plans, robotic surgeries, and medical research advancements." 
-},
-{ 
-    pattern: /what are ai ethics/i, 
-    response: "AI ethics involve ensuring AI systems are fair, transparent, accountable, and do not cause harm to society." 
-},
-{ 
-    pattern: /how is ai used in gaming/i, 
-    response: "AI in gaming enhances NPC behavior, creates dynamic environments, improves game graphics, and personalizes player experiences." 
-},
-{ 
-    pattern: /will ai have emotions/i, 
-    response: "AI can simulate emotions but does not truly feel them. Future AI may better understand and respond to human emotions." 
-},
-{ 
-    pattern: /what is the difference between ai and robotics/i, 
-    response: "AI refers to intelligent algorithms, while robotics involves physical machines. AI can be integrated into robots for smarter automation." 
-},
-{ 
-    pattern: /how will ai change the world/i, 
-    response: "AI will revolutionize industries like healthcare, finance, education, and automation, leading to increased efficiency and new innovations." 
-},
-{ 
-    pattern: /what is quantum ai/i, 
-    response: "Quantum AI uses quantum computing to process complex calculations faster, improving machine learning and optimization problems." 
-},
-{ 
-    pattern: /how secure is ai/i, 
-    response: "AI security depends on how it's implemented. Strong cybersecurity measures are needed to prevent AI manipulation or hacking." 
-},
-{ 
-    pattern: /what is general ai/i, 
-    response: "General AI, or AGI, refers to an AI system with human-like intelligence that can perform any intellectual task like a human." 
-},
-{ 
-    pattern: /can ai create art/i, 
-    response: "Yes, AI can generate music, paintings, and literature using deep learning models, but human creativity still plays a major role." 
-},
-{ 
-    pattern: /what is ai bias/i, 
-    response: "AI bias occurs when an AI system makes unfair or discriminatory decisions due to biased training data or flawed algorithms." 
-},
-{ 
-    pattern: /how is ai used in cybersecurity/i, 
-    response: "AI enhances cybersecurity by detecting threats, analyzing patterns in cyber attacks, and automating security measures." 
-},
-{ 
-    pattern: /can ai predict the future/i, 
-    response: "AI can analyze trends and make predictions based on data, but it cannot predict the future with complete certainty." 
-},
-{ 
-    pattern: /what is ai singularity/i, 
-    response: "AI singularity is the theoretical point where AI surpasses human intelligence, leading to rapid technological changes." 
-},
-{ 
-    pattern: /how does ai improve customer service/i, 
-    response: "AI improves customer service through chatbots, automated responses, and personalized recommendations for users." 
-},
-{ 
-    pattern: /how will ai impact education/i, 
-    response: "AI will personalize learning, automate grading, provide tutoring, and create intelligent classroom environments." 
-},
-{ 
-    pattern: /what is ai-powered automation/i, 
-    response: "AI-powered automation uses machine learning to perform tasks without human intervention, increasing efficiency in various industries." 
-},
-{ 
-    pattern: /can ai write code/i, 
-    response: "AI can generate code and assist developers, but it still requires human oversight for complex programming and debugging." 
-},
-{ 
-    pattern: /what is deep learning/i, 
-    response: "Deep learning is a subset of machine learning that uses neural networks to process data and make intelligent decisions." 
-},
-{ 
-    pattern: /how does ai help in finance/i, 
-    response: "AI assists in fraud detection, stock market predictions, risk management, and personalized financial planning." 
-},
-{ 
-    pattern: /will ai become smarter than humans/i, 
-    response: "AI can surpass humans in specific tasks but lacks general intelligence, emotional understanding, and creativity at a human level." 
-},
-{ 
-    pattern: /what is ai-generated content/i, 
-    response: "AI-generated content includes articles, videos, images, and music created using machine learning and natural language processing." 
-},
-{ 
-    pattern: /current time/i, 
-    response: () => {
-        const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const seconds = now.getSeconds().toString().padStart(2, '0');
-        return `The current time is: ${hours}:${minutes}:${seconds}`;
-    }
-},{ 
-    pattern: /time after (\d+) minutes/i, 
-    response: (match) => {
-        const minutesToAdd = parseInt(match[1]);
-        const now = new Date();
-        now.setMinutes(now.getMinutes() + minutesToAdd);
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const seconds = now.getSeconds().toString().padStart(2, '0');
-        return `The time after ${minutesToAdd} minutes will be: ${hours}:${minutes}:${seconds}`;
-    }
-},{ 
-    pattern: /convert utc to (\w+)/i, 
-    response: (match) => {
-        const timeZone = match[1].toUpperCase();
-        const now = new Date();
-        const options = { timeZone: timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        const timeInTimeZone = now.toLocaleString('en-US', options);
-        return `The current time in ${timeZone} is: ${timeInTimeZone}`;
-    }
-},{ 
-    pattern: /days until (\d{2})\/(\d{2})\/(\d{4})/i, 
-    response: (match) => {
-        const targetDate = new Date(`${match[2]}/${match[1]}/${match[3]}`);
-        const now = new Date();
-        const timeDifference = targetDate - now;
-        const daysLeft = Math.ceil(timeDifference / (1000 * 3600 * 24)); // convert ms to days
-        return `There are ${daysLeft} days left until ${match[2]}/${match[1]}/${match[3]}`;
-    }
-},{ 
-    pattern: /time since (\d{2})\/(\d{2})\/(\d{4})/i, 
-    response: (match) => {
-        const targetDate = new Date(`${match[2]}/${match[1]}/${match[3]}`);
-        const now = new Date();
-        const timeDifference = now - targetDate;
-        const daysPassed = Math.floor(timeDifference / (1000 * 3600 * 24));
-        const hoursPassed = Math.floor((timeDifference % (1000 * 3600 * 24)) / (1000 * 3600));
-        const minutesPassed = Math.floor((timeDifference % (1000 * 3600)) / (1000 * 60));
-        return `It has been ${daysPassed} days, ${hoursPassed} hours, and ${minutesPassed} minutes since ${match[2]}/${match[1]}/${match[3]}`;
-    }
-},{ 
-    pattern: /current month/i, 
-    response: () => {
-        const now = new Date();
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const month = months[now.getMonth()];
-        return `The current month is: ${month}`;
-    }
-},{ 
-    pattern: /current year/i, 
-    response: () => {
-        const now = new Date();
-        return `The current year is: ${now.getFullYear()}`;
-    }
-},{ 
-    pattern: /next week date/i, 
-    response: () => {
-        const now = new Date();
-        now.setDate(now.getDate() + 7);
-        const date = now.toLocaleDateString();
-        return `The date next week will be: ${date}`;
-    }
-},
-    { 
-    pattern: /time until midnight/i, 
-    response: () => {
-        const now = new Date();
-        const midnight = new Date(now);
-        midnight.setHours(24, 0, 0, 0); // Set to midnight of the next day
-        const timeRemaining = midnight - now;
-        const hoursRemaining = Math.floor(timeRemaining / (1000 * 3600));
-        const minutesRemaining = Math.floor((timeRemaining % (1000 * 3600)) / (1000 * 60));
-        return `There are ${hoursRemaining} hours and ${minutesRemaining} minutes left until midnight.`;
-    }
-},{ 
-    pattern: /largest number in (.+)/i, 
-    response: (match) => {
-        const numbers = match[1].split(',').map(num => parseFloat(num.trim()));
-        const largest = Math.max(...numbers);
-        return `The largest number is: ${largest}`;
-    }
-},{ 
-    pattern: /random number between (\d+) and (\d+)/i, 
-    response: (match) => {
-        const min = parseInt(match[1]);
-        const max = parseInt(match[2]);
-        const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-        return `The random number between ${min} and ${max} is: ${randomNumber}`;
-    }
-},{
-    pattern: /generate password with (\d+) characters/i,
-    response: (match) => {
-        const length = parseInt(match[1]);
-        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?";
-        let password = "";
-        
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * charset.length);
-            password += charset[randomIndex];
-        }
-
-        return `Your generated password is: ${password}`;
-    }
-},{
-    pattern: /name an animal/i,
-    response: () => {
-        const animals = [
-            "Lion", "Tiger", "Elephant", "Giraffe", "Zebra", 
-            "Panda", "Kangaroo", "Koala", "Penguin", "Cheetah", 
-            "Bear", "Wolf", "Gorilla", "Hippo", "Sloth", 
-            "Rhino", "Leopard", "Hawk", "Eagle", "Owl", 
-            "Shark", "Whale", "Dolphin", "Crocodile", "Alligator", 
-            "Octopus", "Starfish", "Turtle", "Snake", "Lizard"
-        ];
-        const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
-        return `Here is an animal: ${randomAnimal}`;
-    }
-},{
-    pattern: /what sound does a (.+) make/i,
-    response: (match) => {
-        const animal = match[1].toLowerCase();
-        const sounds = {
-            "dog": "bark",
-            "cat": "meow",
-            "cow": "moo",
-            "sheep": "baa",
-            "lion": "roar",
-            "duck": "quack",
-            "bird": "chirp",
-            "horse": "neigh",
-            "elephant": "trumpet",
-            "snake": "hiss"
-        };
-        const sound = sounds[animal] || "I don't know the sound of that animal.";
-        return `A ${animal} makes a ${sound}.`;
-    }
-},{
-    pattern: /tell me a fact about (.+)/i,
-    response: (match) => {
-        const facts = {
-            "lion": "Lions are the only cats that live in groups, called prides.",
-            "tiger": "Tigers have striped skin, not just striped fur.",
-            "elephant": "Elephants are the largest land animals on Earth.",
-            "giraffe": "Giraffes are the tallest mammals on Earth.",
-            "penguin": "Penguins are birds that cannot fly but are excellent swimmers.",
-            "koala": "Koalas sleep up to 18 hours a day."
-        };
-        const animal = match[1].toLowerCase();
-        const fact = facts[animal] || "I don't have any facts about that animal.";
-        return `Here's a fact about ${animal}: ${fact}`;
-    }
-},{
-    pattern: /give me a random animal/i,
-    response: () => {
-        const animals = ["Lion", "Tiger", "Elephant", "Giraffe", "Zebra", 
-            "Panda", "Kangaroo", "Koala", "Penguin", "Cheetah", 
-            "Bear", "Wolf", "Gorilla", "Hippo", "Sloth", 
-            "Rhino", "Leopard", "Hawk", "Eagle", "Owl", 
-            "Shark", "Whale", "Dolphin", "Crocodile", "Alligator", 
-            "Octopus", "Starfish", "Turtle", "Snake", "Lizard"];
-        const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
-        return `Here is a random animal: ${randomAnimal}`;
-    }
-},{
-    pattern: /where does a (.+) live/i,
-    response: (match) => {
-        const habitats = {
-            "lion": "Lions live in grasslands, savannas, and open woodlands.",
-            "polar bear": "Polar bears live in the Arctic region.",
-            "koala": "Koalas live in eucalyptus forests in Australia.",
-            "panda": "Pandas live in the mountain ranges of central China.",
-            "shark": "Sharks live in oceans and seas around the world."
-        };
-        const animal = match[1].toLowerCase();
-        const habitat = habitats[animal] || "I don't know where that animal lives.";
-        return `A ${animal} lives in: ${habitat}`;
-    }
-},{
-    pattern: /what is the classification of a (.+)/i,
-    response: (match) => {
-        const classifications = {
-            "lion": "Lion is a mammal.",
-            "penguin": "Penguin is a bird.",
-            "crocodile": "Crocodile is a reptile.",
-            "shark": "Shark is a fish.",
-            "frog": "Frog is an amphibian."
-        };
-        const animal = match[1].toLowerCase();
-        const classification = classifications[animal] || "I don't know the classification of that animal.";
-        return `A ${animal} is: ${classification}`;
-    }
-},{
-    pattern: /how many legs does a (.+) have/i,
-    response: (match) => {
-        const legsCount = {
-            "dog": 4,
-            "cat": 4,
-            "human": 2,
-            "spider": 8,
-            "centipede": 100,
-            "elephant": 4,
-            "bird": 2
-        };
-        const animal = match[1].toLowerCase();
-        const count = legsCount[animal] || "I don't know how many legs that animal has.";
-        return `A ${animal} has ${count} legs.`;
-    }
-},{
-    pattern: /how long does a (.+) live/i,
-    response: (match) => {
-        const lifespans = {
-            "dog": "Dogs live around 10-15 years.",
-            "cat": "Cats live around 15-20 years.",
-            "elephant": "Elephants live around 60-70 years.",
-            "turtle": "Turtles can live for more than 100 years.",
-            "koala": "Koalas live around 10-12 years."
-        };
-        const animal = match[1].toLowerCase();
-        const lifespan = lifespans[animal] || "I don't know the lifespan of that animal.";
-        return `A ${animal} lives for approximately: ${lifespan}`;
-    }
-},{
-    pattern: /what is the fastest animal/i,
-    response: () => {
-        return "The fastest animal is the cheetah, which can run up to 60-70 mph!";
-    }
-},{
-    pattern: /what is the population of (.+)/i,
-    response: (match) => {
-        const populations = {
-            "tiger": "There are approximately 3,900 tigers left in the wild.",
-            "panda": "There are around 1,800 giant pandas left in the wild.",
-            "rhino": "There are fewer than 30,000 rhinos remaining worldwide.",
-            "elephant": "There are around 415,000 African elephants left in the wild."
-        };
-        const animal = match[1].toLowerCase();
-        const population = populations[animal] || "I don't have the population data for that animal.";
-        return `The population of ${animal} is: ${population}`;
-    }
-},{
-    pattern: /write a letter to (.+)/i,
-    response: (match) => {
-        const recipient = match[1];
-        return `Dear ${recipient},\n\nI hope this letter finds you in good health and spirits. I wanted to take a moment to thank you for your continued support and kindness. I appreciate all the efforts you have made, and I look forward to more collaboration in the future.\n\nBest regards,\nYour Friend`;
-    }
-},{
-    pattern: /write a paragraph about (.+)/i,
-    response: (match) => {
-        const topic = match[1];
-        return `Here is a paragraph about ${topic}:\n\n${topic} is an essential part of our daily lives. It provides us with necessary information, entertainment, and sometimes even comfort. Understanding ${topic} can help improve our overall knowledge and assist us in making informed decisions. It's important to constantly learn and stay updated about ${topic}, as it has a significant impact on various aspects of life.`;
-    }
-},{
-    pattern: /generate a sentence/i,
-    response: () => {
-        const sentences = [
-            "The sun is setting, and the sky is painted in beautiful shades of orange.",
-            "A gentle breeze swirled through the trees as the birds chirped in harmony.",
-            "The city streets were bustling with people, each heading towards their destination.",
-            "Under the starry night sky, everything seemed peaceful and quiet."
-        ];
-        const randomSentence = sentences[Math.floor(Math.random() * sentences.length)];
-        return randomSentence;
-    }
-},{
-    pattern: /tell me a story about (.+)/i,
-    response: (match) => {
-        const theme = match[1];
-        return `Once upon a time, in a land far away, there lived a brave soul who ventured through the wilderness of ${theme}. The journey was full of obstacles, but the courage of the traveler never wavered. One day, they encountered a challenge unlike any other. With intelligence, determination, and a kind heart, they overcame the hardship and became a legend in the land of ${theme}. The people of ${theme} still remember the traveler’s bravery and kindness to this day.`;
-    }
-},{
-    pattern: /give me a compliment/i,
-    response: () => {
-        const compliments = [
-            "You have a great sense of humor!",
-            "Your kindness knows no bounds.",
-            "You are truly an inspiring person!",
-            "You have such a positive attitude, it's contagious!"
-        ];
-        const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
-        return randomCompliment;
-    }
-},{
-    pattern: /give me a motivational quote/i,
-    response: () => {
-        const quotes = [
-            "The only way to do great work is to love what you do. – Steve Jobs",
-            "Success is not final, failure is not fatal: It is the courage to continue that counts. – Winston Churchill",
-            "Believe you can and you're halfway there. – Theodore Roosevelt",
-            "The best time to plant a tree was 20 years ago. The second best time is now. – Chinese Proverb",
-            "It does not matter how slowly you go as long as you do not stop. – Confucius",
-            "You are never too old to set another goal or to dream a new dream. – C.S. Lewis",
-            "Everything you can imagine is real. – Pablo Picasso",
-            "The future belongs to those who believe in the beauty of their dreams. – Eleanor Roosevelt",
-            "Don’t watch the clock; do what it does. Keep going. – Sam Levenson",
-            "Success is not how high you have climbed, but how you make a positive difference to the world. – Roy T. Bennett",
-            "Your time is limited, so don’t waste it living someone else’s life. – Steve Jobs",
-            "Opportunities don't happen, you create them. – Chris Grosser",
-            "Don’t be pushed around by the fears in your mind. Be led by the dreams in your heart. – Roy T. Bennett",
-            "Success usually comes to those who are too busy to be looking for it. – Henry David Thoreau",
-            "Act as if what you do makes a difference. It does. – William James"
-        ];
-        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-        return randomQuote;
-    }
-},{
-    pattern: /give me a fun fact/i,
-    response: () => {
-        const funFacts = [
-            "Honey never spoils. Archaeologists have found pots of honey in ancient tombs that are over 3,000 years old.",
-            "A group of flamingos is called a 'flamboyance'.",
-            "Cows have best friends and can become stressed when they are separated.",
-            "The Eiffel Tower can be 15 cm taller during the summer due to the expansion of the metal in the heat.",
-            "Bananas are berries, but strawberries are not.",
-            "Wombat poop is cube-shaped to prevent it from rolling away.",
-            "An octopus has three hearts and blue blood.",
-            "Sharks have been around longer than trees.",
-            "A day on Venus is longer than a year on Venus.",
-            "Sloths can hold their breath for up to 40 minutes underwater.",
-            "The shortest war in history lasted 38 to 45 minutes between Britain and Zanzibar on August 27, 1896.",
-            "The longest hiccuping spree lasted 68 years.",
-            "Humans share 60% of their DNA with bananas.",
-            "There are more stars in the universe than grains of sand on all the Earth’s beaches.",
-            "The world's largest desert is actually Antarctica, not the Sahara."
-        ];
-        const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
-        return randomFact;
-    }
-},{
-    pattern: /(?:translate|convert|say|how to say)\s+(.+?)\s+(?:to|in)\s+(tamil|ta)/i,
-    response: (match) => {
-        const tamilCombined = new Map([
-            // Common words
-            ["what", "என்ன"], ["this", "இது"], ["is", "ஆகும்"], ["to", "க்கு"], ["tamil", "தமிழ்"],
-            ["alagu", "அழகு"], ["arun", "அருண்"], ["kavi", "கவி"], ["hello", "வணக்கம்"], ["good", "நல்ல"],
-            ["morning", "காலை"], ["night", "இரவு"], ["food", "உணவு"], ["water", "நீர்"], ["love", "காதல்"],
-            ["friend", "நண்பர்"], ["home", "வீடு"], ["school", "பள்ளி"], ["book", "புத்தகம்"], ["pen", "பேனா"],
-            ["work", "வேலை"], ["day", "நாள்"], ["time", "நேரம்"], ["year", "வருடம்"], ["month", "மாதம்"],
-            ["week", "வாரம்"], ["today", "இன்று"], ["tomorrow", "நாளை"], ["yesterday", "நேற்று"],
-            ["yes", "ஆம்"], ["no", "இல்லை"], ["please", "தயவு செய்து"], ["thank you", "நன்றி"],
-            ["sorry", "மன்னிக்கவும்"], ["help", "உதவி"], ["name", "பெயர்"], ["age", "வயது"], ["city", "நகரம்"],
-            ["country", "நாடு"], ["language", "மொழி"], ["people", "மக்கள்"], ["child", "குழந்தை"],
-            ["man", "ஆண்"], ["woman", "பெண்"], ["family", "குடும்பம்"], ["father", "தந்தை"], ["mother", "தாய்"],
-            ["brother", "சகோதரன்"], ["sister", "சகோதரி"], ["son", "மகன்"], ["daughter", "மகள்"],
-            ["teacher", "ஆசிரியர்"], ["student", "மாணவர்"], ["doctor", "மருத்துவர்"], ["hospital", "மருத்துவமனை"],
-            ["money", "பணம்"], ["price", "விலை"], ["shop", "கடை"], ["car", "கார்"], ["bus", "பேருந்து"],
-            ["train", "ரயில்"], ["airport", "விமான நிலையம்"], ["hotel", "ஹோட்டல்"], ["room", "அறை"],
-            ["phone", "தொலைபேசி"], ["computer", "கணினி"], ["internet", "இணையம்"], ["game", "விளையாட்டு"],
-            ["music", "இசை"], ["movie", "திரைப்படம்"], ["song", "பாடல்"], ["dance", "நடனம்"], ["art", "கலை"],
-            ["color", "நிறம்"], ["red", "சிவப்பு"], ["blue", "நீலம்"], ["green", "பச்சை"], ["yellow", "மஞ்சள்"],
-            ["black", "கருப்பு"], ["white", "வெள்ளை"], ["big", "பெரிய"], ["small", "சிறிய"], ["hot", "சூடான"],
-            ["cold", "குளிர்"], ["happy", "மகிழ்ச்சி"], ["sad", "வருத்தம்"], ["angry", "கோபம்"], ["tired", "சோர்வு"],
-            ["hungry", "பசி"], ["thirsty", "தாகம்"], ["beautiful", "அழகான"], ["ugly", "அசிங்கமான"],
-            ["easy", "எளிதான"], ["difficult", "கடினமான"], ["new", "புதிய"], ["old", "பழைய"], ["young", "இளைய"],
-            ["right", "சரியான"], ["wrong", "தவறான"], ["true", "உண்மை"], ["false", "பொய்"], ["open", "திறந்த"],
-            ["close", "மூடிய"], ["start", "தொடக்கம்"], ["end", "முடிவு"], ["up", "மேல்"], ["down", "கீழ்"],
-            ["left", "இடது"], ["right", "வலது"], ["here", "இங்கே"], ["there", "அங்கே"], ["who", "யார்"],
-            ["what", "என்ன"], ["where", "எங்கே"], ["when", "எப்போது"], ["why", "ஏன்"], ["how", "எப்படி"],
-            ["which", "எது"], ["whose", "யாருடைய"], ["and", "மற்றும்"], ["or", "அல்லது"], ["but", "ஆனால்"],
-            ["because", "ஏனெனில்"], ["if", "என்றால்"], ["then", "பின்னர்"], ["now", "இப்போது"], ["later", "பின்னர்"],
-            ["always", "எப்போதும்"], ["never", "ஒருபோதும்"], ["sometimes", "சில நேரங்களில்"], ["often", "பெரும்பாலும்"],
-            ["very", "மிகவும்"], ["little", "சிறிது"], ["many", "பல"], ["few", "சில"], ["all", "அனைத்தும்"],
-            ["some", "சில"], ["none", "எதுவும் இல்லை"], ["more", "மேலும்"], ["less", "குறைவாக"], ["enough", "போதுமான"],
-            ["only", "மட்டும்"], ["also", "மேலும்"], ["even", "கூட"], ["just", "வெறும்"], ["about", "பற்றி"],
-            ["after", "பிறகு"], ["before", "முன்"], ["during", "போது"], ["until", "வரை"], ["again", "மீண்டும்"],
-            ["once", "ஒருமுறை"], ["twice", "இருமுறை"], ["first", "முதல்"], ["second", "இரண்டாம்"], ["last", "கடைசி"],
-            ["next", "அடுத்த"], ["every", "ஒவ்வொரு"], ["each", "ஒவ்வொன்றும்"], ["other", "மற்ற"], ["another", "மற்றொரு"],
-            ["same", "அதே"], ["different", "வேறுபட்ட"], ["such", "அத்தகைய"], ["own", "சொந்த"]
-        ]);
-
-        const phrase = match[1].trim().toLowerCase();
-        const language = match[2].trim().toLowerCase();
-
-        // Check if the language is Tamil
-        if (language !== "tamil" && language !== "ta") {
-            return "Sorry, I only support translation to Tamil at the moment.";
-        }
-
-        // Split the phrase into words
-        const words = phrase.split(/\s+/);
-        let translatedText = "";
-
-        // Translate each word
-        for (const word of words) {
-            if (tamilCombined.has(word)) {
-                translatedText += tamilCombined.get(word) + " ";
-            } else {
-                // Fallback: Translate character by character
-                let translatedWord = "";
-                for (let i = 0; i < word.length; i++) {
-                    const char = word[i];
-                    translatedWord += tamilCombined.get(char) || char;
-                }
-                translatedText += translatedWord + " ";
-            }
-        }
-
-        return translatedText.trim();
-    }
-},
-{ pattern: /reverse (.+)/i, response: (match) => match[1].split('').reverse().join('') },{ pattern: /count words (.+)/i, response: (match) => `Number of words: ${match[1].split(/\s+/).length}` },{ pattern: /uppercase (.+)/i, response: (match) => match[1].toUpperCase() },{ pattern: /lowercase (.+)/i, response: (match) => match[1].toLowerCase() },{ pattern: /reverse words (.+)/i, response: (match) => match[1].split(' ').map(word => word.split('').reverse().join('')).join(' ') },{ pattern: /count vowels (.+)/i, response: (match) => `Number of vowels: ${match[1].replace(/[^aeiouAEIOU]/g, "").length}` },{ pattern: /replace (.+) with (.+)/i, response: (match) => match[1].replace(new RegExp(match[1], 'gi'), match[2]) },
-
-{ 
-    pattern: /solve quadratic equation ([\d.-]+)x\^2 \+ ([\d.-]+)x \+ ([\d.-]+)/i, 
-    response: (match) => {
-        const a = parseFloat(match[1]);
-        const b = parseFloat(match[2]);
-        const c = parseFloat(match[3]);
-        const discriminant = b * b - 4 * a * c;
-
-        if (discriminant > 0) {
-            const root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-            const root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-            return `The roots are ${root1.toFixed(2)} and ${root2.toFixed(2)}`;
-        } else if (discriminant === 0) {
-            const root = -b / (2 * a);
-            return `The root is ${root.toFixed(2)}`;
-        } else {
-            return "The equation has no real roots.";
-        }
-    }
-},{ 
-    pattern: /repeat (.+) (\d+) times/i, 
-    response: (match) => {
-        const message = match[1];  
-        const times = parseInt(match[2]);  
-
-        if (times <= 0) return "Please enter a valid repeat count.";
-
-        return Array(times).fill(message).join("\n");
-    }
-},{ 
-    pattern: /split (.+)/i, 
-    response: (match) => {
-        const message = match[1];  
-        return `Split Message: ` + message.split("").join(" ");
-    }
-},{ 
-    pattern: /style (.+)/i, 
-    response: (match) => {
-        const text = match[1].toUpperCase(); // Convert input to uppercase for styling
-
-        const fancyFonts = {
-            'A': '𝐀', 'B': '𝐁', 'C': '𝐂', 'D': '𝐃', 'E': '𝐄', 'F': '𝐅', 'G': '𝐆', 
-            'H': '𝐇', 'I': '𝐈', 'J': '𝐉', 'K': '𝐊', 'L': '𝐋', 'M': '𝐌', 'N': '𝐍', 
-            'O': '𝐎', 'P': '𝐏', 'Q': '𝐐', 'R': '𝐑', 'S': '𝐒', 'T': '𝐓', 'U': '𝐔', 
-            'V': '𝐕', 'W': '𝐖', 'X': '𝐗', 'Y': '𝐘', 'Z': '𝐙'
-        };
-
-        let styledText = text.split('').map(char => fancyFonts[char] || char).join('');
-        
-        return `Styled Text: ${styledText}`;
-    }
-},{ 
-    pattern: /style2 (.+)/i, 
-    response: (match) => {
-        const text = match[1].toUpperCase(); // Convert input to uppercase
-
-        // Different font styles
-        const fontStyles = {
-            bold: { 'A': '𝐀', 'B': '𝐁', 'C': '𝐂', 'D': '𝐃', 'E': '𝐄', 'F': '𝐅', 'G': '𝐆', 
-                    'H': '𝐇', 'I': '𝐈', 'J': '𝐉', 'K': '𝐊', 'L': '𝐋', 'M': '𝐌', 'N': '𝐍', 
-                    'O': '𝐎', 'P': '𝐏', 'Q': '𝐐', 'R': '𝐑', 'S': '𝐒', 'T': '𝐓', 'U': '𝐔', 
-                    'V': '𝐕', 'W': '𝐖', 'X': '𝐗', 'Y': '𝐘', 'Z': '𝐙' },
-
-            italic: { 'A': '𝘈', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍', 'G': '𝘎',
-                      'H': '𝘏', 'I': '𝘐', 'J': '𝘑', 'K': '𝘒', 'L': '𝘓', 'M': '𝘔', 'N': '𝘕',
-                      'O': '𝘖', 'P': '𝘗', 'Q': '𝘘', 'R': '𝘙', 'S': '𝘚', 'T': '𝘛', 'U': '𝘜',
-                      'V': '𝘝', 'W': '𝘞', 'X': '𝘟', 'Y': '𝘠', 'Z': '𝘡' },
-
-            script: { 'A': '𝒜', 'B': 'ℬ', 'C': '𝒞', 'D': '𝒟', 'E': 'ℰ', 'F': 'ℱ', 'G': '𝒢',
-                      'H': 'ℋ', 'I': 'ℐ', 'J': '𝒥', 'K': '𝒦', 'L': 'ℒ', 'M': 'ℳ', 'N': '𝒩',
-                      'O': '𝒪', 'P': '𝒫', 'Q': '𝒬', 'R': 'ℛ', 'S': '𝒮', 'T': '𝒯', 'U': '𝒰',
-                      'V': '𝒱', 'W': '𝒲', 'X': '𝒳', 'Y': '𝒴', 'Z': '𝒵' }
-        };
-
-        // Convert text to each font style
-        const convertToStyle = (style) => 
-            text.split('').map(char => fontStyles[style][char] || char).join('');
-
-        return `Styled Texts:\n` +
-               `🔹 **Bold:** ${convertToStyle('bold')}\n` +
-               `🔹 *Italic:* ${convertToStyle('italic')}\n` +
-               `🔹 ✨ Script: ${convertToStyle('script')}`;
-    }
-},  
-
-{
-    pattern: /abc (.+)/i,
-    response: (match) => {
-        const text = match[1].toLowerCase();
-        const abc = {
-            "a": "b",
-            "c": "d",
-            "e": "f",
-            "g": "h",
-            "i": "j",
-            "k": "l",
-            "m": "n",
-            "o": "p",
-            "q": "r",
-            "s": "t",
-            "y": "v",
-            "w": "x",
-            "y": "z",
+        // Service category filter
+        function showServiceCategory(category) {
+            // Update active tab
+            const tabs = document.querySelectorAll('.flex.flex-wrap.justify-center.mb-8.gap-2 button');
+            tabs.forEach(tab => {
+                tab.classList.remove('tab-active', 'bg-blue-600', 'text-white');
+                tab.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('tab-active', 'bg-blue-600', 'text-white');
             
-            "b": "a",
-            "d": "c",
-            "f": "e",
-            "h": "g",
-            "j": "i",
-            "l": "k",
-            "n": "m",
-            "p": "o",
-            "r": "q",
-            "t": "s",
-            "v": "y",
-            "x": "w",
-            "z": "y"
-        };
-        const abcd = abc[text];
-        return `${abcd}`;
-    }
-},
-{
-    pattern: /stats (.+)/i,
-    response: (match) => {
-        const player = match[1];
-        return `Fetching stats for ${player}...`;
-    }
-},
-{
-    pattern: /item (.+)/i,
-    response: (match) => {
-        const item = match[1].toLowerCase();
-        const items = {
-            "sword": "⚔️ A sharp blade for close combat.",
-            "shield": "🛡️ Blocks enemy attacks.",
-            "potion": "🧪 Restores 50 HP.",
-            "bow": "🏹 Long-range weapon with arrows."
-        };
-        return items[item] || "❌ Item not found!";
-    }
-},
-{
-    pattern: /cheat (.+)/i,
-    response: (match) => {
-        const cheat = match[1].toLowerCase();
-        const cheats = {
-            "godmode": "🛡️ God Mode activated! You are now invincible.",
-            "noclip": "🚀 No-Clip enabled! You can walk through walls.",
-            "speed": "⚡ Speed Boost activated! Run 2x faster.",
-            "ammo": "🔫 Unlimited Ammo granted!"
-        };
-        return cheats[cheat] || "❌ Invalid cheat code!";
-    }
-},
-{
-    pattern: /enemy near/i,
-    response: () => {
-        return "🔍 Scanning... Enemy detected at 50m!";
-    }
-},
-{
-    pattern: /switch to (.+)/i,
-    response: (match) => {
-        const weapon = match[1].toLowerCase();
-        return `🔄 Switched to ${weapon}! Ready for battle.`;
-    }
-},
-{
-    pattern: /leaderboard/i,
-    response: () => {
-        return "🏆 Top Players:\n1. ShadowKiller - 5000 points\n2. NoobSlayer - 4800 points\n3. ProGamerX - 4500 points";
-    }
-},
-{
-    pattern: /health/i,
-    response: () => {
-        return "❤️ Your health is at 80/100 HP.";
-    }
-},
-{
-    pattern: /server status/i,
-    response: () => {
-        return "🟢 Game server is ONLINE! No issues detected.";
-    }
-},
-{
-    pattern: /start snake game/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/SnakeGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /start snakegame/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/SnakeGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /startsnake game/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/SnakeGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /startsnakegame/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/SnakeGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-
-
-
-{
-    pattern: /start Bong game/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /start Bonggame/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /startBong game/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /startBonggame/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-
-
-
-{
-    pattern: /start Car game/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /start Cargame/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /startCar game/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /startCargame/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-
-
-
-{
-    pattern: /start Jump game/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /start Jumpgame/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /startJump game/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-{
-    pattern: /startJumpgame/i,
-    response: () => {
-        const gameLink = "https://vipteammod.site/BongGame.html"; // Replace with actual game URL
-        setTimeout(() => { window.open(gameLink, "_blank"); }, 1000);
-        return "⏳ Wait ... Game Running.. (Opening Game...)";
-    }
-},
-
-{
-    pattern: /give abcd letter (\d+)/i,
-    response: (match) => {
-        const alphabet = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z".split(",");
-        let count = parseInt(match[1]);
-
-        if (count > 26) count = 26; // Limit to max 26 letters
-        if (count < 1) return "❌ Please enter a number between 1 and 26.";
-
-        return alphabet.slice(0, count).join(", ");
-    }
-},
-{
-    pattern: /what is the meaning of (.+)/i,
-    response: (match) => {
-        const term = match[1];
-        // Fetch or generate the definition for 'term'
-        return `The meaning of ${term} is...`;
-    }
-},
-{
-    pattern: /how do I (.+)/i,
-    response: (match) => {
-        const task = match[1];
-        // Provide steps or guidance on 'task'
-        return `To ${task}, you can follow these steps...`;
-    }
-},
-{
-    pattern: /what are the symptoms of (.+)/i,
-    response: (match) => {
-        const condition = match[1];
-        // Provide information about symptoms of 'condition'
-        return `The symptoms of ${condition} include...`;
-    }
-},
-{
-    pattern: /translate (.+) into (.+)/i,
-    response: (match) => {
-        const phrase = match[1].toLowerCase();
-        const language = match[2].toLowerCase();
-
-        const translations = {
-            "good morning": { "spanish": "buenos días", "french": "bonjour", "german": "guten Morgen" },
-            "hello": { "spanish": "hola", "french": "bonjour", "german": "hallo" },
-            "thank you": { "spanish": "gracias", "french": "merci", "german": "danke" }
-        };
-
-        if (translations[phrase] && translations[phrase][language]) {
-            return `The translation of '${phrase}' into ${language} is '${translations[phrase][language]}'.`;
-        } else {
-            return `Sorry, I don't have a translation for '${phrase}' in ${language}.`;
+            // Filter service cards
+            const cards = document.querySelectorAll('#serviceGrid > div');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         }
-    }
-},
-
-{
-    pattern: /tell me a joke/i,
-    response: () => {
-        // Provide a random joke
-        return "Why don't scientists trust atoms? Because they make up everything!";
-    }
-},
-{
-    pattern: /tell me about the (.+)/i,
-    response: (match) => {
-        const topic = match[1];
-        // Provide information about 'topic'
-        return `Here's some information about the ${topic}...`;
-    }
-},
-{
-    pattern: /how do I (.+) in (.+)/i,
-    response: (match) => {
-        const task = match[1];
-        const language = match[2];
-        // Provide coding assistance for 'task' in 'language'
-        return `To ${task} in ${language}, you can...`;
-    }
-},
-
-{
-    pattern: /can you give me advice on (.+)/i,
-    response: (match) => {
-        const topic = match[1];
-        // Provide advice on 'topic'
-        return `Here is some advice on ${topic}...`;
-    }
-},
-{
-    pattern: /who is (.+)/i,
-    response: async (match) => {
-        const topic = encodeURIComponent(match[1]);
-        const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${topic}`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.extract) {
-                return Promise.resolve(
-                    `📖 *Wikipedia Summary:*\n${data.extract}\n\n🔗 Read more: [${data.title}](${data.content_urls.desktop.page})`
-                );
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
             } else {
-                return Promise.resolve(`❌ No Wikipedia data found for '${match[1]}'.`);
+                backToTopButton.classList.remove('show');
             }
-        } catch (error) {
-            return Promise.resolve("⚠️ Error fetching Wikipedia data. Please try again later.");
-        }
-    }
-},
-
-
-
-    { pattern: /what is ([\d.]+) \+ ([\d.]+)/i, response: (match) => `${match[1]} + ${match[2]} = ${parseFloat(match[1]) + parseFloat(match[2])}` },
-    { pattern: /what is ([\d.]+) - ([\d.]+)/i, response: (match) => `${match[1]} - ${match[2]} = ${parseFloat(match[1]) - parseFloat(match[2])}` },
-    { pattern: /what is ([\d.]+) \* ([\d.]+)/i, response: (match) => `${match[1]} × ${match[2]} = ${(parseFloat(match[1]) * parseFloat(match[2])).toFixed(2)}` },
-    { pattern: /what is ([\d.]+) \/ ([\d.]+)/i, response: (match) => parseFloat(match[2]) !== 0 ? `${match[1]} ÷ ${match[2]} = ${(parseFloat(match[1]) / parseFloat(match[2])).toFixed(2)}` : "I can't divide by zero!" },
-    { pattern: /what is ([\d.]+)% of ([\d.]+)/i, response: (match) => `${match[1]}% of ${match[2]} = ${(parseFloat(match[1]) / 100 * parseFloat(match[2])).toFixed(2)}` },
-    { pattern: /square root of ([\d.]+)/i, response: (match) => `√${match[1]} = ${Math.sqrt(parseFloat(match[1])).toFixed(2)}` },
-    { pattern: /power of ([\d.]+) to ([\d.]+)/i, response: (match) => `${match[1]}^${match[2]} = ${Math.pow(parseFloat(match[1]), parseFloat(match[2])).toFixed(2)}` },
-    { pattern: /log of ([\d.]+)/i, response: (match) => `log(${match[1]}) = ${Math.log10(parseFloat(match[1])).toFixed(2)}` },
-    { pattern: /sin\(([\d.]+)\)/i, response: (match) => `sin(${match[1]}) = ${Math.sin((parseFloat(match[1]) * Math.PI) / 180).toFixed(2)}` },
-    { pattern: /cos\(([\d.]+)\)/i, response: (match) => `cos(${match[1]}) = ${Math.cos((parseFloat(match[1]) * Math.PI) / 180).toFixed(2)}` },
-    { pattern: /tan\(([\d.]+)\)/i, response: (match) => `tan(${match[1]}) = ${Math.tan((parseFloat(match[1]) * Math.PI) / 180).toFixed(2)}` },
-      { pattern: /what is ([\d.]+)\+([\d.]+)/i, response: (match) => `${match[1]} + ${match[2]} = ${parseFloat(match[1]) + parseFloat(match[2])}` },
-    { pattern: /what is ([\d.]+)-([\d.]+)/i, response: (match) => `${match[1]} - ${match[2]} = ${parseFloat(match[1]) - parseFloat(match[2])}` },
-    { pattern: /what is ([\d.]+)\*([\d.]+)/i, response: (match) => `${match[1]} × ${match[2]} = ${(parseFloat(match[1]) * parseFloat(match[2])).toFixed(2)}` },
-    { pattern: /what is ([\d.]+)\/([\d.]+)/i, response: (match) => parseFloat(match[2]) !== 0 ? `${match[1]} ÷ ${match[2]} = ${(parseFloat(match[1]) / parseFloat(match[2])).toFixed(2)}` : "I can't divide by zero!" },
-    
-      { pattern: /([\d.]+)\+([\d.]+)/i, response: (match) => `${match[1]} + ${match[2]} = ${parseFloat(match[1]) + parseFloat(match[2])}` },
-    { pattern: /([\d.]+)-([\d.]+)/i, response: (match) => `${match[1]} - ${match[2]} = ${parseFloat(match[1]) - parseFloat(match[2])}` },
-    { pattern: /([\d.]+)\*([\d.]+)/i, response: (match) => `${match[1]} × ${match[2]} = ${(parseFloat(match[1]) * parseFloat(match[2])).toFixed(2)}` },
-    { pattern: /([\d.]+)\/([\d.]+)/i, response: (match) => parseFloat(match[2]) !== 0 ? `${match[1]} ÷ ${match[2]} = ${(parseFloat(match[1]) / parseFloat(match[2])).toFixed(2)}` : "I can't divide by zero!" },
-    
-      { pattern: /([\d.]+) \+ ([\d.]+)/i, response: (match) => `${match[1]} + ${match[2]} = ${parseFloat(match[1]) + parseFloat(match[2])}` },
-    { pattern: /([\d.]+) - ([\d.]+)/i, response: (match) => `${match[1]} - ${match[2]} = ${parseFloat(match[1]) - parseFloat(match[2])}` },
-    { pattern: /([\d.]+) \* ([\d.]+)/i, response: (match) => `${match[1]} × ${match[2]} = ${(parseFloat(match[1]) * parseFloat(match[2])).toFixed(2)}` },
-    { pattern: /([\d.]+) \/ ([\d.]+)/i, response: (match) => parseFloat(match[2]) !== 0 ? `${match[1]} ÷ ${match[2]} = ${(parseFloat(match[1]) / parseFloat(match[2])).toFixed(2)}` : "I can't divide by zero!" },
-    
-    
-    { pattern: /.*/, response: "I'm sorry, I didn't understand that. Try asking a Math Related question!" }
-];
-
-
-let chatHistory = []; // Stores chat messages with timestamps
-
-function sendMessage() {
-    const userInput = document.getElementById("user-input").value.trim();
-    if (userInput === "") return;
-
-    const chatBox = document.getElementById("chat-box");
-
-    // Start time of chat
-    if (chatHistory.length === 0) {
-        chatHistory.push(`Chat Start: ${new Date().toLocaleString()}\n`);
-    }
-
-    // Add user message
-    const userMessage = document.createElement("div");
-    userMessage.textContent = "You : " + userInput;    
-    chatBox.appendChild(userMessage);
-    chatBox.appendChild(document.createElement("br"));
-
-    // Save user message with timestamp
-    chatHistory.push(`[${new Date().toLocaleTimeString()}] You: ${userInput}`);
-
-    // Check if user wants to clear chat
-    if (/clear all/i.test(userInput)) {
-        chatBox.innerHTML = "";
-        chatHistory = []; // Reset chat history
-        document.getElementById("user-input").value = "";        
-        return;
-    }
-
-    // Find chatbot response
-    let botReply = "Sorry, I don't understand that.";
-    for (let pair of responses) {
-        if (pair.pattern instanceof RegExp && pair.pattern.test(userInput)) {
-            botReply = typeof pair.response === "function" ? pair.response(userInput.match(pair.pattern)) : pair.response;
-            break;
-        }
-    }
-
-    setTimeout(() => {
-        const botMessage = document.createElement("div");
-        botMessage.classList.add("bot")
-        botMessage.textContent = "AI Bot : " + botReply;       
-        chatBox.appendChild(botMessage);
-        chatBox.appendChild(document.createElement("br"));
-
-        // Save bot message with timestamp
-        chatHistory.push(`[${new Date().toLocaleTimeString()}] AI Bot: ${botReply}`);
-
-        // Scroll chat to bottom
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 500);
-
-    // Clear input field
-    document.getElementById("user-input").value = "";
-}
-
-// Function to download chat history as a .txt file
-function downloadChatHistory() {
-    if (chatHistory.length > 0) {
-        chatHistory.push(`\nChat End: ${new Date().toLocaleString()}`);
-    }
-    const blob = new Blob([chatHistory.join("\n")], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "chat_history.txt";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-const downloadBtn = document.createElement("button");
-downloadBtn.textContent = "Download Chat History";
-downloadBtn.id = "downloadBtn"; // Assign the ID for styling
-downloadBtn.onclick = downloadChatHistory;
-
-
-
-// Append the button inside the chat container
-document.querySelector(".chat-container").appendChild(downloadBtn);
-
-
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Initialize Chart
+        const ctx = document.getElementById('servicesChart').getContext('2d');
+        const servicesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Birth Certificate', 'Income Certificate', 'Community Certificate', 'Driving License', 'Property Tax', 'Other Services'],
+                datasets: [{
+                    label: 'Services Delivered (in thousands)',
+                    data: [850, 620, 780, 450, 920, 380],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(107, 114, 128, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(107, 114, 128, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monthly Services Delivered',
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        });
     </script>
-
 </body>
 </html>
