@@ -7,6 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
         
@@ -125,6 +128,23 @@
         .back-to-top.show {
             display: block;
         }
+        
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 5px;
+            width: 200px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 1001;
+        }
+        
+        .user-dropdown.show {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -149,9 +169,11 @@
                         <i class="fas fa-envelope"></i>
                         <span>help@marisevai.gov.in</span>
                     </div>
-                    <a href="login.html" class="bg-white text-blue-800 px-4 py-2 rounded-md font-semibold hover:bg-blue-100 transition">
-                        <i class="fas fa-user mr-2"></i>Login / Register
-                    </a>
+                    
+                    <!-- Login/Register or User Profile Section -->
+                    <div id="authSection" class="relative">
+                        <!-- This will be updated by JavaScript based on auth state -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -1040,6 +1062,92 @@
     </button>
 
     <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+            authDomain: "vipteammod-movies.firebaseapp.com",
+            projectId: "vipteammod-movies",
+            databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com",
+            appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Update UI based on auth state
+        function updateUI(user) {
+            const authSection = document.getElementById('authSection');
+            
+            if (user) {
+                // User is signed in
+                const userEmail = user.email;
+                
+                authSection.innerHTML = `
+                    <div class="relative">
+                        <button onclick="toggleUserDropdown()" class="flex items-center bg-white text-blue-800 px-4 py-2 rounded-md font-semibold hover:bg-blue-100 transition">
+                            <i class="fas fa-user-circle mr-2"></i>
+                            <span class="truncate max-w-xs">${userEmail}</span>
+                            <i class="fas fa-chevron-down ml-2"></i>
+                        </button>
+                        <div id="userDropdown" class="user-dropdown">
+                            <a href="#" class="block px-4 py-3 text-gray-800 hover:bg-blue-50 transition">
+                                <i class="fas fa-user mr-2"></i> My Profile
+                            </a>
+                            <a href="#" class="block px-4 py-3 text-gray-800 hover:bg-blue-50 transition">
+                                <i class="fas fa-file-alt mr-2"></i> My Applications
+                            </a>
+                            <a href="#" class="block px-4 py-3 text-gray-800 hover:bg-blue-50 transition">
+                                <i class="fas fa-cog mr-2"></i> Settings
+                            </a>
+                            <div class="border-t border-gray-200 my-1"></div>
+                            <a href="#" onclick="logout()" class="block px-4 py-3 text-red-600 hover:bg-red-50 transition">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // User is signed out
+                authSection.innerHTML = `
+                    <a href="login.html" class="bg-white text-blue-800 px-4 py-2 rounded-md font-semibold hover:bg-blue-100 transition">
+                        <i class="fas fa-user mr-2"></i>Login / Register
+                    </a>
+                `;
+            }
+        }
+
+        // Toggle user dropdown
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const authSection = document.getElementById('authSection');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (!authSection.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Logout function
+        function logout() {
+            auth.signOut().then(() => {
+                // Sign-out successful
+                window.location.reload();
+            }).catch((error) => {
+                // An error happened
+                console.error('Logout error:', error);
+            });
+        }
+
+        // Listen for auth state changes
+        auth.onAuthStateChanged(user => {
+            updateUI(user);
+        });
+
         // Service category filter
         function showServiceCategory(category) {
             // Update active tab
@@ -1147,3 +1255,4 @@
     </script>
 </body>
 </html>
+
