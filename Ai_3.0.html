@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VIPTEAMMOD AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.min.js"></script>
@@ -18116,7 +18115,7 @@ class YouTubeScreenLoader {
             }
         }
         
-        return Null;
+        return null;
     }
     
     /**
@@ -18394,6 +18393,10 @@ if (/close screen|exit screen/i.test(userInputRaw)) {
     youtubeScreenLoader.closeGame();
     return;
 }
+
+
+
+
 class ScreenDrawloader {
     constructor() {
         console.log("ScreenDrawloader constructor initialized");
@@ -22128,21 +22131,24 @@ class AVUScreenLoader {
             border-top: 1px solid rgba(255, 255, 255, 0.2);
         `;
         
-        const messageInput = document.createElement('input');
-        messageInput.id = 'messageInput';
-        messageInput.type = 'text';
-        messageInput.placeholder = 'Type your message...';
-        messageInput.style.cssText = `
-            flex: 1;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 16px;
-            outline: none;
-            box-sizing: border-box;
-        `;
+const messageInput = document.createElement('input');
+messageInput.id = 'messageInput';
+messageInput.type = 'text';
+messageInput.placeholder = 'Type your message...';
+messageInput.style.cssText = `
+    flex: 1;
+    height: 50px; /* Fixed height to maintain consistency */
+    padding: 12px 15px;
+    border: none;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+    line-height: normal; /* Ensures text is vertically centered */
+    vertical-align: middle; /* Helps with vertical alignment */
+`;
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.sendMessage();
@@ -32143,7 +32149,7 @@ if (/close screen|exit screen/i.test(userInputRaw)) {
 class CameraObjectUnderstanding {
     constructor() {
         this.appName = 'CAMERA OBJECT UNDERSTANDING';
-        this.instructions = 'Use your camera or upload an image to identify and understand objects.';
+        this.instructions = 'Use your camera to identify and understand objects in real-time.';
         
         this.appContainer = null;
         this.isActive = false;
@@ -32266,8 +32272,8 @@ class CameraObjectUnderstanding {
      */
     checkBrowserSupport() {
         if (!this.hasMediaDevices) {
-            botReply('Your browser does not support camera access. Image upload will still work.');
-            // We don't return false here, as the app can still function with image upload
+            botReply('Your browser does not support camera access. Please try a different browser.');
+            return false;
         }
         
         if (!this.hasObjectDetection) {
@@ -32311,10 +32317,6 @@ class CameraObjectUnderstanding {
             @keyframes fadeIn {
                 from { opacity: 0; transform: translateY(10px); }
                 to { opacity: 1; transform: translateY(0); }
-            }
-            .tab-button.active {
-                background-color: rgba(33, 150, 243, 0.7);
-                color: white;
             }
         `;
         document.head.appendChild(styleElement);
@@ -32425,23 +32427,8 @@ class CameraObjectUnderstanding {
             padding: 20px;
         `;
         
-        // --- NEW: Tab Navigation ---
-        const tabNavigation = document.createElement('div');
-        tabNavigation.style.cssText = `
-            display: flex;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        `;
-        
-        const cameraTab = this.createTabButton('Camera', true, () => this.switchTab('camera'));
-        const uploadTab = this.createTabButton('Upload Image', false, () => this.switchTab('upload'));
-        
-        tabNavigation.appendChild(cameraTab);
-        tabNavigation.appendChild(uploadTab);
-        
-        // --- MODIFIED: Camera Container (now part of a tab content area) ---
+        // Camera container
         this.cameraContainer = document.createElement('div');
-        this.cameraContainer.id = 'camera-content';
         this.cameraContainer.style.cssText = `
             position: relative;
             width: 100%;
@@ -32450,7 +32437,6 @@ class CameraObjectUnderstanding {
             overflow: hidden;
             background-color: #000;
             margin-bottom: 20px;
-            display: block; // Initially visible
         `;
         
         // Video element for camera feed
@@ -32555,75 +32541,6 @@ class CameraObjectUnderstanding {
         this.cameraContainer.appendChild(this.videoElement);
         this.cameraContainer.appendChild(this.canvasElement);
         this.cameraContainer.appendChild(cameraControls);
-
-        // --- NEW: Upload Container ---
-        this.uploadContainer = document.createElement('div');
-        this.uploadContainer.id = 'upload-content';
-        this.uploadContainer.style.cssText = `
-            width: 100%;
-            height: 60%;
-            border-radius: 16px;
-            overflow: hidden;
-            background-color: rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-            display: none; // Initially hidden
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 18px;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        `;
-
-        const uploadPrompt = document.createElement('p');
-        uploadPrompt.textContent = 'Click to select an image or drag and drop';
-        uploadPrompt.style.marginBottom = '15px';
-
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-        fileInput.style.display = 'none'; // Hide the default input
-        fileInput.addEventListener('change', (e) => this.handleImageUpload(e));
-
-        const uploadButton = document.createElement('button');
-        uploadButton.textContent = 'Choose Image';
-        uploadButton.style.cssText = `
-            padding: 12px 25px;
-            border-radius: 8px;
-            border: none;
-            background-color: rgba(33, 150, 243, 0.8);
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        `;
-        uploadButton.addEventListener('click', () => fileInput.click());
-
-        this.uploadContainer.appendChild(uploadPrompt);
-        this.uploadContainer.appendChild(uploadButton);
-        this.uploadContainer.appendChild(fileInput);
-
-        // Add drag and drop functionality
-        this.uploadContainer.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            this.uploadContainer.style.borderColor = 'rgba(33, 150, 243, 0.8)';
-            this.uploadContainer.style.backgroundColor = 'rgba(33, 150, 243, 0.1)';
-        });
-        this.uploadContainer.addEventListener('dragleave', () => {
-            this.uploadContainer.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-            this.uploadContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-        });
-        this.uploadContainer.addEventListener('drop', (e) => {
-            e.preventDefault();
-            this.uploadContainer.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-            this.uploadContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-            if (e.dataTransfer.files.length) {
-                this.processImageFile(e.dataTransfer.files[0]);
-            }
-        });
         
         // Settings panel
         const settingsPanel = document.createElement('div');
@@ -32799,9 +32716,7 @@ class CameraObjectUnderstanding {
         `;
         this.resultDisplay.textContent = 'Loading object detection model...';
         
-        mainContent.appendChild(tabNavigation);
         mainContent.appendChild(this.cameraContainer);
-        mainContent.appendChild(this.uploadContainer);
         mainContent.appendChild(settingsPanel);
         mainContent.appendChild(resultContainer);
         resultContainer.appendChild(resultHeader);
@@ -32812,130 +32727,6 @@ class CameraObjectUnderstanding {
         
         // Initialize camera
         this.initializeCamera();
-    }
-
-    /**
-     * Create a tab button
-     */
-    createTabButton(label, isActive, onClickHandler) {
-        const button = document.createElement('button');
-        button.textContent = label;
-        button.className = 'tab-button' + (isActive ? ' active' : '');
-        button.style.cssText = `
-            padding: 10px 20px;
-            border: none;
-            background: none;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s ease;
-            margin-right: 15px;
-        `;
-        button.addEventListener('click', onClickHandler);
-        return button;
-    }
-
-    /**
-     * Switch between Camera and Upload tabs
-     */
-    switchTab(tabName) {
-        const cameraContent = document.getElementById('camera-content');
-        const uploadContent = document.getElementById('upload-content');
-        const tabButtons = document.querySelectorAll('.tab-button');
-
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-
-        if (tabName === 'camera') {
-            cameraContent.style.display = 'block';
-            uploadContent.style.display = 'none';
-            tabButtons[0].classList.add('active');
-            this.updateStatus('Camera mode activated.');
-        } else {
-            cameraContent.style.display = 'none';
-            uploadContent.style.display = 'flex';
-            tabButtons[1].classList.add('active');
-            this.updateStatus('Upload mode activated. Select an image to detect objects.');
-            // Stop continuous detection when switching to upload mode
-            this.stopContinuousDetection();
-        }
-    }
-    
-    /**
-     * Handle image upload from file input
-     */
-    handleImageUpload(event) {
-        const file = event.target.files[0];
-        if (file) {
-            this.processImageFile(file);
-        }
-    }
-
-    /**
-     * Process the selected image file
-     */
-    processImageFile(file) {
-        if (!file.type.startsWith('image/')) {
-            this.updateStatus('Please select a valid image file.');
-            return;
-        }
-
-        this.updateStatus('Processing image...');
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                // Draw the image onto the canvas for detection
-                const context = this.canvasElement.getContext('2d');
-                
-                // Set canvas dimensions to match the image
-                this.canvasElement.width = img.width;
-                this.canvasElement.height = img.height;
-
-                // Clear canvas and draw the new image
-                context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
-                context.drawImage(img, 0, 0, img.width, img.height);
-
-                // For visual feedback in the UI, we can display the image in the upload area
-                this.uploadContainer.innerHTML = ''; // Clear previous content
-                const uploadedImagePreview = document.createElement('img');
-                uploadedImagePreview.src = e.target.result;
-                uploadedImagePreview.style.cssText = `
-                    max-width: 100%;
-                    max-height: 100%;
-                    object-fit: contain;
-                    border-radius: 8px;
-                `;
-                this.uploadContainer.appendChild(uploadedImagePreview);
-
-                // Now, run object detection on the canvas
-                this.detectObjectsInCanvas();
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-
-    /**
-     * Detect objects in the current canvas (used for uploaded images)
-     */
-    async detectObjectsInCanvas() {
-        if (this.isDetecting) {
-            return;
-        }
-        
-        this.isDetecting = true;
-        this.updateStatus('Detecting objects in uploaded image...');
-        
-        try {
-            await this.processImageForObjects();
-        } catch (error) {
-            console.error('Error detecting objects in image:', error);
-            this.updateStatus('Error detecting objects: ' + error.message);
-        } finally {
-            this.isDetecting = false;
-        }
     }
     
     /**
@@ -33002,14 +32793,6 @@ class CameraObjectUnderstanding {
      * Initialize the camera
      */
     async initializeCamera() {
-        // If browser doesn't support mediaDevices, we can't initialize the camera
-        if (!this.hasMediaDevices) {
-            this.updateStatus('Camera not available. Please use the "Upload Image" tab.');
-            // Automatically switch to upload tab if camera is not available
-            this.switchTab('upload');
-            return;
-        }
-
         try {
             // Stop any existing stream
             if (this.currentStream) {
@@ -33053,9 +32836,7 @@ class CameraObjectUnderstanding {
             
         } catch (error) {
             console.error('Error initializing camera:', error);
-            this.updateStatus('Error accessing camera: ' + error.message + '. Please use the "Upload Image" tab.');
-            // Switch to upload tab on camera error
-            this.switchTab('upload');
+            this.updateStatus('Error accessing camera: ' + error.message);
         }
     }
     
@@ -33120,13 +32901,6 @@ class CameraObjectUnderstanding {
      * Start continuous object detection with maximum speed
      */
     startContinuousDetection() {
-        // Continuous detection only makes sense for camera mode
-        if (document.getElementById('upload-content').style.display === 'flex') {
-            this.updateStatus('Continuous detection is only available in camera mode.');
-            document.getElementById('mode-single-shot').checked = true;
-            return;
-        }
-
         if (this.continuousDetectionId) {
             clearInterval(this.continuousDetectionId);
         }
@@ -33299,8 +33073,8 @@ class CameraObjectUnderstanding {
             // Use the loaded model for real detection
             this.updateStatus('Detecting objects with AI model...');
             
-            // Detect objects in the canvas (which now has either video frame or uploaded image)
-            const predictions = await this.model.detect(this.canvasElement);
+            // Detect objects in the video frame
+            const predictions = await this.model.detect(this.videoElement);
             
             if (predictions && predictions.length > 0) {
                 // Convert predictions to our format
@@ -33313,7 +33087,7 @@ class CameraObjectUnderstanding {
                 
                 this.displayDetectedObjects(objects);
             } else {
-                this.updateStatus('No objects detected. Try pointing your camera at common objects or selecting a different image.');
+                this.updateStatus('No objects detected. Try pointing your camera at common objects.');
             }
             
         } catch (error) {
@@ -33700,17 +33474,10 @@ class CameraObjectUnderstanding {
     drawBoundingBox(bbox, label, confidence) {
         const context = this.canvasElement.getContext('2d');
         
-        // For uploaded images, the canvas is already the correct size.
-        // For video, we need to scale.
-        let scaleX, scaleY;
-        if (this.videoElement.videoWidth > 0) {
-            scaleX = this.canvasElement.width / this.videoElement.videoWidth;
-            scaleY = this.canvasElement.height / this.videoElement.videoHeight;
-        } else {
-            scaleX = 1;
-            scaleY = 1;
-        }
-
+        // Scale coordinates to canvas size
+        const scaleX = this.canvasElement.width / this.videoElement.videoWidth;
+        const scaleY = this.canvasElement.height / this.videoElement.videoHeight;
+        
         const x = bbox[0] * scaleX;
         const y = bbox[1] * scaleY;
         const width = bbox[2] * scaleX;
@@ -33860,9 +33627,6 @@ if (/close screen|exit screen/i.test(userInputRaw)) {
     cameraObjectUnderstanding.closeApp();
     return;
 }
-
-
-
 
 
 
@@ -39932,6 +39696,2033 @@ document.onkeydown = function (e) {
         // Call the function when the window is resized
         window.addEventListener('resize', adjustScreenSize);
     </script>
+    
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script>
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyANmru4_kH0eDNgDFURF5aZTaiPgaQ4avU",
+    authDomain: "vipteammod-movies.firebaseapp.com",
+    projectId: "vipteammod-movies",
+    databaseURL: "https://vipteammod-movies-default-rtdb.firebaseio.com",
+    appId: "1:1024721077525:android:c25e4ab10ec8e4166ad51c"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Global variables to store toggle states
+let autoCorrectEnabled = true;
+let textCompletionEnabled = true;
+
+// Main script with authentication
+document.addEventListener('DOMContentLoaded', function() {
+    // Track authentication state
+    auth.onAuthStateChanged(function(user) {
+        // Clear any existing UI elements
+        clearExistingUI();
+        
+        if (user) {
+            // User is signed in
+            initializeAppWithUser(user);
+            // Unlock message inputs
+            unlockMessageInputs();
+        } else {
+            // User is signed out
+            initializeAppWithoutUser();
+            // Lock message inputs
+            lockMessageInputs();
+        }
+    });
+
+    // Function to clear existing UI elements
+    function clearExistingUI() {
+        // Remove settings icon if it exists
+        const existingSettingsIcon = document.querySelector('[data-settings-icon]');
+        if (existingSettingsIcon) {
+            existingSettingsIcon.remove();
+        }
+        
+        // Remove login button if it exists
+        const existingLoginButton = document.querySelector('[data-login-button]');
+        if (existingLoginButton) {
+            existingLoginButton.remove();
+        }
+        
+        // Remove settings panel if it exists
+        const existingSettingsPanel = document.querySelector('[data-settings-panel]');
+        if (existingSettingsPanel) {
+            existingSettingsPanel.remove();
+        }
+    }
+
+    // Function to unlock message inputs when logged in
+    function unlockMessageInputs() {
+        const messageInputs = document.querySelectorAll('input[type="text"], input[type="search"], textarea');
+        messageInputs.forEach(input => {
+            // Store original placeholder if it exists and not already stored
+            if (!input.hasAttribute('data-original-placeholder') && input.placeholder !== 'Please login to use this feature') {
+                input.setAttribute('data-original-placeholder', input.placeholder);
+            }
+            
+            // Set the placeholder to the unlocked version
+            const originalPlaceholder = input.getAttribute('data-original-placeholder') || 'Type your message...';
+            input.placeholder = originalPlaceholder;
+            input.disabled = false;
+            input.style.backgroundColor = '';
+            input.style.cursor = '';
+            
+            // Remove the login modal click event listener if it exists
+            input.removeEventListener('click', showLoginModal);
+        });
+    }
+
+    // Function to lock message inputs when not logged in
+    function lockMessageInputs() {
+        const messageInputs = document.querySelectorAll('input[type="text"], input[type="search"], textarea');
+        messageInputs.forEach(input => {
+            // Store original placeholder if it exists and not already stored
+            if (!input.hasAttribute('data-original-placeholder') && input.placeholder !== 'Please login to use this feature') {
+                input.setAttribute('data-original-placeholder', input.placeholder);
+            }
+            
+            // Set the placeholder to the locked version
+            input.placeholder = 'Please login to use this feature';
+            input.disabled = true;
+            input.style.backgroundColor = 'rgba(240, 240, 240, 0.1)';
+            input.style.cursor = 'not-allowed';
+            
+            // Remove any existing click event listener to avoid duplicates
+            input.removeEventListener('click', showLoginModal);
+            
+            // Add click event to show login modal
+            input.addEventListener('click', showLoginModal);
+        });
+    }
+
+    function initializeAppWithUser(user) {
+        // Create settings icon with user info
+        const settingsIcon = document.createElement('div');
+        settingsIcon.setAttribute('data-settings-icon', 'true');
+        settingsIcon.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            cursor: move;
+            background-color: #0084ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 132, 255, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid white;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+        `;
+        
+        // Add user avatar or default icon
+        const userIcon = document.createElement('div');
+        userIcon.style.cssText = `
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0084ff;
+            font-weight: bold;
+            font-size: 12px;
+            overflow: hidden;
+        `;
+        
+        // Show user's initial or default icon
+        if (user.displayName) {
+            userIcon.textContent = user.displayName.charAt(0).toUpperCase();
+        } else if (user.email) {
+            userIcon.textContent = user.email.charAt(0).toUpperCase();
+        } else {
+            const settingsImage = document.createElement('img');
+            settingsImage.src = 'setting.png';
+            settingsImage.style.cssText = `
+                width: 24px;
+                height: 24px;
+                object-fit: contain;
+                filter: brightness(0) invert(1);
+            `;
+            userIcon.appendChild(settingsImage);
+        }
+        
+        settingsIcon.appendChild(userIcon);
+        
+        // Add hover effect
+        settingsIcon.addEventListener('mouseenter', () => {
+            settingsIcon.style.backgroundColor = '#0084ff';
+            settingsIcon.style.transform = 'scale(1.1)';
+            settingsIcon.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 132, 255, 0.8)';
+        });
+        
+        settingsIcon.addEventListener('mouseleave', () => {
+            settingsIcon.style.backgroundColor = '#0084ff';
+            settingsIcon.style.transform = 'scale(1)';
+            settingsIcon.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 132, 255, 0.6)';
+        });
+        
+        // Make settings icon draggable
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+        
+        settingsIcon.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+        
+        // Touch events for mobile
+        settingsIcon.addEventListener('touchstart', dragStart);
+        document.addEventListener('touchmove', drag);
+        settingsIcon.addEventListener('touchend', dragEnd);
+        
+        function dragStart(e) {
+            if (e.type === "touchstart") {
+                initialX = e.touches[0].clientX - xOffset;
+                initialY = e.touches[0].clientY - yOffset;
+            } else {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+            }
+            
+            if (e.target === settingsIcon || e.target.parentNode === settingsIcon) {
+                isDragging = true;
+                settingsIcon.style.cursor = 'grabbing';
+                settingsIcon.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 25px rgba(0, 132, 255, 0.9)';
+            }
+        }
+        
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+                
+                xOffset = currentX;
+                yOffset = currentY;
+                
+                // Keep within viewport boundaries
+                const rect = settingsIcon.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                if (rect.left < 0) {
+                    xOffset = 0;
+                } else if (rect.right > viewportWidth) {
+                    xOffset = viewportWidth - rect.width;
+                }
+                
+                if (rect.top < 0) {
+                    yOffset = 0;
+                } else if (rect.bottom > viewportHeight) {
+                    yOffset = viewportHeight - rect.height;
+                }
+                
+                setTranslate(xOffset, yOffset, settingsIcon);
+            }
+        }
+        
+        function dragEnd(e) {
+            initialX = currentX;
+            initialY = currentY;
+            isDragging = false;
+            settingsIcon.style.cursor = 'move';
+            settingsIcon.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 132, 255, 0.6)';
+        }
+        
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+        }
+        
+        // Create settings panel
+        const settingsPanel = document.createElement('div');
+        settingsPanel.setAttribute('data-settings-panel', 'true');
+        settingsPanel.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        `;
+        
+        // Create settings modal
+        const settingsModal = document.createElement('div');
+        settingsModal.style.cssText = `
+            background-color: rgba(30, 30, 40, 0.95);
+            border-radius: 16px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 132, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-family: Arial, sans-serif;
+        `;
+        
+        // Create settings header
+        const settingsHeader = document.createElement('div');
+        settingsHeader.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        
+        const settingsTitle = document.createElement('h2');
+        settingsTitle.textContent = 'Settings';
+        settingsTitle.style.cssText = `
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        `;
+        
+        // Create close button
+        const closeButton = document.createElement('div');
+        closeButton.innerHTML = '✕';
+        closeButton.style.cssText = `
+            font-size: 20px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.2s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        `;
+        
+        closeButton.addEventListener('mouseenter', () => {
+            closeButton.style.color = 'white';
+            closeButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            
+            autoCorrectEnabled = autoCorrectToggle.input.checked;
+            textCompletionEnabled = aiCompletionToggle.input.checked;
+            
+            // Apply the settings immediately
+            applySettings();
+            
+            settingsPanel.style.display = 'none';
+         /*   showNotification('Settings saved successfully');*/
+        });
+        // Set up a timer to call applySettings() every second
+function initializeSettingsTimer() {
+    // Call applySettings() immediately once
+    applySettings();
+    
+    // Then set up an interval to call it every second
+    setInterval(applySettings, 1000);
+}
+
+// Add this to your initialization code
+// Call this function after your DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Your existing initialization code...
+    
+    // Add this line to start the timer
+    initializeSettingsTimer();
+});
+        closeButton.addEventListener('mouseleave', () => {
+            closeButton.style.color = 'rgba(255, 255, 255, 0.7)';
+            closeButton.style.backgroundColor = 'transparent';
+        });
+        
+        settingsHeader.appendChild(settingsTitle);
+        settingsHeader.appendChild(closeButton);
+        
+        // Create user info section
+        const userInfoSection = document.createElement('div');
+        userInfoSection.style.cssText = `
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        `;
+        
+        const userAvatar = document.createElement('div');
+        userAvatar.style.cssText = `
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0084ff;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+            overflow: hidden;
+        `;
+        
+        if (user.displayName) {
+            userAvatar.textContent = user.displayName.charAt(0).toUpperCase();
+        } else if (user.email) {
+            userAvatar.textContent = user.email.charAt(0).toUpperCase();
+        }
+        
+        const userDetails = document.createElement('div');
+        
+        const userName = document.createElement('div');
+        userName.textContent = user.displayName || 'User';
+        userName.style.cssText = `
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        `;
+        
+        const userEmail = document.createElement('div');
+        userEmail.textContent = user.email;
+        userEmail.style.cssText = `
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        `;
+        
+        userDetails.appendChild(userName);
+        userDetails.appendChild(userEmail);
+        
+        userInfoSection.appendChild(userAvatar);
+        userInfoSection.appendChild(userDetails);
+        
+        // Create settings content
+        const settingsContent = document.createElement('div');
+        settingsContent.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        // Create toggle container for auto-correction
+        const autoCorrectToggle = createToggleOption('Auto-Correction', 'Automatically correct spelling and grammar mistakes as you type.', autoCorrectEnabled);
+        
+        // Create toggle container for AI text completion
+        const aiCompletionToggle = createToggleOption('Text Completion', 'Suggest text completions as you type.', textCompletionEnabled);
+        
+        // Create logout button
+        const logoutButton = document.createElement('button');
+        logoutButton.textContent = 'Logout';
+        logoutButton.style.cssText = `
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+            width: 100%;
+            margin-top: 10px;
+        `;
+        
+        logoutButton.addEventListener('mouseenter', () => {
+            logoutButton.style.backgroundColor = '#e60000';
+            logoutButton.style.boxShadow = '0 0 15px rgba(255, 77, 77, 0.5)';
+        });
+        
+        logoutButton.addEventListener('mouseleave', () => {
+            logoutButton.style.backgroundColor = '#ff4d4d';
+            logoutButton.style.boxShadow = '0 0 10px rgba(255, 77, 77, 0.3)';
+        });
+        
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                settingsPanel.style.display = 'none';
+                showNotification('You have been logged out successfully');
+                // The auth state change will trigger the UI update
+            }).catch((error) => {
+                showNotification('Error logging out: ' + error.message, 'error');
+            });
+        });
+        
+        // Create settings footer
+        const settingsFooter = document.createElement('div');
+        settingsFooter.style.cssText = `
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        
+
+        // Assemble settings modal
+        settingsContent.appendChild(userInfoSection);
+        settingsContent.appendChild(autoCorrectToggle.container);
+        settingsContent.appendChild(aiCompletionToggle.container);
+        settingsContent.appendChild(logoutButton);
+        settingsModal.appendChild(settingsHeader);
+        settingsModal.appendChild(settingsContent);
+        settingsModal.appendChild(settingsFooter);
+        settingsPanel.appendChild(settingsModal);
+        
+        // Add elements to document
+        document.body.appendChild(settingsIcon);
+        document.body.appendChild(settingsPanel);
+        
+        // Add event listeners
+        settingsIcon.addEventListener('click', (e) => {
+            // Only open settings if not dragging
+            if (!isDragging) {
+                settingsPanel.style.display = 'flex';
+            }
+        });
+        
+        closeButton.addEventListener('click', () => {
+            settingsPanel.style.display = 'none';
+        });
+        
+        // Close settings when clicking outside modal
+        settingsPanel.addEventListener('click', (e) => {
+            if (e.target === settingsPanel) {
+                settingsPanel.style.display = 'none';
+            }
+        });
+        
+        // Initialize auto-correction and text completion
+        initializeAutoCorrectionAndCompletion();
+    }
+
+    function initializeAppWithoutUser() {
+        // Create login button
+        const loginButton = document.createElement('button');
+        loginButton.setAttribute('data-login-button', 'true');
+        loginButton.textContent = 'Login';
+        loginButton.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 132, 255, 0.6);
+            backdrop-filter: blur(5px);
+        `;
+        
+        loginButton.addEventListener('mouseenter', () => {
+            loginButton.style.backgroundColor = '#0070e0';
+            loginButton.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 132, 255, 0.8)';
+        });
+        
+        loginButton.addEventListener('mouseleave', () => {
+            loginButton.style.backgroundColor = '#0084ff';
+            loginButton.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 132, 255, 0.6)';
+        });
+        
+        loginButton.addEventListener('click', () => {
+            showLoginModal();
+        });
+        
+        document.body.appendChild(loginButton);
+        
+        // Initialize auto-correction and text completion without user-specific features
+        initializeAutoCorrectionAndCompletion();
+    }
+
+    function showLoginModal() {
+        // Create login modal
+        const loginModal = document.createElement('div');
+        loginModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        `;
+        
+        // Create login form container
+        const loginContainer = document.createElement('div');
+        loginContainer.style.cssText = `
+            background-color: rgba(30, 30, 40, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 132, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-family: Arial, sans-serif;
+        `;
+        
+        // Create login header
+        const loginHeader = document.createElement('div');
+        loginHeader.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        
+        const loginTitle = document.createElement('h2');
+        loginTitle.textContent = 'Login';
+        loginTitle.style.cssText = `
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+        `;
+        
+        // Create close button
+        const closeLoginButton = document.createElement('div');
+        closeLoginButton.innerHTML = '✕';
+        closeLoginButton.style.cssText = `
+            font-size: 20px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.2s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        `;
+        
+        closeLoginButton.addEventListener('mouseenter', () => {
+            closeLoginButton.style.color = 'white';
+            closeLoginButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+        });
+        
+        closeLoginButton.addEventListener('mouseleave', () => {
+            closeLoginButton.style.color = 'rgba(255, 255, 255, 0.7)';
+            closeLoginButton.style.backgroundColor = 'transparent';
+        });
+        
+        closeLoginButton.addEventListener('click', () => {
+            document.body.removeChild(loginModal);
+        });
+        
+        loginHeader.appendChild(loginTitle);
+        loginHeader.appendChild(closeLoginButton);
+        
+        // Create login form
+        const loginForm = document.createElement('form');
+        loginForm.style.cssText = `
+            display: flex;
+            flex-direction: column;
+        `;
+        
+        // Email input
+        const emailContainer = document.createElement('div');
+        emailContainer.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        const emailLabel = document.createElement('label');
+        emailLabel.textContent = 'Email';
+        emailLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        const emailInput = document.createElement('input');
+        emailInput.type = 'email';
+        emailInput.placeholder = 'Enter your email';
+        emailInput.required = true;
+        emailInput.style.cssText = `
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        `;
+        
+        emailContainer.appendChild(emailLabel);
+        emailContainer.appendChild(emailInput);
+        
+        // Password input
+        const passwordContainer = document.createElement('div');
+        passwordContainer.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        const passwordLabel = document.createElement('label');
+        passwordLabel.textContent = 'Password';
+        passwordLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        const passwordInput = document.createElement('input');
+        passwordInput.type = 'password';
+        passwordInput.placeholder = 'Enter your password';
+        passwordInput.required = true;
+        passwordInput.style.cssText = `
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        `;
+        
+        passwordContainer.appendChild(passwordLabel);
+        passwordContainer.appendChild(passwordInput);
+        
+        // Remember me and forgot password
+        const optionsContainer = document.createElement('div');
+        optionsContainer.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        `;
+        
+        // Remember me
+        const rememberContainer = document.createElement('div');
+        rememberContainer.style.cssText = `
+            display: flex;
+            align-items: center;
+        `;
+        
+        const rememberCheckbox = document.createElement('input');
+        rememberCheckbox.type = 'checkbox';
+        rememberCheckbox.id = 'remember';
+        rememberCheckbox.style.cssText = `
+            margin-right: 8px;
+        `;
+        
+        const rememberLabel = document.createElement('label');
+        rememberLabel.htmlFor = 'remember';
+        rememberLabel.textContent = 'Remember me';
+        rememberLabel.style.cssText = `
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        rememberContainer.appendChild(rememberCheckbox);
+        rememberContainer.appendChild(rememberLabel);
+        
+        // Forgot password
+        const forgotPassword = document.createElement('a');
+        forgotPassword.textContent = 'Forgot password?';
+        forgotPassword.href = '#';
+        forgotPassword.style.cssText = `
+            font-size: 14px;
+            color: #0084ff;
+            text-decoration: none;
+        `;
+        
+        forgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            showNotification('Password reset functionality would be implemented here');
+        });
+        
+        optionsContainer.appendChild(rememberContainer);
+        optionsContainer.appendChild(forgotPassword);
+        
+        // Login button
+        const loginSubmitButton = document.createElement('button');
+        loginSubmitButton.type = 'submit';
+        loginSubmitButton.textContent = 'Login';
+        loginSubmitButton.style.cssText = `
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 10px rgba(0, 132, 255, 0.3);
+            margin-bottom: 20px;
+        `;
+        
+        loginSubmitButton.addEventListener('mouseenter', () => {
+            loginSubmitButton.style.backgroundColor = '#0070e0';
+            loginSubmitButton.style.boxShadow = '0 0 15px rgba(0, 132, 255, 0.5)';
+        });
+        
+        loginSubmitButton.addEventListener('mouseleave', () => {
+            loginSubmitButton.style.backgroundColor = '#0084ff';
+            loginSubmitButton.style.boxShadow = '0 0 10px rgba(0, 132, 255, 0.3)';
+        });
+        
+        // Sign up link
+        const signupContainer = document.createElement('div');
+        signupContainer.style.cssText = `
+            text-align: center;
+            margin-top: 10px;
+        `;
+        
+        const signupText = document.createElement('span');
+        signupText.textContent = "Don't have an account? ";
+        signupText.style.cssText = `
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        const signupLink = document.createElement('a');
+        signupLink.textContent = 'Sign up';
+        signupLink.href = '#';
+        signupLink.style.cssText = `
+            font-size: 14px;
+            color: #0084ff;
+            text-decoration: none;
+            font-weight: 500;
+        `;
+        
+        signupLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.body.removeChild(loginModal);
+            showSignupModal();
+        });
+        
+        signupContainer.appendChild(signupText);
+        signupContainer.appendChild(signupLink);
+        
+        // Error message container
+        const errorMessage = document.createElement('div');
+        errorMessage.style.cssText = `
+            color: #ff4d4d;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        `;
+        
+        // Assemble login form
+        loginForm.appendChild(emailContainer);
+        loginForm.appendChild(passwordContainer);
+        loginForm.appendChild(optionsContainer);
+        loginForm.appendChild(loginSubmitButton);
+        loginForm.appendChild(errorMessage);
+        loginForm.appendChild(signupContainer);
+        
+        // Handle form submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            const remember = rememberCheckbox.checked;
+            
+            // Show loading state
+            loginSubmitButton.textContent = 'Logging in...';
+            loginSubmitButton.disabled = true;
+            
+            // Sign in with Firebase
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed in successfully
+                    const user = userCredential.user;
+                    document.body.removeChild(loginModal);
+                    showNotification('Login successful');
+                })
+                .catch((error) => {
+                    // Handle errors
+                    const errorCode = error.code;
+                    const errorText = getErrorMessage(errorCode);
+                    
+                    errorMessage.textContent = errorText;
+                    errorMessage.style.display = 'block';
+                    
+                    // Reset button state
+                    loginSubmitButton.textContent = 'Login';
+                    loginSubmitButton.disabled = false;
+                });
+        });
+        
+        // Assemble login modal
+        loginContainer.appendChild(loginHeader);
+        loginContainer.appendChild(loginForm);
+        loginModal.appendChild(loginContainer);
+        
+        // Add to document
+        document.body.appendChild(loginModal);
+        
+        // Focus on email input
+        setTimeout(() => {
+            emailInput.focus();
+        }, 100);
+    }
+
+    function showSignupModal() {
+        // Create signup modal (similar to login modal)
+        const signupModal = document.createElement('div');
+        signupModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        `;
+        
+        // Create signup form container
+        const signupContainer = document.createElement('div');
+        signupContainer.style.cssText = `
+            background-color: rgba(30, 30, 40, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 132, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-family: Arial, sans-serif;
+        `;
+        
+        // Create signup header
+        const signupHeader = document.createElement('div');
+        signupHeader.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        
+        const signupTitle = document.createElement('h2');
+        signupTitle.textContent = 'Sign Up';
+        signupTitle.style.cssText = `
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+        `;
+        
+        // Create close button
+        const closeSignupButton = document.createElement('div');
+        closeSignupButton.innerHTML = '✕';
+        closeSignupButton.style.cssText = `
+            font-size: 20px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.2s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        `;
+        
+        closeSignupButton.addEventListener('mouseenter', () => {
+            closeSignupButton.style.color = 'white';
+            closeSignupButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+        });
+        
+        closeSignupButton.addEventListener('mouseleave', () => {
+            closeSignupButton.style.color = 'rgba(255, 255, 255, 0.7)';
+            closeSignupButton.style.backgroundColor = 'transparent';
+        });
+        
+        closeSignupButton.addEventListener('click', () => {
+            document.body.removeChild(signupModal);
+        });
+        
+        signupHeader.appendChild(signupTitle);
+        signupHeader.appendChild(closeSignupButton);
+        
+        // Create signup form
+        const signupForm = document.createElement('form');
+        signupForm.style.cssText = `
+            display: flex;
+            flex-direction: column;
+        `;
+        
+        // Name input
+        const nameContainer = document.createElement('div');
+        nameContainer.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        const nameLabel = document.createElement('label');
+        nameLabel.textContent = 'Full Name';
+        nameLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.placeholder = 'Enter your full name';
+        nameInput.required = true;
+        nameInput.style.cssText = `
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        `;
+        
+        nameContainer.appendChild(nameLabel);
+        nameContainer.appendChild(nameInput);
+        
+        // Email input
+        const emailContainer = document.createElement('div');
+        emailContainer.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        const emailLabel = document.createElement('label');
+        emailLabel.textContent = 'Email';
+        emailLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        const emailInput = document.createElement('input');
+        emailInput.type = 'email';
+        emailInput.placeholder = 'Enter your email';
+        emailInput.required = true;
+        emailInput.style.cssText = `
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        `;
+        
+        emailContainer.appendChild(emailLabel);
+        emailContainer.appendChild(emailInput);
+        
+        // Password input
+        const passwordContainer = document.createElement('div');
+        passwordContainer.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        const passwordLabel = document.createElement('label');
+        passwordLabel.textContent = 'Password';
+        passwordLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        const passwordInput = document.createElement('input');
+        passwordInput.type = 'password';
+        passwordInput.placeholder = 'Enter your password';
+        passwordInput.required = true;
+        passwordInput.style.cssText = `
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        `;
+        
+        passwordContainer.appendChild(passwordLabel);
+        passwordContainer.appendChild(passwordInput);
+        
+        // Confirm password input
+        const confirmPasswordContainer = document.createElement('div');
+        confirmPasswordContainer.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        const confirmPasswordLabel = document.createElement('label');
+        confirmPasswordLabel.textContent = 'Confirm Password';
+        confirmPasswordLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        const confirmPasswordInput = document.createElement('input');
+        confirmPasswordInput.type = 'password';
+        confirmPasswordInput.placeholder = 'Confirm your password';
+        confirmPasswordInput.required = true;
+        confirmPasswordInput.style.cssText = `
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        `;
+        
+        confirmPasswordContainer.appendChild(confirmPasswordLabel);
+        confirmPasswordContainer.appendChild(confirmPasswordInput);
+        
+        // Terms and conditions
+        const termsContainer = document.createElement('div');
+        termsContainer.style.cssText = `
+            margin-bottom: 20px;
+        `;
+        
+        const termsCheckbox = document.createElement('input');
+        termsCheckbox.type = 'checkbox';
+        termsCheckbox.id = 'terms';
+        termsCheckbox.required = true;
+        termsCheckbox.style.cssText = `
+            margin-right: 8px;
+        `;
+        
+        const termsLabel = document.createElement('label');
+        termsLabel.htmlFor = 'terms';
+        termsLabel.innerHTML = 'I agree to the <a href="#" style="color: #0084ff;">Terms and Conditions</a>';
+        termsLabel.style.cssText = `
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        termsContainer.appendChild(termsCheckbox);
+        termsContainer.appendChild(termsLabel);
+        
+        // Sign up button
+        const signupSubmitButton = document.createElement('button');
+        signupSubmitButton.type = 'submit';
+        signupSubmitButton.textContent = 'Sign Up';
+        signupSubmitButton.style.cssText = `
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 10px rgba(0, 132, 255, 0.3);
+            margin-bottom: 20px;
+        `;
+        
+        signupSubmitButton.addEventListener('mouseenter', () => {
+            signupSubmitButton.style.backgroundColor = '#0070e0';
+            signupSubmitButton.style.boxShadow = '0 0 15px rgba(0, 132, 255, 0.5)';
+        });
+        
+        signupSubmitButton.addEventListener('mouseleave', () => {
+            signupSubmitButton.style.backgroundColor = '#0084ff';
+            signupSubmitButton.style.boxShadow = '0 0 10px rgba(0, 132, 255, 0.3)';
+        });
+        
+        // Login link
+        const loginContainer = document.createElement('div');
+        loginContainer.style.cssText = `
+            text-align: center;
+            margin-top: 10px;
+        `;
+        
+        const loginText = document.createElement('span');
+        loginText.textContent = "Already have an account? ";
+        loginText.style.cssText = `
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        `;
+        
+        const loginLink = document.createElement('a');
+        loginLink.textContent = 'Login';
+        loginLink.href = '#';
+        loginLink.style.cssText = `
+            font-size: 14px;
+            color: #0084ff;
+            text-decoration: none;
+            font-weight: 500;
+        `;
+        
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.body.removeChild(signupModal);
+            showLoginModal();
+        });
+        
+        loginContainer.appendChild(loginText);
+        loginContainer.appendChild(loginLink);
+        
+        // Error message container
+        const errorMessage = document.createElement('div');
+        errorMessage.style.cssText = `
+            color: #ff4d4d;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        `;
+        
+        // Assemble signup form
+        signupForm.appendChild(nameContainer);
+        signupForm.appendChild(emailContainer);
+        signupForm.appendChild(passwordContainer);
+        signupForm.appendChild(confirmPasswordContainer);
+        signupForm.appendChild(termsContainer);
+        signupForm.appendChild(signupSubmitButton);
+        signupForm.appendChild(errorMessage);
+        signupForm.appendChild(loginContainer);
+        
+        // Handle form submission
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = nameInput.value;
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const terms = termsCheckbox.checked;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Show loading state
+            signupSubmitButton.textContent = 'Creating account...';
+            signupSubmitButton.disabled = true;
+            
+            // Create user with Firebase
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed up successfully
+                    const user = userCredential.user;
+                    
+                    // Update user profile with display name
+                    return user.updateProfile({
+                        displayName: name
+                    }).then(() => {
+                        document.body.removeChild(signupModal);
+                        showNotification('Account created successfully');
+                    });
+                })
+                .catch((error) => {
+                    // Handle errors
+                    const errorCode = error.code;
+                    const errorText = getErrorMessage(errorCode);
+                    
+                    errorMessage.textContent = errorText;
+                    errorMessage.style.display = 'block';
+                    
+                    // Reset button state
+                    signupSubmitButton.textContent = 'Sign Up';
+                    signupSubmitButton.disabled = false;
+                });
+        });
+        
+        // Assemble signup modal
+        signupContainer.appendChild(signupHeader);
+        signupContainer.appendChild(signupForm);
+        signupModal.appendChild(signupContainer);
+        
+        // Add to document
+        document.body.appendChild(signupModal);
+        
+        // Focus on name input
+        setTimeout(() => {
+            nameInput.focus();
+        }, 100);
+    }
+
+    // Helper function to get user-friendly error messages
+    function getErrorMessage(errorCode) {
+        switch (errorCode) {
+            case 'auth/email-already-in-use':
+                return 'Email already in use';
+            case 'auth/invalid-email':
+                return 'Invalid email address';
+            case 'auth/operation-not-allowed':
+                return 'Operation not allowed';
+            case 'auth/weak-password':
+                return 'Password is too weak';
+            case 'auth/user-disabled':
+                return 'Account has been disabled';
+            case 'auth/user-not-found':
+                return 'No account found with this email';
+            case 'auth/wrong-password':
+                return 'Incorrect password';
+            case 'auth/too-many-requests':
+                return 'Too many requests. Try again later';
+            case 'auth/network-request-failed':
+                return 'Network error. Check your connection';
+            default:
+                return 'An error occurred. Please try again';
+        }
+    }
+
+    // Helper function to show notifications
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: ${type === 'success' ? '#4caf50' : '#ff4d4d'};
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 10003;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        `;
+        
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        // Fade in
+        setTimeout(() => {
+            notification.style.opacity = '1';
+        }, 10);
+        
+        // Fade out and remove
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Function to create toggle option
+    function createToggleOption(label, description, defaultState) {
+        const container = document.createElement('div');
+        container.style.cssText = `
+            margin-bottom: 15px;
+        `;
+        
+        const toggleContainer = document.createElement('div');
+        toggleContainer.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        `;
+        
+        const labelContainer = document.createElement('div');
+        
+        const toggleLabel = document.createElement('span');
+        toggleLabel.textContent = label;
+        toggleLabel.style.cssText = `
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+            display: block;
+            margin-bottom: 4px;
+        `;
+        
+        const toggleDescription = document.createElement('span');
+        toggleDescription.textContent = description;
+        toggleDescription.style.cssText = `
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            display: block;
+        `;
+        
+        labelContainer.appendChild(toggleLabel);
+        labelContainer.appendChild(toggleDescription);
+        
+        // Create toggle switch
+        const toggleSwitch = document.createElement('label');
+        toggleSwitch.style.cssText = `
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        `;
+        
+        const toggleInput = document.createElement('input');
+        toggleInput.type = 'checkbox';
+        toggleInput.style.cssText = `
+            opacity: 0;
+            width: 0;
+            height: 0;
+        `;
+        toggleInput.checked = defaultState;
+        
+        const toggleSlider = document.createElement('span');
+        toggleSlider.style.cssText = `
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+            border: 0.5px solid white;
+        `;
+        
+        const toggleSliderBefore = document.createElement('span');
+        toggleSliderBefore.style.cssText = `
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            border: 0.5px solid #0084ff;
+            box-shadow: 0 0 5px rgba(0, 132, 255, 0.5);
+        `;
+        
+        toggleSlider.appendChild(toggleSliderBefore);
+        toggleSwitch.appendChild(toggleInput);
+        toggleSwitch.appendChild(toggleSlider);
+        
+        toggleContainer.appendChild(labelContainer);
+        toggleContainer.appendChild(toggleSwitch);
+        container.appendChild(toggleContainer);
+        
+        // Add event listener for toggle switch
+        toggleInput.addEventListener('change', function() {
+            if (this.checked) {
+                toggleSlider.style.backgroundColor = '#0084ff';
+                toggleSliderBefore.style.transform = 'translateX(26px)';
+                toggleSliderBefore.style.border = '0.5px solid white';
+                toggleSliderBefore.style.boxShadow = '0 0 8px rgba(255, 255, 255, 0.7)';
+            } else {
+                toggleSlider.style.backgroundColor = '#ccc';
+                toggleSliderBefore.style.transform = 'translateX(0)';
+                toggleSliderBefore.style.border = '0.5px solid #0084ff';
+                toggleSliderBefore.style.boxShadow = '0 0 5px rgba(0, 132, 255, 0.5)';
+            }
+        });
+        
+        // Initialize toggle state
+        if (toggleInput.checked) {
+            toggleSlider.style.backgroundColor = '#0084ff';
+            toggleSliderBefore.style.transform = 'translateX(26px)';
+            toggleSliderBefore.style.border = '0.5px solid white';
+            toggleSliderBefore.style.boxShadow = '0 0 8px rgba(255, 255, 255, 0.7)';
+        }
+        
+        return {
+            container: container,
+            input: toggleInput
+        };
+    }
+
+    // Enhanced correction rules
+    const correctionRules = [
+        // Common spelling errors
+        { pattern: /\bteh\b/gi, replacement: "the" },
+        { pattern: /\btha\b/gi, replacement: "the" },
+        { pattern: /\bthier\b/gi, replacement: "their" },
+        { pattern: /\brecieve\b/gi, replacement: "receive" },
+        { pattern: /\bseperate\b/gi, replacement: "separate" },
+        { pattern: /\boccured\b/gi, replacement: "occurred" },
+        { pattern: /\bdefinately\b/gi, replacement: "definitely" },
+        { pattern: /\bgoverment\b/gi, replacement: "government" },
+        { pattern: /\bexistance\b/gi, replacement: "existence" },
+        { pattern: /\bneccessary\b/gi, replacement: "necessary" },
+        { pattern: /\bembarass\b/gi, replacement: "embarrass" },
+        { pattern: /\barguement\b/gi, replacement: "argument" },
+        { pattern: /\bcomitted\b/gi, replacement: "committed" },
+        { pattern: /\bconsious\b/gi, replacement: "conscious" },
+        { pattern: /\bconcious\b/gi, replacement: "conscious" },
+        { pattern: /\bfamilar\b/gi, replacement: "familiar" },
+        { pattern: /\bimediately\b/gi, replacement: "immediately" },
+        { pattern: /\bocasion\b/gi, replacement: "occasion" },
+        { pattern: /\bpublically\b/gi, replacement: "publicly" },
+        { pattern: /\brecomend\b/gi, replacement: "recommend" },
+        { pattern: /\bsupercede\b/gi, replacement: "supersede" },
+        { pattern: /\buntill\b/gi, replacement: "until" },
+        { pattern: /\bwierd\b/gi, replacement: "weird" },
+        
+        // More spelling errors (abbreviated for space)
+        { pattern: /\baccomodate\b/gi, replacement: "accommodate" },
+        { pattern: /\bacheive\b/gi, replacement: "achieve" },
+        { pattern: /\baccross\b/gi, replacement: "across" },
+        { pattern: /\bagressive\b/gi, replacement: "aggressive" },
+        { pattern: /\bapparant\b/gi, replacement: "apparent" },
+        { pattern: /\bbegining\b/gi, replacement: "beginning" },
+        { pattern: /\bbelive\b/gi, replacement: "believe" },
+        { pattern: /\bbuisness\b/gi, replacement: "business" },
+        { pattern: /\bcalender\b/gi, replacement: "calendar" },
+        { pattern: /\bcollegue\b/gi, replacement: "colleague" },
+        
+        // Capitalization errors
+        { pattern: /\bi\b/g, replacement: "I" },
+        { pattern: /\bi'(\w)/gi, replacement: (match, p1) => `I'${p1}` },
+        { pattern: /^(\s*)([a-z])/gm, replacement: (match, p1, p2) => `${p1}${p2.toUpperCase()}` },
+        
+        // Punctuation errors
+        { pattern: /\.(\s*)([a-z])/g, replacement: (match, p1, p2) => `. ${p2.toUpperCase()}` },
+        { pattern: /\?(\s*)([a-z])/g, replacement: (match, p1, p2) => `? ${p2.toUpperCase()}` },
+        { pattern: /\!(\s*)([a-z])/g, replacement: (match, p1, p2) => `! ${p2.toUpperCase()}` },
+        { pattern: /\s+([.!?])/g, replacement: "$1" },
+        { pattern: /([.!?])(?=[a-zA-Z])/g, replacement: "$1 " },
+        
+        // Common word mistakes
+        { pattern: /\bwhats\b/gi, replacement: "what's" },
+        { pattern: /\byour\s+welcome\b/gi, replacement: "you're welcome" },
+        { pattern: /\bit's\s+a\b/gi, replacement: "its a" },
+        { pattern: /\byou're\s+a\b/gi, replacement: "your a" },
+        { pattern: /\bto\s+be\s+continue\b/gi, replacement: "to be continued" },
+        { pattern: /\balot\b/gi, replacement: "a lot" },
+        { pattern: /\bcan\s+not\b/gi, replacement: "cannot" },
+        { pattern: /\bevery\s+day\b/gi, replacement: "everyday" },
+        { pattern: /\bin\s+to\b/gi, replacement: "into" },
+        { pattern: /\bkind\s+of\b/gi, replacement: "kind of" },
+        { pattern: /\bloose\b/gi, replacement: "lose" },
+        
+        // More common word mistakes (abbreviated for space)
+        { pattern: /\baffect\b/gi, replacement: "effect" },
+        { pattern: /\beffect\b/gi, replacement: "affect" },
+        { pattern: /\baccept\b/gi, replacement: "except" },
+        { pattern: /\bexcept\b/gi, replacement: "accept" },
+        { pattern: /\badvice\b/gi, replacement: "advise" },
+        { pattern: /\badvise\b/gi, replacement: "advice" },
+        { pattern: /\baisle\b/gi, replacement: "isle" },
+        { pattern: /\bisle\b/gi, replacement: "aisle" }
+    ];
+
+    // Enhanced text completion suggestions
+    const completionSuggestions = {
+        // Greetings
+        "hello": [" there!", " world!", " everyone!", " how are you?"],
+        "hi": [" there!", " everyone!", " how are you?"],
+        "good morning": [",", " everyone", " sir", " ma'am"],
+        "good afternoon": [",", " everyone", " sir", " ma'am"],
+        "good evening": [",", " everyone", " sir", " ma'am"],
+        
+        // Gratitude
+        "thank": [" you", " you very much", " you so much", " you for your time"],
+        "thanks": [" for", [" everything", " your help", " your time"], " so much"],
+        "i appreciate": [" it", [" your help", " your time", " your consideration"], " the opportunity"],
+        
+        // Common phrases
+        "i think": [" that", [" so", " you should", " we should"], " it's important"],
+        "i believe": [" that", [" so", " we can", " it will"], " in"],
+        "i would": [" like to", [" recommend", " suggest", " know"], " appreciate it if"],
+        "i will": [" be", [" there", " happy to", " in touch"], " let you know"],
+        "i am": [" writing to", [" interested in", " looking for", " happy to"], " not sure"],
+        
+        // Business communication
+        "please": [" let me know", [" send me", " help me", " advise me"], " find attached"],
+        "could you": [" please", [" let me know", " send me", " advise me"], " clarify"],
+        "would you": [" like to", [" be able to", " mind", " please"], " consider"],
+        "looking forward": [" to", [" seeing you", " hearing from you", " it"], " our meeting"],
+        "as soon as": [" possible", [" you can", " I get back"], " convenient"],
+        
+        // Closing phrases
+        "best regards": [",", " to you", " and thanks"],
+        "sincerely": [",", " yours", " thank you"],
+        "yours truly": [",", " sincerely"],
+        "kind regards": [",", " to you"],
+        "many thanks": [" for", [" your help", " your time", " considering"], " in advance"],
+        
+        // Questions
+        "how are": [" you", [" you doing", " things going"], " you feeling"],
+        "what do": [" you think", [" you mean", " you suggest"], " you recommend"],
+        "when can": [" we", [" you", " I", " they"], " we expect"],
+        "where can": [" I", [" we", " you", " they"], " I find"],
+        "why is": [" it", [" that", " this", " it important"], " it happening"],
+        
+        // Responses
+        "i agree": [" with", [" you", " that", " your point"], " completely"],
+        "i understand": [" that", [" your concern", " the situation"], " completely"],
+        "i see": [" what", [" you mean", " you're saying", " the problem"]],
+        "that makes": [" sense", [" perfect sense", " things clearer"], " me wonder"],
+        
+        // Common expressions
+        "by the": [" way", [" end of", " time", " way"]],
+        "on the": [" other hand", [" phone", " way", " same page"]],
+        "in the": [" meantime", [" beginning", " end", " morning"]],
+        "at the": [" moment", [" same time", " end", " beginning"]],
+        "for the": [" first time", [" most part", " time being", " record"]],
+        
+        // Time expressions
+        "see you": [" soon", [" later", " tomorrow", " next week"]],
+        "talk to": [" you", [" you soon", " you later", " me"]],
+        "have a": [" great day", [" good one", " nice weekend", " question"]],
+        "take": [" care", [" your time", " a look", " it easy"]],
+        
+        // Problem solving
+        "the problem": [" is", [" with", " that", " we're facing"]],
+        "the issue": [" is", [" with", " that", " we're having"]],
+        "we need": [" to", [" fix this", " resolve this", " find a solution"]],
+        "i suggest": [" that", [" we", " you", " trying"]],
+        
+        // More completions
+        "it is": [" important", [" necessary", " good to", " crucial"]],
+        "that is": [" why", [" what", " how", " when"]],
+        "this is": [" a", [" great", " good", " perfect"]],
+        "there is": [" a", [" problem", " solution", " way"]],
+        "we are": [" working", [" on it", " together", " to resolve"]],
+        "they are": [" going", [" to", " be there", " help us"]],
+        "you are": [" right", [" welcome", " the best", " correct"]],
+        
+        // Questions and responses
+        "do you": [" want", [" to", " know", " understand"]],
+        "can you": [" help", [" me", " us", " with this"]],
+        "will you": [" be", [" there", " able to", " available"]],
+        "are you": [" sure", [" going", " coming", " available"]],
+        "is there": [" a", [" way", " problem", " solution"]],
+        
+        // Conditional phrases
+        "if you": [" need", [" help", " more information", " assistance"]],
+        "if we": [" can", [" help", " do anything", " assist"]],
+        "if they": [" want", [" to", " help", " participate"]],
+        "when you": [" have", [" time", " a moment", " questions"]],
+        "when we": [" meet", [" again", " tomorrow", " next week"]],
+        
+        // Conjunctions and transitions
+        "in addition": [" to", [" that", " this", "the above"]],
+        "on the other": [" hand", [" side", " end"]],
+        "as a": [" result", [" matter of fact", " consequence"]],
+        "in order": [" to", [" succeed", " understand", " proceed"]],
+        "even though": [" it", [" seems", " is difficult", " may seem"]],
+        
+        // Common phrases
+        "let me": [" know", [" you know", " explain", " show you"]],
+        "give me": [" a", [" call", " moment", " break"]],
+        "tell me": [" what", [" you think", " to do", " happened"]],
+        "show me": [" how", [" to do it", " it works", " you did"]],
+        
+        // Agreement and disagreement
+        "i completely": [" agree", [" understand", " disagree"]],
+        "i totally": [" agree", [" understand", " disagree"]],
+        "i partially": [" agree", [" disagree", " understand"]],
+        "i somewhat": [" agree", [" disagree", " understand"]],
+        
+        // Requests and offers
+        "would you": [" mind", [" helping", " explaining", " waiting"]],
+        "could you": [" possibly", [" help", " explain", " assist"]],
+        "do you": [" mind", [" if I", " helping", " waiting"]],
+        "can I": [" help", [" you", " with that", " in any way"]],
+        
+        // Time and scheduling
+        "what time": [" is", [" it", " the meeting", " good for you"]],
+        "what day": [" works", [" best", " for you", " for everyone"]],
+        "how about": [" tomorrow", [" next week", " later today"]],
+        "is that": [" good", [" for you", " convenient", " okay"]],
+        
+        // Expressions of uncertainty
+        "i'm not": [" sure", [" what", " when", " how"]],
+        "i don't": [" know", [" what", " when", " how"]],
+        "i'm not": [" certain", [" about", " that", " this"]],
+        "it might": [" be", [" difficult", " easy", " possible"]],
+        
+        // Expressions of certainty
+        "i'm": [" sure", [" that", " about", " it will"]],
+        "i know": [" that", [" what", " when", " how"]],
+        "i'm": [" certain", [" about", " that", " this"]],
+        "it will": [" be", [" great", " good", " successful"]],
+        
+        // More completions
+        "it seems": [" like", [" you", " it", " that"]],
+        "it looks": [" like", [" you", " it", " that"]],
+        "it sounds": [" like", [" you", " it", " a plan"]],
+        "it feels": [" like", [" you", " it", " a good idea"]],
+        
+        // Directions and instructions
+        "go to": [" the", [" left", "right", "next page"]],
+        "turn": [" left", ["right", "around", "it off"]],
+        "look at": [" the", ["screen", "document", "picture"]],
+        "click on": [" the", ["button", "link", "image"]],
+        
+        // Technology terms
+        "the website": [" is", ["down", "not working", "loading slowly"]],
+        "my computer": [" is", ["slow", "not working", "crashing"]],
+        "the internet": [" is", ["slow", "not working", "down"]],
+        "my phone": [" is", ["dead", "not working", "broken"]],
+        
+        // Work-related
+        "the meeting": [" is", ["at", "scheduled for", "postponed until"]],
+        "my boss": [" wants", ["to", "me to", "us to"]],
+        "the deadline": [" is", ["approaching", "tomorrow", "extended"]],
+        "the project": [" is", ["complete", "almost done", "delayed"]],
+        
+        // Personal
+        "my family": [" is", ["great", "doing well", "visiting"]],
+        "my friends": [" are", ["great", "coming over", "helping"]],
+        "my health": [" is", ["improving", "good", "not great"]],
+        "my car": [" is", ["broken", "running well", "in the shop"]],
+        
+        // Travel
+        "the flight": [" is", ["delayed", "on time", "cancelled"]],
+        "my hotel": [" is", ["nice", "close by", "booked"]],
+        "the restaurant": [" is", ["good", "close by", "expensive"]],
+        "the weather": [" is", ["nice", "terrible", "improving"]],
+        
+        // Education
+        "the class": [" is", ["interesting", "difficult", "boring"]],
+        "my teacher": [" is", ["great", "strict", "helpful"]],
+        "the homework": [" is", ["due", "difficult", "easy"]],
+        "the exam": [" is", ["tomorrow", "difficult", "important"]],
+        
+        // Shopping
+        "the store": [" is", ["closed", "open", "far away"]],
+        "the price": [" is", ["too high", "reasonable", "good"]],
+        "my order": [" is", ["late", "ready", "cancelled"]],
+        "the product": [" is", ["good", "broken", "not what I expected"]]
+    };
+
+    // Function to apply settings immediately
+    function applySettings() {
+        // This function will re-apply the auto-correction and text completion
+        // features with the updated settings
+        const messageInputs = document.querySelectorAll('input[type="text"], input[type="search"], textarea');
+        
+        // Remove existing event listeners and re-add them with updated settings
+        messageInputs.forEach(input => {
+            // Clone the input to remove all event listeners
+            const newInput = input.cloneNode(true);
+            input.parentNode.replaceChild(newInput, input);
+            
+            // Re-apply the auto-correction and text completion
+            setupAutoCorrection(newInput);
+        });
+    }
+
+    // Function to initialize auto-correction and text completion
+    function initializeAutoCorrectionAndCompletion() {
+        // Function to set up auto-correction and text completion on an input element
+        function setupAutoCorrection(inputElement) {
+            if (!inputElement) return;
+            
+            // Create a suggestions container for text completion
+            const suggestionsContainer = document.createElement('div');
+            suggestionsContainer.style.cssText = `
+                position: absolute;
+                background-color: rgba(30, 30, 40, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                display: none;
+                max-height: 200px;
+                overflow-y: auto;
+                color: white;
+                font-family: Arial, sans-serif;
+            `;
+            
+            // Position the suggestions container relative to the input
+            function positionSuggestions() {
+                const rect = inputElement.getBoundingClientRect();
+                suggestionsContainer.style.top = `${rect.bottom + window.scrollY}px`;
+                suggestionsContainer.style.left = `${rect.left + window.scrollX}px`;
+                suggestionsContainer.style.width = `${rect.width}px`;
+            }
+            
+            // Add the suggestions container to the document
+            document.body.appendChild(suggestionsContainer);
+            
+            // Store the current suggestion index
+            let currentSuggestionIndex = -1;
+            let currentSuggestions = [];
+            
+            // Handle input events
+            inputElement.addEventListener('input', function(e) {
+                // Skip if input is disabled (not logged in)
+                if (inputElement.disabled) return;
+                
+                const input = e.target;
+                const originalValue = input.value;
+                let cursorPosition = input.selectionStart;
+                let correctedValue = originalValue;
+                
+                // Apply auto-correction if enabled
+                if (autoCorrectEnabled) {
+                    // Apply all correction rules
+                    for (const rule of correctionRules) {
+                        correctedValue = correctedValue.replace(rule.pattern, rule.replacement);
+                    }
+                    
+                    // Update input if corrections were made
+                    if (correctedValue !== originalValue) {
+                        input.value = correctedValue;
+                        
+                        // Adjust cursor position based on text length change
+                        const diff = correctedValue.length - originalValue.length;
+                        input.selectionStart = cursorPosition + diff;
+                        input.selectionEnd = cursorPosition + diff;
+                    }
+                }
+                
+                // Show text completion suggestions if enabled
+                if (textCompletionEnabled) {
+                    if (input.value.trim() !== '') {
+                        showCompletionSuggestions(input.value);
+                    } else {
+                        suggestionsContainer.style.display = 'none';
+                    }
+                } else {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Handle keyboard events for suggestion navigation
+            inputElement.addEventListener('keydown', function(e) {
+                // Skip if input is disabled (not logged in)
+                if (inputElement.disabled) return;
+                
+                if (suggestionsContainer.style.display === 'none' || currentSuggestions.length === 0) {
+                    return;
+                }
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    currentSuggestionIndex = Math.min(currentSuggestionIndex + 1, currentSuggestions.length - 1);
+                    updateSuggestionHighlight();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    currentSuggestionIndex = Math.max(currentSuggestionIndex - 1, -1);
+                    updateSuggestionHighlight();
+                } else if (e.key === 'Enter' || e.key === 'Tab') {
+                    if (currentSuggestionIndex >= 0 && currentSuggestionIndex < currentSuggestions.length) {
+                        e.preventDefault();
+                        applySuggestion(currentSuggestions[currentSuggestionIndex]);
+                    }
+                } else if (e.key === 'Escape') {
+                    suggestionsContainer.style.display = 'none';
+                    currentSuggestionIndex = -1;
+                }
+            });
+            
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target !== inputElement && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.style.display = 'none';
+                    currentSuggestionIndex = -1;
+                }
+            });
+            
+            // Function to show completion suggestions
+            function showCompletionSuggestions(text) {
+                const words = text.toLowerCase().split(' ');
+                const lastWord = words[words.length - 1];
+                const lastTwoWords = words.length > 1 ? words[words.length - 2] + ' ' + lastWord : '';
+                const lastThreeWords = words.length > 2 ? words[words.length - 3] + ' ' + words[words.length - 2] + ' ' + lastWord : '';
+                
+                currentSuggestions = [];
+                suggestionsContainer.innerHTML = '';
+                
+                // Check for suggestions based on the last three words, then two words, then one word
+                if (completionSuggestions[lastThreeWords]) {
+                    const suggestions = completionSuggestions[lastThreeWords];
+                    addSuggestions(suggestions, lastThreeWords);
+                } else if (completionSuggestions[lastTwoWords]) {
+                    const suggestions = completionSuggestions[lastTwoWords];
+                    addSuggestions(suggestions, lastTwoWords);
+                } else if (completionSuggestions[lastWord]) {
+                    const suggestions = completionSuggestions[lastWord];
+                    addSuggestions(suggestions, lastWord);
+                }
+                
+                if (currentSuggestions.length > 0) {
+                    positionSuggestions();
+                    suggestionsContainer.style.display = 'block';
+                    currentSuggestionIndex = -1;
+                } else {
+                    suggestionsContainer.style.display = 'none';
+                }
+            }
+            
+            // Function to add suggestions to the container
+            function addSuggestions(suggestions, prefix) {
+                for (let i = 0; i < suggestions.length; i++) {
+                    let suggestion;
+                    if (Array.isArray(suggestions[i])) {
+                        // If it's an array of alternatives, pick one randomly
+                        suggestion = suggestions[i][Math.floor(Math.random() * suggestions[i].length)];
+                    } else {
+                        suggestion = suggestions[i];
+                    }
+                    
+                    const suggestionElement = document.createElement('div');
+                    suggestionElement.textContent = prefix + suggestion;
+                    suggestionElement.style.cssText = `
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        transition: background-color 0.2s ease;
+                    `;
+                    
+                    suggestionElement.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = 'rgba(0, 132, 255, 0.3)';
+                        currentSuggestionIndex = currentSuggestions.indexOf(suggestion);
+                        updateSuggestionHighlight();
+                    });
+                    
+                    suggestionElement.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                    
+                    suggestionElement.addEventListener('click', function() {
+                        applySuggestion(suggestion);
+                    });
+                    
+                    suggestionsContainer.appendChild(suggestionElement);
+                    currentSuggestions.push(suggestion);
+                }
+            }
+            
+            // Function to update suggestion highlight
+            function updateSuggestionHighlight() {
+                const suggestionElements = suggestionsContainer.querySelectorAll('div');
+                suggestionElements.forEach((element, index) => {
+                    if (index === currentSuggestionIndex) {
+                        element.style.backgroundColor = 'rgba(0, 132, 255, 0.5)';
+                    } else {
+                        element.style.backgroundColor = 'transparent';
+                    }
+                });
+            }
+            
+            // Function to apply a suggestion
+            function applySuggestion(suggestion) {
+                const words = inputElement.value.split(' ');
+                
+                // Check if we have a three-word prefix
+                if (words.length > 2) {
+                    const lastThreeWords = words[words.length - 3] + ' ' + words[words.length - 2] + ' ' + words[words.length - 1];
+                    if (completionSuggestions[lastThreeWords]) {
+                        words[words.length - 3] = lastThreeWords + suggestion;
+                        words.pop(); // Remove the last word
+                        words.pop(); // Remove the second last word
+                    } 
+                    // Check if we have a two-word prefix
+                    else if (words.length > 1) {
+                        const lastTwoWords = words[words.length - 2] + ' ' + words[words.length - 1];
+                        if (completionSuggestions[lastTwoWords]) {
+                            words[words.length - 2] = lastTwoWords + suggestion;
+                            words.pop(); // Remove the last word as it's included in the suggestion
+                        } else {
+                            // Otherwise, replace just the last word
+                            words[words.length - 1] = words[words.length - 1] + suggestion;
+                        }
+                    } else {
+                        // If there's only one word, append the suggestion to it
+                        words[0] = words[0] + suggestion;
+                    }
+                } 
+                // Check if we have a two-word prefix
+                else if (words.length > 1) {
+                    const lastTwoWords = words[words.length - 2] + ' ' + words[words.length - 1];
+                    if (completionSuggestions[lastTwoWords]) {
+                        words[words.length - 2] = lastTwoWords + suggestion;
+                        words.pop(); // Remove the last word as it's included in the suggestion
+                    } else {
+                        // Otherwise, replace just the last word
+                        words[words.length - 1] = words[words.length - 1] + suggestion;
+                    }
+                } else {
+                    // If there's only one word, append the suggestion to it
+                    words[0] = words[0] + suggestion;
+                }
+                
+                inputElement.value = words.join(' ');
+                suggestionsContainer.style.display = 'none';
+                currentSuggestionIndex = -1;
+                inputElement.focus();
+            }
+        }
+
+        // Apply auto-correction and text completion to all message inputs
+        const messageInputs = document.querySelectorAll('input[type="text"], input[type="search"], textarea');
+        messageInputs.forEach(input => {
+            setupAutoCorrection(input);
+        });
+
+        // Also apply to any dynamically added inputs
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) { // Element node
+                        if (node.matches('input[type="text"], input[type="search"], textarea')) {
+                            setupAutoCorrection(node);
+                        }
+                        
+                        // Check child nodes
+                        const inputs = node.querySelectorAll('input[type="text"], input[type="search"], textarea');
+                        inputs.forEach(input => {
+                            setupAutoCorrection(input);
+                        });
+                    }
+                });
+            });
+        });
+
+        // Start observing the document body for added nodes
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+});
+</script>
+
+
+
+
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.min.js"></script>
